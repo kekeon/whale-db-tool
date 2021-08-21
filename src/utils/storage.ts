@@ -23,8 +23,7 @@ class CacheManager {
    * @param effectiveTime 有效时长
    */
   setLocal(key: string, value: any, effectiveTime: number = 7 * 24 * 360000) {
-    let exp =
-      effectiveTime > 0 ? new Date().valueOf() + effectiveTime : effectiveTime;
+    let exp = effectiveTime > 0 ? new Date().valueOf() + effectiveTime : effectiveTime;
 
     let cacheData = {
       exp: exp,
@@ -61,7 +60,7 @@ class CacheManager {
 
 // 初始化缓存对象
 
-let cacheInstance: any = null;
+let cacheInstance: CacheManager | null = null;
 
 export default () => {
   if (!cacheInstance) {

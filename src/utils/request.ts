@@ -242,7 +242,7 @@ class Http implements HttpInstance {
   }
 }
 
-let httpInstance: HttpInstance;
+let httpInstance: HttpInstance | null = null;
 export default (() => {
   if (!httpInstance) {
     httpInstance = new Http();
