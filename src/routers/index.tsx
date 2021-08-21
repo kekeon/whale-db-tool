@@ -1,33 +1,33 @@
-import React from "react";
-import { RouteConfig } from "react-router-config";
+import React from 'react'
+import { RouteConfig } from 'react-router-config'
 
-import App from "../App";
-import Index from "../pages/index";
-import Layouts from "../layouts/BasicLayout";
-import Overview from "../pages/overview/index";
-import Mysql from "../pages/mysql/index";
+import App from '../App'
+import Index from '../pages/index'
+import Layouts from '../layouts/BasicLayout'
+import Overview from '../pages/overview/index'
+import Mysql from '../pages/mysql/index'
 
 export const routes: RouteConfig[] = [
   {
     component: App,
     routes: [
       {
-        path: "/login",
+        path: '/login',
         exact: true,
         component: Index,
       },
       {
-        path: "/main",
+        path: '/main',
         // exact: true,
         component: Layouts,
         routes: [
           {
-            path: "/main/overview",
+            path: '/main/overview',
             exact: true,
             component: Overview,
           },
           {
-            path: "/main/mysql",
+            path: '/main/mysql',
             exact: true,
             component: Mysql,
           },
@@ -35,4 +35,4 @@ export const routes: RouteConfig[] = [
       },
     ],
   },
-];
+]

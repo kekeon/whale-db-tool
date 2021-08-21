@@ -1,4 +1,4 @@
 export interface MySqlDbStateType {
-    dbName: string
-    tableName: string
+  dbName: string
+  tableName: string
 }

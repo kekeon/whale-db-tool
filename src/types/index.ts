@@ -1,1 +1,1 @@
-export {mysql} from './mysqlType';
+export { mysql } from './mysqlType'

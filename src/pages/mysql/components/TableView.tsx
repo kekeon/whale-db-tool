@@ -1,19 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { VariableSizeGrid as Grid } from "react-window";
-import ResizeObserver from "rc-resize-observer";
-import classNames from "classnames";
-import {
-  Button,
-  Checkbox,
-  Col,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-  Table,
-} from "antd";
-import style from "./styles/TableView.module.less";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { VariableSizeGrid as Grid } from 'react-window'
+import ResizeObserver from 'rc-resize-observer'
+import classNames from 'classnames'
+import { Button, Checkbox, Col, InputNumber, message, Modal, Row, Table } from 'antd'
+import style from './styles/TableView.module.less'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import {
   AppstoreAddOutlined,
   CaretLeftOutlined,
@@ -26,9 +17,9 @@ import {
   ProfileOutlined,
   SyncOutlined,
   TableOutlined,
-} from "@ant-design/icons";
-import DbLabelText from "_cp/DbLabelText";
-import DbDropdownMenu, { MenuItem } from "_cp/DbDropdownMenu";
+} from '@ant-design/icons'
+import DbLabelText from '_cp/DbLabelText'
+import DbDropdownMenu, { MenuItem } from '_cp/DbDropdownMenu'
 import {
   copyMenuList,
   copy_excel,
@@ -40,132 +31,128 @@ import {
   select_inset_sql,
   select_json,
   select_update_sql,
-} from "./const";
+} from './const'
 
-import { tableRenderData } from "../const";
-import { downloadJson, exportExcel } from "@/utils/xlsx";
-import { formatInsert, formatUpdate } from "@/utils/utils";
-import DbClipboard from "_cp/DbClipboard";
-import EditRowForm from "./EditRowForm";
-import { useBoolean } from "ahooks";
-import { mysqlTableDeleteItem } from "@/service/mysql";
-import { mySqlState } from "@/store";
-import { useRecoilValue } from "recoil";
-import { mysql } from "@/types";
+import { tableRenderData } from '../const'
+import { downloadJson, exportExcel } from '@/utils/xlsx'
+import { formatInsert, formatUpdate } from '@/utils/utils'
+import DbClipboard from '_cp/DbClipboard'
+import EditRowForm from './EditRowForm'
+import { useBoolean } from 'ahooks'
+import { mysqlTableDeleteItem } from '@/service/mysql'
+import { mySqlState } from '@/store'
+import { useRecoilValue } from 'recoil'
+import { mysql } from '@/types'
 
 interface Props {
-  dbName: string;
-  tableName: string;
-  queryData?: (...args: any) => void;
+  dbName: string
+  tableName: string
+  queryData?: (...args: any) => void
 }
-type PropsExtra = Props & Parameters<typeof Table>[0];
+type PropsExtra = Props & Parameters<typeof Table>[0]
 const TableView: React.FC<PropsExtra> = (props) => {
-  const { scroll, queryData } = props;
-  const [tableWidth, setTableWidth] = useState(0);
-  const [editFormType, setEditFormType] = useState<mysql.EditFormType>(
-    mysql.EditFormType.new
-  );
+  const { scroll, queryData } = props
+  const [tableWidth, setTableWidth] = useState(0)
+  const [editFormType, setEditFormType] = useState<mysql.EditFormType>(mysql.EditFormType.new)
 
   // 行列相关数据，存储索引，翻页记得清空
-  const [selectkeysMap, setSelectkeysMap] = useState<any>({}); // 包含-1， 选择全部行
-  const [selectRowIndex, setSelectRowIndex] = useState<number>(-1);
-  const gridRef = useRef<any>();
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const [editRowData, setEditRowData] = useState<any>();
+  const [selectkeysMap, setSelectkeysMap] = useState<any>({}) // 包含-1， 选择全部行
+  const [selectRowIndex, setSelectRowIndex] = useState<number>(-1)
+  const gridRef = useRef<any>()
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const [editRowData, setEditRowData] = useState<any>()
 
-  const { dbName, tableName } = useRecoilValue(mySqlState.mySqlDbState);
-  const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState);
-  const uuid = useRecoilValue(mySqlState.mySqlDbUUid);
+  const { dbName, tableName } = useRecoilValue(mySqlState.mySqlDbState)
+  const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
+  const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
 
-  let totalWidth = 0;
-  let unWidthCount = 0;
+  let totalWidth = 0
+  let unWidthCount = 0
   columns?.forEach((column) => {
     if (column.width) {
-      totalWidth += column.width as number;
+      totalWidth += column.width as number
     } else {
-      unWidthCount++;
+      unWidthCount++
     }
-  });
+  })
 
   let mergedColumns = useMemo(() => {
     let columnList = columns!.map((column) => {
       if (column.width) {
-        return column;
+        return column
       }
 
-      let w = unWidthCount
-        ? Math.floor((tableWidth - totalWidth) / unWidthCount)
-        : 150;
+      let w = unWidthCount ? Math.floor((tableWidth - totalWidth) / unWidthCount) : 150
 
       return {
         ...column,
         width: w < 150 ? 150 : w,
-      };
-    });
+      }
+    })
     columnList.unshift({
       width: 30,
-      dataIndex: "__checkbox__",
-      title: "__checkbox__",
-    });
-    return columnList;
-  }, [columns]);
+      dataIndex: '__checkbox__',
+      title: '__checkbox__',
+    })
+    return columnList
+  }, [columns])
 
   let isSelectAll = useMemo(() => {
-    return selectkeysMap["-1"];
-  }, [selectkeysMap]);
+    return selectkeysMap['-1']
+  }, [selectkeysMap])
 
   const [connectObject] = useState<any>(() => {
-    const obj = {};
-    Object.defineProperty(obj, "scrollLeft", {
+    const obj = {}
+    Object.defineProperty(obj, 'scrollLeft', {
       get: () => null,
       set: (scrollLeft: number) => {
         if (gridRef.current) {
-          gridRef.current.scrollTo({ scrollLeft });
+          gridRef.current.scrollTo({ scrollLeft })
         }
       },
-    });
+    })
 
-    return obj;
-  });
+    return obj
+  })
 
   /* 右键菜单 start */
 
   const rightMenuHide = () => {
-    menuRef.current!.style.top = -1000 + "px";
-    menuRef.current!.style.left = "0px";
-  };
+    menuRef.current!.style.top = -1000 + 'px'
+    menuRef.current!.style.left = '0px'
+  }
 
   useEffect(() => {
     window.oncontextmenu = (e) => {
-      const target = e.target as HTMLElement;
-      const rowIndex = target?.dataset?.rowIndex;
+      const target = e.target as HTMLElement
+      const rowIndex = target?.dataset?.rowIndex
 
       if (rowIndex) {
-        e.preventDefault();
-        setSelectRowIndex(Number(rowIndex));
-        menuRef.current!.style.top = e.clientY + 5 + "px";
-        menuRef.current!.style.left = e.clientX + 5 + "px";
-        console.log("oncontextmenu", e);
-        return;
+        e.preventDefault()
+        setSelectRowIndex(Number(rowIndex))
+        menuRef.current!.style.top = e.clientY + 5 + 'px'
+        menuRef.current!.style.left = e.clientX + 5 + 'px'
+        console.log('oncontextmenu', e)
+        return
       }
 
-      rightMenuHide();
-    };
+      rightMenuHide()
+    }
 
     const leftClick = () => {
-      rightMenuHide();
-    };
-    document.body.addEventListener("click", leftClick);
+      rightMenuHide()
+    }
+    document.body.addEventListener('click', leftClick)
 
     return () => {
-      window.oncontextmenu = null;
-      document.body.removeEventListener("click", leftClick);
-    };
-  }, []);
+      window.oncontextmenu = null
+      document.body.removeEventListener('click', leftClick)
+    }
+  }, [])
 
   /* 右键菜单 end */
 
-  const [editRowVisible, { toggle: editRowToggle }] = useBoolean(false);
+  const [editRowVisible, { toggle: editRowToggle }] = useBoolean(false)
 
   const resetVirtualGrid = () => {
     gridRef &&
@@ -173,53 +160,45 @@ const TableView: React.FC<PropsExtra> = (props) => {
       gridRef.current.resetAfterIndices({
         columnIndex: 0,
         shouldForceUpdate: false,
-      });
-  };
+      })
+  }
   useEffect(() => {
-    resetVirtualGrid();
-  }, [tableWidth, columns]);
+    resetVirtualGrid()
+  }, [tableWidth, columns])
 
   const handChangeCheckbox = (e: CheckboxChangeEvent, rowIndex: number) => {
-    let v = e.target.checked;
-    selectkeysMap[rowIndex] = v;
+    let v = e.target.checked
+    selectkeysMap[rowIndex] = v
 
     // 取消全选
     if (rowIndex === -1 && !v) {
-      setSelectkeysMap({});
-      return;
+      setSelectkeysMap({})
+      return
     }
 
     // 全选中，取消其中一个
     if (selectkeysMap[-1] && rowIndex >= 0 && !v) {
-      selectkeysMap[-1] = false;
-      let o: any = {};
+      selectkeysMap[-1] = false
+      let o: any = {}
       props.dataSource?.forEach((row, index) => {
-        o[index] = true;
-      });
+        o[index] = true
+      })
 
-      o[rowIndex] = false;
-      setSelectkeysMap(o);
-      return;
+      o[rowIndex] = false
+      setSelectkeysMap(o)
+      return
     }
 
-    setSelectkeysMap({ ...selectkeysMap });
-  };
+    setSelectkeysMap({ ...selectkeysMap })
+  }
 
-  const handleRowCell = (
-    e: React.MouseEvent,
-    rowIndex: number,
-    colIndex: number,
-    rowData: any
-  ) => {
-    e.preventDefault();
-    setSelectRowIndex(rowIndex);
-  };
+  const handleRowCell = (e: React.MouseEvent, rowIndex: number, colIndex: number, rowData: any) => {
+    e.preventDefault()
+    setSelectRowIndex(rowIndex)
+  }
 
-  const renderVirtualList: any = (
-    rowData: object[],
-    { scrollbarSize, ref, onScroll }: any
-  ): React.ReactNode => {
-    ref.current = connectObject;
+  const renderVirtualList: any = (rowData: object[], { scrollbarSize, ref, onScroll }: any): React.ReactNode => {
+    ref.current = connectObject
 
     return (
       <Grid
@@ -227,73 +206,61 @@ const TableView: React.FC<PropsExtra> = (props) => {
         className="virtual-grid"
         columnCount={mergedColumns.length}
         columnWidth={(index: number) => {
-          const width = mergedColumns[index]["width"];
-          return width as number;
+          const width = mergedColumns[index]['width']
+          return width as number
         }}
         height={scroll!.y as number}
         rowCount={rowData.length}
         rowHeight={() => 30}
         width={tableWidth}
         onScroll={({ scrollLeft }: { scrollLeft: number }) => {
-          onScroll({ scrollLeft });
+          onScroll({ scrollLeft })
         }}
       >
-        {({
-          columnIndex,
-          rowIndex,
-          style,
-        }: {
-          columnIndex: number;
-          rowIndex: number;
-          style: React.CSSProperties;
-        }) => {
+        {({ columnIndex, rowIndex, style }: { columnIndex: number; rowIndex: number; style: React.CSSProperties }) => {
           return (
             <>
               {columnIndex === 0 ? (
                 <div
                   style={style}
-                  className={classNames("virtual-table-cell", {
-                    "virtual-table-cell-last":
-                      columnIndex === mergedColumns.length - 1,
-                    "odd-row": rowIndex % 2 !== 0,
+                  className={classNames('virtual-table-cell', {
+                    'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+                    'odd-row': rowIndex % 2 !== 0,
                   })}
                 >
                   <Checkbox
                     checked={isSelectAll || selectkeysMap[rowIndex]}
                     onChange={(e) => {
-                      handChangeCheckbox(e, rowIndex);
+                      handChangeCheckbox(e, rowIndex)
                     }}
                   />
                 </div>
               ) : (
                 <div
-                  className={classNames("virtual-table-cell", {
-                    "virtual-table-cell-last":
-                      columnIndex === mergedColumns.length - 1,
-                    "odd-row": rowIndex % 2 !== 0,
-                    "select-row-bg": selectRowIndex === rowIndex,
+                  className={classNames('virtual-table-cell', {
+                    'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+                    'odd-row': rowIndex % 2 !== 0,
+                    'select-row-bg': selectRowIndex === rowIndex,
                   })}
                   data-col-index={columnIndex}
                   data-row-index={rowIndex}
                   style={style}
                   onClick={(e) => {
-                    handleRowCell(e, rowIndex, columnIndex, rowData);
+                    handleRowCell(e, rowIndex, columnIndex, rowData)
                   }}
                 >
                   {tableRenderData(
                     (mergedColumns as any)[columnIndex],
-                    (rowData[rowIndex] as any)[
-                      (mergedColumns as any)[columnIndex].dataIndex
-                    ]
+                    (rowData[rowIndex] as any)[(mergedColumns as any)[columnIndex].dataIndex],
                   )}
                 </div>
               )}
             </>
-          );
+          )
         }}
       </Grid>
-    );
-  };
+    )
+  }
 
   const renderHeader: any = (rowProps: any) => {
     return (
@@ -305,223 +272,155 @@ const TableView: React.FC<PropsExtra> = (props) => {
                 <Checkbox
                   checked={isSelectAll}
                   onChange={(e) => {
-                    handChangeCheckbox(e, -1);
+                    handChangeCheckbox(e, -1)
                   }}
                 />
               </th>
-            );
+            )
           }
-          return c;
+          return c
         })}
       </tr>
-    );
-  };
+    )
+  }
 
   const getSelectData = () => {
-    let data: any = [];
-    if (selectkeysMap["-1"]) {
-      data = props.dataSource;
-      return data;
+    let data: any = []
+    if (selectkeysMap['-1']) {
+      data = props.dataSource
+      return data
     }
 
     if (selectkeysMap && Object.keys(selectkeysMap).length > 0) {
-      data = props.dataSource?.filter((item, index) => selectkeysMap[index]);
+      data = props.dataSource?.filter((item, index) => selectkeysMap[index])
     }
 
-    return data;
-  };
+    return data
+  }
 
   const handleExport = (data: MenuItem) => {
-    let list = getSelectData();
+    let list = getSelectData()
     switch (data.idx) {
       case select_excel:
-        exportExcel(props.columns as any, list);
-        break;
+        exportExcel(props.columns as any, list)
+        break
       case select_json:
-        downloadJson(JSON.stringify(list), "json");
-        break;
+        downloadJson(JSON.stringify(list), 'json')
+        break
       case select_inset_sql:
-        downloadJson(
-          formatInsert(
-            dbName!,
-            tableName!,
-            columns,
-            list
-          ),
-          "json"
-        );
-        break;
+        downloadJson(formatInsert(dbName!, tableName!, columns, list), 'json')
+        break
       case select_update_sql:
         downloadJson(
           formatUpdate(
             dbName!,
             tableName!,
             (props as any).columns.map((d: any) => d.dataIndex),
-            list
+            list,
           ),
-          "json"
-        );
-        break;
+          'json',
+        )
+        break
     }
-  };
+  }
 
   const handleCopy = (item: MenuItem) => {
-    let list = getSelectData();
+    let list = getSelectData()
     switch (item.idx) {
       case copy_excel:
-        return copy_excel;
+        return copy_excel
       case copy_json:
-        return JSON.stringify(list);
+        return JSON.stringify(list)
       case copy_inset_sql:
-        return formatInsert(
-          dbName!,
-          tableName!,
-          columns,
-          list
-        );
+        return formatInsert(dbName!, tableName!, columns, list)
       case copy_update_sql:
-        return formatUpdate(
-          dbName!,
-          tableName!,
-          columns,
-          list
-        );
+        return formatUpdate(dbName!, tableName!, columns, list)
     }
-  };
+  }
 
   const handleAddRow = () => {
-    setEditFormType(mysql.EditFormType.new);
-    editRowToggle(true);
-  };
+    setEditFormType(mysql.EditFormType.new)
+    editRowToggle(true)
+  }
 
   // 编辑行数据
   const handleEditRowForm = () => {
-    const data = props.dataSource?.[selectRowIndex];
-    console.log("data", data);
-    setEditRowData(data);
-    setEditFormType(mysql.EditFormType.edit);
-    editRowToggle(true);
-  };
+    const data = props.dataSource?.[selectRowIndex]
+    console.log('data', data)
+    setEditRowData(data)
+    setEditFormType(mysql.EditFormType.edit)
+    editRowToggle(true)
+  }
 
   const copyMenuListMemo = useMemo(() => {
     return copyMenuList.map((item) => {
       item.title = (
         <DbClipboard
           textFun={() => {
-            return handleCopy(item) as string;
+            return handleCopy(item) as string
           }}
         >
           {item.title}
         </DbClipboard>
-      );
-      return item;
-    });
-  }, [copyMenuList]);
+      )
+      return item
+    })
+  }, [copyMenuList])
 
   /* 删除 start*/
   const deleteTableData = (list: any[]) => {
-    const len = list?.length;
+    const len = list?.length
     Modal.confirm({
-      title: "删除",
+      title: '删除',
       icon: <ExclamationCircleOutlined />,
       content: `确认删除选中的${len}条数据？`,
-      okText: "确认",
-      cancelText: "取消",
+      okText: '确认',
+      cancelText: '取消',
       onOk: async () => {
-        await mysqlTableDeleteItem(
-          "uuid",
-          dbName!,
-          tableName!,
-          props.columns,
-          list
-        );
-        setSelectkeysMap({});
-        queryData?.();
-        setSelectRowIndex(-1);
-        message.success("删除成功");
+        await mysqlTableDeleteItem('uuid', dbName!, tableName!, props.columns, list)
+        setSelectkeysMap({})
+        queryData?.()
+        setSelectRowIndex(-1)
+        message.success('删除成功')
       },
-    });
-  };
+    })
+  }
 
   const handleDeleteItems = async () => {
-    const list = getSelectData();
-    deleteTableData(list);
-  };
+    const list = getSelectData()
+    deleteTableData(list)
+  }
 
   const handleDeleteItem = () => {
-    const data = props.dataSource?.[selectRowIndex];
-    deleteTableData([data]);
-  };
+    const data = props.dataSource?.[selectRowIndex]
+    deleteTableData([data])
+  }
 
   /* 删除 end*/
 
   return (
-    <div className={style["table-view"]}>
+    <div className={style['table-view']}>
       <Row className="table-toolbar" justify="space-between" align="middle">
         <Col span={12}>
           <DbDropdownMenu list={exportMenuList} onClick={handleExport}>
-            <Button
-              title="导出"
-              type="text"
-              className="ml5"
-              icon={<ExportOutlined />}
-            />
+            <Button title="导出" type="text" className="ml5" icon={<ExportOutlined />} />
           </DbDropdownMenu>
           <DbDropdownMenu list={copyMenuListMemo}>
-            <Button
-              title="复制"
-              type="text"
-              className="ml5"
-              icon={<CopyOutlined />}
-            />
+            <Button title="复制" type="text" className="ml5" icon={<CopyOutlined />} />
           </DbDropdownMenu>
-          <Button
-            title="插入"
-            type="text"
-            className="ml5"
-            onClick={handleAddRow}
-            icon={<AppstoreAddOutlined />}
-          />
-          <Button
-            title="删除"
-            type="text"
-            className="ml5"
-            onClick={handleDeleteItems}
-            icon={<DeleteOutlined />}
-          />
-          <Button
-            title="表格查看"
-            type="text"
-            className="ml5"
-            icon={<TableOutlined />}
-          />
-          <Button
-            title="表单查看"
-            type="text"
-            className="ml5"
-            icon={<ProfileOutlined />}
-          />
+          <Button title="插入" type="text" className="ml5" onClick={handleAddRow} icon={<AppstoreAddOutlined />} />
+          <Button title="删除" type="text" className="ml5" onClick={handleDeleteItems} icon={<DeleteOutlined />} />
+          <Button title="表格查看" type="text" className="ml5" icon={<TableOutlined />} />
+          <Button title="表单查看" type="text" className="ml5" icon={<ProfileOutlined />} />
         </Col>
         <Col span={12} className="left">
           <Row justify="end" align="middle">
-            <Button
-              type="text"
-              className="ml5"
-              icon={<FilterOutlined title="过率" />}
-            />
-            <Button
-              type="text"
-              className="ml5"
-              onClick={queryData}
-              icon={<SyncOutlined title="刷新" />}
-            />
+            <Button type="text" className="ml5" icon={<FilterOutlined title="过率" />} />
+            <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
             <DbLabelText text="页码">
               <Button type="text" icon={<CaretLeftOutlined title="上一行" />} />
               <InputNumber size="small" min={0} defaultValue={0} />
-              <Button
-                type="text"
-                icon={<CaretRightOutlined title="下一页" />}
-              />
+              <Button type="text" icon={<CaretRightOutlined title="下一页" />} />
             </DbLabelText>
             <DbLabelText text="行数">
               <InputNumber size="small" min={0} defaultValue={0} />
@@ -531,7 +430,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       </Row>
       <ResizeObserver
         onResize={({ width }) => {
-          setTableWidth(width);
+          setTableWidth(width)
         }}
       >
         <Table
@@ -560,6 +459,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
         <div onClick={handleDeleteItem}>删除</div>
       </div>
     </div>
-  );
-};
-export default TableView;
+  )
+}
+export default TableView

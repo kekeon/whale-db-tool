@@ -1,21 +1,21 @@
-import { MySqlDbStateType } from "@/store/mysqlState/types";
-import { mysql } from "@/types";
-import { atom } from "recoil";
+import { MySqlDbStateType } from '@/store/mysqlState/types'
+import { mysql } from '@/types'
+import { atom } from 'recoil'
 
 export const mySqlDbUUid = atom<string>({
-  key: "mySqlDbUUidState",
+  key: 'mySqlDbUUidState',
   default: '',
-});
+})
 
 export const mySqlDbState = atom<Partial<MySqlDbStateType>>({
-  key: "mySqlDbNameState",
+  key: 'mySqlDbNameState',
   default: {
-    tableName: "",
-    dbName: "",
+    tableName: '',
+    dbName: '',
   },
-});
+})
 
 export const mySqlDbTableColumsState = atom<Partial<mysql.tableColumsInfo>[]>({
-    key: "mySqlDbTableInfoState",
-    default: [],
-  });
+  key: 'mySqlDbTableInfoState',
+  default: [],
+})

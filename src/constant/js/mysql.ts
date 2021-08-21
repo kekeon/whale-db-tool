@@ -1,3 +1,1 @@
-enum Enum {
-    
-}
+enum Enum {}

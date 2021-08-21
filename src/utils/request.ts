@@ -1,46 +1,46 @@
 // axios 和 公共请求方法封装
-import axios from 'axios';
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios/index';
-import storage from './storage';
+import axios from 'axios'
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios/index'
+import storage from './storage'
 
-import { confirmTips, successTip, warnTipsDiag } from './tips';
+import { confirmTips, successTip, warnTipsDiag } from './tips'
 
 export interface GetOpt {
-  isCache?: boolean; // isCache: true 缓存数据，并从缓存中去；
-  isRefresh?: boolean; // isRefresh：true 不从缓存中去拿数据， 并会刷新缓存数据,
-  suffixUrl?: string;
+  isCache?: boolean // isCache: true 缓存数据，并从缓存中去；
+  isRefresh?: boolean // isRefresh：true 不从缓存中去拿数据， 并会刷新缓存数据,
+  suffixUrl?: string
 }
 
 export interface PostOpt {
-  text?: string;
-  hidden?: boolean;
+  text?: string
+  hidden?: boolean
 }
 
 export interface requestResponse<T> {
-  data: T;
+  data: T
 }
 
 export interface Response extends AxiosResponse {
   data: {
-    [k: string]: any;
-    code: number;
-    message: any;
-    data: requestResponse<any>;
-  };
+    [k: string]: any
+    code: number
+    message: any
+    data: requestResponse<any>
+  }
 }
 
 declare interface HttpInstance {
-  get<T>(url: string, params?: object, opt?: GetOpt): Promise<requestResponse<T>>;
+  get<T>(url: string, params?: object, opt?: GetOpt): Promise<requestResponse<T>>
 
-  post<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>;
+  post<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
 
-  put<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>;
+  put<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
 
-  delete<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>;
+  delete<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
 }
 
 interface ErrorMessage {
-  [k: string]: string;
+  [k: string]: string
 }
 
 // 错误码
@@ -59,16 +59,16 @@ const ERROR_CODE_MAP: ErrorMessage = {
   '502': '网关错误。',
   '503': '服务不可用，服务器暂时过载或维护。',
   '504': '网关超时。',
-};
+}
 
 class Http implements HttpInstance {
-  private instance: AxiosInstance;
+  private instance: AxiosInstance
 
   constructor() {
     this.instance = axios.create({
       baseURL: '/api/v1/', // 接口前缀
       timeout: 60000, // 设置响应超时时间
-    });
+    })
 
     // 请求拦截
     this.instance.interceptors.request.use(
@@ -78,60 +78,60 @@ class Http implements HttpInstance {
           // config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
           config.headers['Content-Type'] = config.headers['Content-Type']
             ? config.headers['Content-Type']
-            : 'application/json';
+            : 'application/json'
         }
         if (config.method === 'get') {
           config.params = {
             ...config.params,
-          };
+          }
         }
         // 设置token
-        const token = 'Bearer ' + storage().getLocal('AUTH_TOKEN', 'o2222');
-        token && (config.headers.Authorization = token);
-        return config;
+        const token = 'Bearer ' + storage().getLocal('AUTH_TOKEN', 'o2222')
+        token && (config.headers.Authorization = token)
+        return config
       },
       (error) => Promise.reject(error),
-    );
+    )
 
     // 响应拦截
     this.instance.interceptors.response.use(
       (response: Response) => {
         if (response.status === 200) {
-          const code = response.data && Number(response.data.code);
+          const code = response.data && Number(response.data.code)
           if (code !== 0) {
             // 失败
             if (code === 7) {
-              warnTipsDiag('未登录或登录已过期，请重新登录');
+              warnTipsDiag('未登录或登录已过期，请重新登录')
               // 清除用户信息
               setTimeout(() => {
-                window.location.pathname = '/login';
-              }, 1000);
+                window.location.pathname = '/login'
+              }, 1000)
             } else {
-              confirmTips(response.data.message || ERROR_CODE_MAP[response.data.code.toString()]);
+              confirmTips(response.data.message || ERROR_CODE_MAP[response.data.code.toString()])
             }
-            return Promise.reject(response);
+            return Promise.reject(response)
           }
-          return Promise.resolve(response);
+          return Promise.resolve(response)
         }
-        warnTipsDiag(ERROR_CODE_MAP[response.status.toString()]);
-        return Promise.reject(response);
+        warnTipsDiag(ERROR_CODE_MAP[response.status.toString()])
+        return Promise.reject(response)
       },
       (error) => {
-        let errorMessage = '';
+        let errorMessage = ''
         if (typeof error === 'string') {
-          errorMessage = error;
+          errorMessage = error
         } else if (error as Error) {
-          const reg = /timeout/g;
+          const reg = /timeout/g
           if (reg.test(error.message)) {
-            errorMessage = '抱歉，操作超时, 请稍后再试';
+            errorMessage = '抱歉，操作超时, 请稍后再试'
           } else {
-            errorMessage = ERROR_CODE_MAP[error.response.status];
+            errorMessage = ERROR_CODE_MAP[error.response.status]
           }
         }
-        warnTipsDiag(errorMessage);
-        return Promise.reject(error);
+        warnTipsDiag(errorMessage)
+        return Promise.reject(error)
       },
-    );
+    )
   }
 
   /**
@@ -145,12 +145,12 @@ class Http implements HttpInstance {
       // opt中的参数，数据缓存,isCache:是否需要缓存, isRefresh: 是否强刷缓存, url 作为key, 缓存时间 7*24*3600*1000
 
       if (opt.isCache && !opt.isRefresh) {
-        const key = url.replace(/\//g, '_').toLocaleUpperCase();
-        const res = storage().gGetLocal(key, false);
+        const key = url.replace(/\//g, '_').toLocaleUpperCase()
+        const res = storage().gGetLocal(key, false)
         // 缓存中存在有效
         if (res) {
-          resolve(res);
-          return false;
+          resolve(res)
+          return false
         }
       }
 
@@ -160,22 +160,22 @@ class Http implements HttpInstance {
           // 响应后缓存结果
 
           if (res.data.list === null) {
-            res.data.list = [];
+            res.data.list = []
           }
 
           if (opt.isCache) {
-            const key = url.replace(/\//g, '_').toLocaleUpperCase();
-            storage().setLocal(key, res.data, 60000);
+            const key = url.replace(/\//g, '_').toLocaleUpperCase()
+            storage().setLocal(key, res.data, 60000)
           }
 
-          resolve(res.data);
+          resolve(res.data)
         })
         .catch((err) => {
-          reject(err);
-        });
+          reject(err)
+        })
     }).catch((err) => {
-      return Promise.reject(err);
-    });
+      return Promise.reject(err)
+    })
   }
 
   /**
@@ -192,16 +192,16 @@ class Http implements HttpInstance {
         .post(url, params, opt)
         .then((res) => {
           if (!opt.hidden) {
-            successTip(opt.text ? opt.text : '操作成功');
+            successTip(opt.text ? opt.text : '操作成功')
           }
-          resolve(res.data);
+          resolve(res.data)
         })
         .catch((err) => {
-          reject(err);
-        });
+          reject(err)
+        })
     }).catch((err) => {
-      return Promise.reject(err);
-    });
+      return Promise.reject(err)
+    })
   }
 
   public put<T>(url: string, params: object, opt: PostOpt = { text: '更新成功', hidden: true }) {
@@ -211,16 +211,16 @@ class Http implements HttpInstance {
         .put(url, params, opt)
         .then((res) => {
           if (!opt.hidden) {
-            successTip(opt.text ? opt.text : '更新成功');
+            successTip(opt.text ? opt.text : '更新成功')
           }
-          resolve(res.data);
+          resolve(res.data)
         })
         .catch((err) => {
-          reject(err);
-        });
+          reject(err)
+        })
     }).catch((err) => {
-      return Promise.reject(err);
-    });
+      return Promise.reject(err)
+    })
   }
 
   public delete<T>(url: string, params: object, opt: PostOpt = { text: '删除成功', hidden: true }) {
@@ -229,23 +229,23 @@ class Http implements HttpInstance {
         .delete(url, { data: params, ...opt })
         .then((res) => {
           if (!opt.hidden) {
-            successTip(opt.text ? opt.text : '删除成功');
+            successTip(opt.text ? opt.text : '删除成功')
           }
-          resolve(res.data);
+          resolve(res.data)
         })
         .catch((err) => {
-          reject(err);
-        });
+          reject(err)
+        })
     }).catch((err) => {
-      return Promise.reject(err);
-    });
+      return Promise.reject(err)
+    })
   }
 }
 
-let httpInstance: HttpInstance | null = null;
+let httpInstance: HttpInstance | null = null
 export default (() => {
   if (!httpInstance) {
-    httpInstance = new Http();
+    httpInstance = new Http()
   }
-  return httpInstance;
-})();
+  return httpInstance
+})()

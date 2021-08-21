@@ -1,54 +1,52 @@
-import {
-  formLayout,
-  inputPlaceholder,
-  inputRequired,
-} from "@/constant/js/form";
-import { addConnect, updateConnect } from "@/service/dbInstance";
-import { Modal, Form, Input, InputNumber } from "antd";
-import React from "react";
+import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
+import { addConnect, updateConnect } from '@/service/dbInstance'
+import { Modal, Form, Input, InputNumber } from 'antd'
+import React from 'react'
 interface Props {
-  visible: boolean;
-  initInfo: Partial<conmon.cuid>;
-  onCancel: () => void;
-  onOk: () => void;
+  visible: boolean
+  initInfo: Partial<conmon.cuid>
+  onCancel: () => void
+  onOk: () => void
 }
 
-type PropsExtra = Props;
+type PropsExtra = Props
 
-const Item = Form.Item;
+const Item = Form.Item
 
 const MySqlAddModal: React.FC<PropsExtra> = (props) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm()
 
   const handleOk = () => {
-    form.validateFields().then(value => {
-      console.log(value);
+    form.validateFields().then(
+      (value) => {
+        console.log(value)
 
-      if (props.initInfo?.uuid) {
-        updateConnect(props.initInfo?.uuid, value).then(() => {
-          props?.onCancel()
-          props?.onOk()
-        })
-      } else {
-        addConnect(value).then(() => {
-          props?.onCancel()
-          props?.onOk()
-        })
-      }
-    }, error => {
-      console.log('error', error);
-    })
+        if (props.initInfo?.uuid) {
+          updateConnect(props.initInfo?.uuid, value).then(() => {
+            props?.onCancel()
+            props?.onOk()
+          })
+        } else {
+          addConnect(value).then(() => {
+            props?.onCancel()
+            props?.onOk()
+          })
+        }
+      },
+      (error) => {
+        console.log('error', error)
+      },
+    )
   }
 
   const handleCancel = () => {
     props?.onCancel()
   }
 
-  
-  const { initInfo } = props;
+  const { initInfo } = props
 
   return (
-    <div className={"MySqlAddModal"}>
+    <div className={'MySqlAddModal'}>
       <Modal
         title="MySql"
         visible={props.visible}
@@ -67,7 +65,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
               {
                 type: 'string',
                 max: 100,
-                message: "最大长度100",
+                message: '最大长度100',
               },
             ]}
           >
@@ -83,7 +81,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
               {
                 max: 100,
                 type: 'string',
-                message: "最大长度100",
+                message: '最大长度100',
               },
             ]}
           >
@@ -99,11 +97,11 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
               {
                 max: 1000,
                 type: 'string',
-                message: "最大长度1000",
+                message: '最大长度1000',
               },
             ]}
           >
-            <Input placeholder={inputPlaceholder}/>
+            <Input placeholder={inputPlaceholder} />
           </Item>
 
           <Item
@@ -112,12 +110,12 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             rules={[
               {
                 ...inputRequired,
-                required: !Boolean(initInfo?.uuid)
+                required: !Boolean(initInfo?.uuid),
               },
               {
                 max: 100,
                 type: 'string',
-                message: "最大长度100",
+                message: '最大长度100',
               },
             ]}
           >
@@ -133,15 +131,15 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
               {
                 max: 65535,
                 type: 'number',
-                message: "最大值65535",
+                message: '最大值65535',
               },
             ]}
           >
-            <InputNumber style={{width: '100%'}} placeholder={inputPlaceholder} />
+            <InputNumber style={{ width: '100%' }} placeholder={inputPlaceholder} />
           </Item>
         </Form>
       </Modal>
     </div>
-  );
-};
-export default MySqlAddModal;
+  )
+}
+export default MySqlAddModal

@@ -1,67 +1,62 @@
-import { USE_DATABASES_FUN } from "@/sql/mysql.sql";
-import { Button } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import style from "./styles/CodeMonaco.module.less";
+import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
+import { Button } from 'antd'
+import React, { useEffect, useRef, useState } from 'react'
+import style from './styles/CodeMonaco.module.less'
 import * as monaco from 'monaco-editor'
-import { mysql } from "@/types";
+import { mysql } from '@/types'
 
 interface Props {
-  onRun: (sqlList: mysql.queryItem[]) => void;
-  db: string;
+  onRun: (sqlList: mysql.queryItem[]) => void
+  db: string
 }
-type PropsExtra = Props;
-
+type PropsExtra = Props
 
 const CodeMonaco: React.FC<PropsExtra> = ({ onRun, db }) => {
-  const [code, setCode] = useState<string>('');
+  const [code, setCode] = useState<string>('')
   const ref = useRef<any>()
   const monacoInstanceRef = useRef<any>()
   const editorDidMount = (editor: any, monaco: any) => {
-    editor.focus();
-  };
+    editor.focus()
+  }
 
   useEffect(() => {
-    console.log('CodeMonaco', ref);
+    console.log('CodeMonaco', ref)
     monacoInstanceRef.current = monaco.editor.create(ref.current, {
-      value: "",
+      value: '',
       language: 'sql',
-      theme: 'vs-dark'
+      theme: 'vs-dark',
     })
-    console.log("monacoInstance", monacoInstanceRef);
-
-  },[]) 
-
+    console.log('monacoInstance', monacoInstanceRef)
+  }, [])
 
   const handleRun = () => {
     let val = monacoInstanceRef.current.getValue()
-    console.log("handleRun", val, db);
+    console.log('handleRun', val, db)
     setCode(val)
     let sqlList: mysql.queryItem[] = [
       USE_DATABASES_FUN(db || ''),
       {
-        type: "query",
+        type: 'query',
         sql: val,
       },
-    ];
-    onRun(sqlList);
+    ]
+    onRun(sqlList)
   }
 
   const options = {
     selectOnLineNumbers: true,
-  };
+  }
 
   return (
-    <div className={style["monaco-wrap"]}>
+    <div className={style['monaco-wrap']}>
       <div className="monaco-tool-wrap">
-        <Button size="small" type={"primary"} ghost onClick={handleRun}>
+        <Button size="small" type={'primary'} ghost onClick={handleRun}>
           运行
         </Button>
       </div>
-      <div style={{height: '300px'}} ref={ref}>
-
-      </div>
+      <div style={{ height: '300px' }} ref={ref}></div>
     </div>
-  );
-};
+  )
+}
 
-export default CodeMonaco;
+export default CodeMonaco
