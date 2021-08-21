@@ -1,0 +1,1 @@
+export const CONNECT_LIST = 'CONNECT_LIST'

@@ -1,0 +1,24 @@
+:local(.db-connect-lsit) {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+
+  :global {
+    .db-item-wrap {
+      display: inline-block;
+      background-color: @bg_gray_small;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 5px;
+      cursor: pointer;
+      .db-edit-icon-wrap {
+        margin-left: 5px;
+      }
+    }
+
+    .db-item-active {
+      background-color: @bg_blue_default;
+    }
+  }
+}

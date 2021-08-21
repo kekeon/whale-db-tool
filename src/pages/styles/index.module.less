@@ -1,0 +1,43 @@
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  :global {
+    .login-wrap-card {
+      border-radius: 8px;
+      width: 800px;
+      padding: 20px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 500px;
+
+      .sys-logo {
+        flex: 1;
+      }
+
+      .sys-form {
+        flex: 1;
+        .ant-input-affix-wrapper-focused .ant-input-prefix {
+          color: @bg_blue_default;
+        }
+
+        .sys-form-title {
+          line-height: 40px;
+          text-align: center;
+          font-size: 20px;
+          margin-bottom: 20px;
+        }
+      }
+      .login-btn {
+        width: 100%;
+      }
+    }
+  }
+}

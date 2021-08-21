@@ -1,0 +1,96 @@
+:local(.table-view) {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  :global {
+    .ant-table-thead {
+      .ant-table-cell {
+        padding: 5px;
+        box-shadow: 4px 0px 10px #888;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .virtual-table .ant-table-container:before,
+    .virtual-table .ant-table-container:after {
+      display: none;
+    }
+    .virtual-table-cell {
+      box-sizing: border-box;
+      padding: 5px;
+      border-bottom: 1px solid #e8e8e8;
+      background: #fff;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    [data-theme="dark"] .virtual-table-cell {
+      box-sizing: border-box;
+      padding: 5px;
+      border-bottom: 1px solid #303030;
+      background: #141414;
+    }
+
+    .odd-row {
+      background-color: #f1f1f1;
+    }
+
+    .select-row-bg {
+      background-color: @bg_blue_light;
+    }
+
+    .table-toolbar {
+      height: 30px;
+      background-color: @bg_gray_small;
+      padding: 0 10px;
+      .anticon {
+        font-size: 16px;
+        color: @bg_blue_default;
+      }
+
+      .left {
+        text-align: right;
+      }
+    }
+
+    .menu-wrap {
+      display: inline-block;
+      position: fixed;
+      top: -500px;
+      left: -500px;
+      color: @bg_blue_default;
+      font-size: 12px;
+      cursor: pointer;
+      overflow: hidden;
+
+      > div {
+        padding: 5px 10px;
+        background: #fff;
+        width: 80px;
+
+        &:hover {
+          background: @bg_blue_default;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+
+// .virtual-table .ant-table-container:before,
+//   .virtual-table .ant-table-container:after {
+//     display: none;
+//   }
+//   .virtual-table-cell {
+//     box-sizing: border-box;
+//     padding: 16px;
+//     border-bottom: 1px solid #e8e8e8;
+//     background: #FFF;
+//   }
+//  [data-theme="dark"]  .virtual-table-cell {
+//     box-sizing: border-box;
+//     padding: 16px;
+//     border-bottom: 1px solid #303030;
+//     background: #141414;
+//   }
