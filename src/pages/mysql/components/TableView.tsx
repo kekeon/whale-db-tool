@@ -339,6 +339,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   }
 
   const handleAddRow = () => {
+    setEditRowData(undefined)
     setEditFormType(mysql.EditFormType.new)
     editRowToggle(true)
   }
@@ -377,7 +378,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       okText: '确认',
       cancelText: '取消',
       onOk: async () => {
-        await mysqlTableDeleteItem('uuid', dbName!, tableName!, props.columns, list)
+        await mysqlTableDeleteItem(uuid, dbName!, tableName!, props.columns, list)
         setSelectkeysMap({})
         queryData?.()
         setSelectRowIndex(-1)
@@ -415,7 +416,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         </Col>
         <Col span={12} className="left">
           <Row justify="end" align="middle">
-            <Button type="text" className="ml5" icon={<FilterOutlined title="过率" />} />
+            <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
             <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
             <DbLabelText text="页码">
               <Button type="text" icon={<CaretLeftOutlined title="上一行" />} />
@@ -446,14 +447,15 @@ const TableView: React.FC<PropsExtra> = (props) => {
           }}
         />
       </ResizeObserver>
-      <EditRowForm
-        visible={editRowVisible}
-        toggle={editRowToggle}
-        onSuccess={queryData}
-        editData={editRowData}
-        formType={editFormType}
-      />
-
+      {editRowVisible && (
+        <EditRowForm
+          visible={editRowVisible}
+          toggle={editRowToggle}
+          onSuccess={queryData}
+          editData={editRowData}
+          formType={editFormType}
+        />
+      )}
       <div className="menu-wrap" ref={menuRef}>
         <div onClick={handleEditRowForm}>编辑</div>
         <div onClick={handleDeleteItem}>删除</div>

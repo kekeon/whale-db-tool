@@ -39,168 +39,25 @@ type DataItem = {
   state: string
 }
 
-const columns: ProFormColumnsType<DataItem>[] = [
-  {
-    title: '标题',
-    dataIndex: 'title',
-    formItemProps: {
-      rules: [
-        {
-          required: true,
-          message: '此项为必填项',
-        },
-      ],
-    },
-    width: 'm',
-  },
-  {
-    title: '状态',
-    dataIndex: 'state',
-    valueType: 'select',
-    valueEnum,
-    width: 'm',
-  },
-  {
-    title: '标签',
-    dataIndex: 'labels',
-    width: 'm',
-  },
-  {
-    title: '创建时间',
-    key: 'showTime',
-    dataIndex: 'createName',
-    valueType: 'date',
-  },
-  {
-    title: '分组',
-    valueType: 'group',
-    columns: [
-      {
-        title: '状态',
-        dataIndex: 'groupState',
-        valueType: 'select',
-        width: 'xs',
-        valueEnum,
-      },
-      {
-        title: '标题',
-        width: 'md',
-        dataIndex: 'groupTitle',
-        formItemProps: {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    title: '列表',
-    valueType: 'formList',
-    dataIndex: 'list',
-    initialValue: [{ state: 'all', title: '标题' }],
-    columns: [
-      {
-        valueType: 'group',
-        columns: [
-          {
-            title: '状态',
-            dataIndex: 'state',
-            valueType: 'select',
-            width: 'xs',
-            valueEnum,
-          },
-          {
-            title: '标题',
-            dataIndex: 'title',
-            formItemProps: {
-              rules: [
-                {
-                  required: true,
-                  message: '此项为必填项',
-                },
-              ],
-            },
-            width: 'm',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'FormSet',
-    valueType: 'formSet',
-    dataIndex: 'formSet',
-    columns: [
-      {
-        title: '状态',
-        dataIndex: 'groupState',
-        valueType: 'select',
-        width: 'xs',
-        valueEnum,
-      },
-      {
-        title: '标题',
-        dataIndex: 'groupTitle',
-        tip: '标题过长会自动收缩',
-        formItemProps: {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-        },
-        width: 'm',
-      },
-    ],
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'created_at',
-    valueType: 'dateRange',
-    transform: (value) => {
-      return {
-        startTime: value[0],
-        endTime: value[1],
-      }
-    },
-  },
-]
-
 const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, toggle, onSuccess }) => {
   const [layoutType, setLayoutType] = useState<ProFormLayoutType>('DrawerForm')
   const [columnsList, setColumnsList] = useState<ProFormColumnsType<DataItem>[]>([])
-
-  const tableDesc = useRef<any>()
 
   const mySqlDbStates = useRecoilValue(mySqlState.mySqlDbState)
   const dbUuid = useRecoilValue(mySqlState.mySqlDbUUid)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
   useEffect(() => {
-    visible && dbUuid && handleTableColumns()
-  }, [mySqlDbStates, dbUuid, visible])
+    visible && handleTableColumns()
+  }, [visible])
 
   const handleTableColumns = useCallback(async () => {
     const res = await mysqlTableColumnsShowFull(dbUuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!)
 
-    tableDesc.current = res
-  }, [mySqlDbStates])
+    const editInfo = generateEditJson(res, editData)
+    console.log('editData', editData, editInfo)
 
-  const columnsListMemo: any = useMemo(() => {
-    if (!isEmptyArray(tableDesc.current) && visible) {
-      const editInfo = generateEditJson(tableDesc.current, editData)
-      console.log('editInfo', editInfo)
-
-      setColumnsList(editInfo)
-      return editInfo
-    }
-
-    return []
-  }, [visible])
+    setColumnsList(editInfo)
+  }, [mySqlDbStates, editData])
 
   const handleSave = useCallback(
     async (values) => {
@@ -213,7 +70,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
       })
 
       if (!isEmptyArray(columnList)) {
-        let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columnsList, [values])
+        let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columns, [values])
 
         if (formType === mysql.EditFormType.edit) {
           sql = formatUpdateValid(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columns, [values], editData)
@@ -261,7 +118,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
         onVisibleChange={(bool) => {
           toggle(bool)
         }}
-        columns={columnsListMemo}
+        columns={columnsList}
       />
     </>
   )

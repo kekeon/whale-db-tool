@@ -63,11 +63,11 @@ export function undefinedToValue(val: unknown, fieldDesc: any) {
  * @param {IKV<unknown>[]} data
  * @returns {string}
  */
-export function formatInsert(db: string, table: string, colums: any[], data: IKV<unknown>[]): string {
-  let field = colums.map((s) => '`' + s + '`')
+export function formatInsert(db: string, table: string, columns: any[], data: IKV<unknown>[]): string {
+  let field = columns.map((s) => '`' + s.Field + '`')
 
   let sqlList: string[] = data.map((item) => {
-    let arr = colums.map((k) => {
+    let arr = columns.map((k) => {
       return `${undefinedToValue(item[k.Field], k)}`
     })
     return 'INSERT INTO `' + db + '`.`' + table + '` (' + field.join(',') + ') VALUES (' + arr.join(',') + '); '
