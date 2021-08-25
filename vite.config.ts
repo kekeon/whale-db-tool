@@ -1,13 +1,13 @@
-import { defineConfig } from "vite";
-import reactRefresh from "@vitejs/plugin-react-refresh";
-const prefix = `monaco-editor/esm/vs`;
+import { defineConfig } from 'vite'
+import reactRefresh from '@vitejs/plugin-react-refresh'
+const prefix = `monaco-editor/esm/vs`
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [reactRefresh()],
   css: {
     modules: {
-      scopeBehaviour: "local",
-      generateScopedName: "[name]__[local]___[hash:base64:5]",
+      scopeBehaviour: 'local',
+      generateScopedName: '[name]__[local]___[hash:base64:5]',
     },
     preprocessorOptions: {
       less: {
@@ -20,15 +20,15 @@ export default defineConfig({
     alias: [
       {
         find: /^@\//,
-        replacement: "/src/",
+        replacement: '/src/',
       },
       {
         find: /^_cp\//,
-        replacement: "/src/components/",
+        replacement: '/src/components/',
       },
       {
         find: /^~/,
-        replacement: "",
+        replacement: '',
       },
     ],
   },
@@ -49,11 +49,11 @@ export default defineConfig({
   server: {
     proxy: {
       // 选项写法
-      "^/api/.*": {
-        target: "http://localhost:8090/",
+      '^/api/.*': {
+        target: 'http://localhost:8091/',
         changeOrigin: true,
         //rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
   },
-});
+})

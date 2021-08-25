@@ -1,6 +1,8 @@
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
 import { addConnect, updateConnect } from '@/service/dbInstance'
-import { Modal, Form, Input, InputNumber } from 'antd'
+import { mysqlAdd, mysqlPing } from '@/service/mysql'
+import { mysql } from '@/types'
+import { Modal, Form, Input, InputNumber, Button } from 'antd'
 import React from 'react'
 interface Props {
   visible: boolean
@@ -27,11 +29,31 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             props?.onOk()
           })
         } else {
-          addConnect(value).then(() => {
+          mysqlAdd({ ...value, type: 'mysql' }).then(() => {
             props?.onCancel()
             props?.onOk()
           })
         }
+      },
+      (error) => {
+        console.log('error', error)
+      },
+    )
+  }
+
+  const handlePing = () => {
+    form.validateFields().then(
+      async (value) => {
+        console.log(value)
+
+        const data: mysql.dbBase = {
+          password: value.password,
+          user: value.user,
+          host: value.host,
+          port: value.port,
+        }
+        const res = await mysqlPing(data)
+        console.log('res', res)
       },
       (error) => {
         console.log('error', error)
@@ -55,7 +77,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form {...formLayout} form={form} name="MySqlAddForm">
+        <Form<mysql.dbBase> {...formLayout} form={form} name="MySqlAddForm">
           <Item
             name="another_name"
             label="名称"
@@ -89,9 +111,9 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
           </Item>
 
           <Item
-            name="name"
+            name="user"
             label="用户名"
-            initialValue={initInfo?.name}
+            initialValue={initInfo?.user}
             rules={[
               inputRequired,
               {
@@ -136,6 +158,10 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             ]}
           >
             <InputNumber style={{ width: '100%' }} placeholder={inputPlaceholder} />
+          </Item>
+
+          <Item name="" label="">
+            <Button onClick={handlePing}>检测</Button>
           </Item>
         </Form>
       </Modal>

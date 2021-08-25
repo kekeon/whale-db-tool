@@ -2,6 +2,7 @@ import DbTableTree from '@/components/DbTableTree/index'
 import { deleteDelete, listConnect } from '@/service/dbInstance'
 import {
   mysqlDbQuery,
+  mysqlList,
   mysqlTableColumnsShowFull,
   mysqlTableDataQuery,
   mysqlTableExecQuery,
@@ -35,15 +36,18 @@ const Mysql: React.FC<any> = () => {
 
   const initData = async () => {
     handleListConnect()
+  }
 
+  const handleChangeConnect = async (uuid: conmon.uuid) => {
     let d: any = await mysqlDbQuery(uuid)
     console.log('initData', d)
+    setUuid(uuid)
     setDbList(d)
   }
 
   const handleListConnect = async () => {
-    let r = await listConnect()
-    setConnectList(r)
+    let r = await mysqlList()
+    setConnectList(r.data.list)
   }
 
   const handleTreeSelect = async (keys: string[], optopn: any) => {
@@ -88,8 +92,8 @@ const Mysql: React.FC<any> = () => {
   }
 
   /*  connect start */
-  const MySqlConnectDelete = (item: conmon.cuid) => {
-    deleteDelete(item.uuid).then(() => {
+  const MySqlConnectDelete = (uuid: conmon.uuid) => {
+    deleteDelete(uuid).then(() => {
       handleListConnect()
     })
   }
@@ -117,12 +121,7 @@ const Mysql: React.FC<any> = () => {
   return (
     <section className={style.mysql}>
       <div className="db-connect-wrap">
-        <DbConnectList
-          onAdd={MySqlConnectAdd}
-          onDelete={MySqlConnectDelete}
-          onEdit={MySqlConnectEdit}
-          list={connectList}
-        />
+        <DbConnectList onAdd={MySqlConnectAdd} onDelete={MySqlConnectDelete} onChange={handleChangeConnect} />
       </div>
       <div className="db-data-wrap">
         <div className="db-table">

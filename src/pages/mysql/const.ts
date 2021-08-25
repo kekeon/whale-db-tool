@@ -127,7 +127,7 @@ export function generateEditJson(fieldList: mysql.tableColumsInfo[], editRowData
 }
 
 export function tableRenderData(rowField: IKV<string>, value: any) {
-  const type = rowField.Type.replace(/\(.+/g, '').toLocaleLowerCase()
+  const type = rowField?.Type?.replace(/\(.+/g, '').toLocaleLowerCase()
   const vNull = '[ null ]'
   switch (type) {
     // 数字

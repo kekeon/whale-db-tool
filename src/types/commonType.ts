@@ -3,6 +3,8 @@ declare interface IKV<T> {
 }
 
 namespace conmon {
+  export type uuid = string
+
   export type connectItem = {
     another_name: string
     host: string
@@ -12,7 +14,7 @@ namespace conmon {
   }
 
   export type connectUuid = {
-    uuid: string
+    uuid: uuid
   }
 
   export type cuid = connectItem & connectUuid

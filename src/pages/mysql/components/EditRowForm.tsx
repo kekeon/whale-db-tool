@@ -178,13 +178,14 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
   const tableDesc = useRef<any>()
 
   const mySqlDbStates = useRecoilValue(mySqlState.mySqlDbState)
+  const dbUuid = useRecoilValue(mySqlState.mySqlDbUUid)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
   useEffect(() => {
-    handleTableColumns()
-  }, [mySqlDbStates])
+    visible && dbUuid && handleTableColumns()
+  }, [mySqlDbStates, dbUuid, visible])
 
   const handleTableColumns = useCallback(async () => {
-    const res = await mysqlTableColumnsShowFull('', mySqlDbStates.dbName!, mySqlDbStates.tableName!)
+    const res = await mysqlTableColumnsShowFull(dbUuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!)
 
     tableDesc.current = res
   }, [mySqlDbStates])
@@ -230,7 +231,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
             sql: sql,
           },
         ]
-        let data: any = await mysqlTableExecQuery('uuid', sqlList)
+        let data: any = await mysqlTableExecQuery(dbUuid, sqlList)
         toggle(false)
         onSuccess?.()
       }

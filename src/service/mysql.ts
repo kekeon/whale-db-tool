@@ -9,9 +9,24 @@ import {
   USE_DATABASES_FUN,
 } from '@/sql/mysql.sql'
 import { mysql } from '@/types'
-import request, { PostOpt } from '@/utils/request'
+import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
-import { MYSQL_QUERY } from './api'
+import { MYSQL_ADD, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY } from './api'
+
+// 新增
+export async function mysqlAdd(props: mysql.dbAdd, option?: PostOpt) {
+  return request.post(MYSQL_ADD, props, option)
+}
+
+// ping 检测
+export async function mysqlPing(props: mysql.dbBase, option?: PostOpt) {
+  return request.post(MYSQL_PING, props, option)
+}
+
+// list
+export async function mysqlList(option?: GetOpt) {
+  return request.get<mysql.dbObjList>(MYSQL_LIST, {}, option)
+}
 
 // 基础查询
 export async function mysqlQuery(props: mysql.queryProps, option?: PostOpt) {
@@ -20,7 +35,7 @@ export async function mysqlQuery(props: mysql.queryProps, option?: PostOpt) {
 
 // 查询数据库
 export async function mysqlDbQuery(uuid: string, option?: PostOpt) {
-  let p: mysql.queryProps = { uuid: '123', sql_list: [SHOW_DATABASES] }
+  let p: mysql.queryProps = { uuid: uuid, sql_list: [SHOW_DATABASES] }
   const res = await mysqlQuery(p, option)
   if (Array.isArray(res.data) && res.data[0] && Array.isArray(res.data[0]['data'])) {
     let d: any = res.data[0]['data'].map((item: any) => ({

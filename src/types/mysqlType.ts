@@ -71,4 +71,35 @@ export namespace mysql {
     set = 'set',
     enum = 'enum',
   }
+
+  export interface dbBase {
+    user: string
+    password: string
+    host: string
+    port: number
+  }
+
+  export interface dbAdd extends dbBase {
+    user: string
+    password: string
+    host: string
+    port: number
+    type: string
+    another_name: string
+  }
+
+  export interface dbList {
+    connection_uuid: conmon.uuid
+    connection_host: string
+    connection_another_name: string
+    connection_port: string
+    connection_account: string
+    create_time: string
+    other_info: string
+    update_time: string
+  }
+
+  export interface dbObjList {
+    list: dbList[]
+  }
 }
