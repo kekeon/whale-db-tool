@@ -12,13 +12,7 @@ const Content = Layout.Content
 type MainProps = RouteConfig
 
 class Main extends React.Component<MainProps> {
-  componentDidMount() {
-    console.log('Main')
-  }
-
   render() {
-    const { children } = this.props
-    console.log(children)
     return (
       <Layout className={styles['main-page']}>
         <NavHeader />
