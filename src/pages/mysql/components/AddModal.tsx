@@ -1,12 +1,12 @@
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
 import { addConnect, updateConnect } from '@/service/dbInstance'
-import { mysqlAdd, mysqlPing } from '@/service/mysql'
+import { mysqlAdd, mysqlPing, mysqlUpdate } from '@/service/mysql'
 import { mysql } from '@/types'
 import { Modal, Form, Input, InputNumber, Button } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 interface Props {
   visible: boolean
-  initInfo: Partial<conmon.cuid>
+  initInfo: Partial<common.cuid>
   onCancel: () => void
   onOk: () => void
 }
@@ -17,19 +17,25 @@ const Item = Form.Item
 
 const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   const [form] = Form.useForm()
-
+  const [loading, setLoading] = useState(false)
   const handleOk = () => {
     form.validateFields().then(
       (value) => {
         console.log(value)
-
+        setLoading(true)
         if (props.initInfo?.uuid) {
-          updateConnect(props.initInfo?.uuid, value).then(() => {
+          mysqlUpdate({
+            ...value,
+            type: 'mysql',
+            uuid: props.initInfo?.uuid || '',
+          }).then(() => {
+            setLoading(false)
             props?.onCancel()
             props?.onOk()
           })
         } else {
           mysqlAdd({ ...value, type: 'mysql' }).then(() => {
+            setLoading(false)
             props?.onCancel()
             props?.onOk()
           })
@@ -76,6 +82,9 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
         cancelText="取消"
         onOk={handleOk}
         onCancel={handleCancel}
+        okButtonProps={{
+          loading: loading,
+        }}
       >
         <Form<mysql.dbBase> {...formLayout} form={form} name="MySqlAddForm">
           <Item
@@ -113,7 +122,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
           <Item
             name="user"
             label="用户名"
-            initialValue={initInfo?.user}
+            initialValue={initInfo?.name}
             rules={[
               inputRequired,
               {

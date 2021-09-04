@@ -11,11 +11,20 @@ import {
 import { mysql } from '@/types'
 import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
-import { MYSQL_ADD, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY } from './api'
+import { MYSQL_ADD, MYSQL_DELETE, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY, MYSQL_UPDATE } from './api'
 
 // 新增
 export async function mysqlAdd(props: mysql.dbAdd, option?: PostOpt) {
   return request.post(MYSQL_ADD, props, option)
+}
+
+// 更新
+export async function mysqlUpdate(props: mysql.dbAdd & common.connectUuid, option?: PostOpt) {
+  return request.put(MYSQL_UPDATE, props, option)
+}
+// 删除
+export async function mysqlDelete(props: common.connectUuid, option?: PostOpt) {
+  return request.delete(MYSQL_DELETE, props, option)
 }
 
 // ping 检测

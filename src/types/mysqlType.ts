@@ -89,7 +89,7 @@ export namespace mysql {
   }
 
   export interface dbList {
-    connection_uuid: conmon.uuid
+    connection_uuid: common.uuid
     connection_host: string
     connection_another_name: string
     connection_port: string

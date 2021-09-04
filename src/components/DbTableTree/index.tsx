@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import style from './index.module.less'
 import { Tree } from 'antd'
 import { TreeProps } from 'antd/lib/tree/index'
+import { DownOutlined } from '@ant-design/icons'
+import classnames from 'classnames'
 
 type DbTableTreeItem = {
   name: string
@@ -46,12 +48,32 @@ const DbTableTree: React.FC<DbTableTreePropsExtra> = (props) => {
           <span>{item.name}</span>
         )
 
-      let key = pk ? `${pk}_${inx}` : `${inx}`
+      const key = pk ? `${pk}.${inx}` : `${inx}`
       if (item.list) {
-        return { title: name, key: key, children: loop(item.list, key) }
+        return {
+          icon: (
+            <span
+              className={classnames('iconfont', {
+                'icon-biaoge': pk,
+                'icon-shujuku': !pk,
+                is_Load: !pk,
+              })}
+            ></span>
+          ),
+          title: name,
+          key: key,
+          children: loop(item.list, key),
+        }
       }
-
       return {
+        icon: (
+          <span
+            className={classnames('iconfont', {
+              'icon-biaoge': pk,
+              'icon-shujuku': !pk,
+            })}
+          ></span>
+        ),
         title: name,
         key: key,
       }
@@ -61,6 +83,8 @@ const DbTableTree: React.FC<DbTableTreePropsExtra> = (props) => {
     <div className={style['db-table-tree']}>
       <Tree
         onExpand={onExpand}
+        showIcon={true}
+        switcherIcon={<DownOutlined />}
         expandedKeys={expandedKeys}
         autoExpandParent={true}
         treeData={loop(listData)}

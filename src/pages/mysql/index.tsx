@@ -2,6 +2,7 @@ import DbTableTree from '@/components/DbTableTree/index'
 import { deleteDelete, listConnect } from '@/service/dbInstance'
 import {
   mysqlDbQuery,
+  mysqlDelete,
   mysqlList,
   mysqlTableColumnsShowFull,
   mysqlTableDataQuery,
@@ -18,13 +19,14 @@ import MySqlAddModal from './components/AddModal'
 import CodeMonaco from './components/CodeMonaco'
 import TableView from './components/TableView'
 import style from './index.module.less'
+import { mysql } from '@/types'
 
 const Mysql: React.FC<any> = () => {
-  const [connectList, setConnectList] = useState<any[]>()
+  const [connectList, setConnectList] = useState<mysql.dbList[]>()
   const [dbList, setDbList] = useState<any[]>()
   const [tableData, setTableData] = useState<any[]>([])
-  const [addVisible, { toggle: addDbtoggle }] = useBoolean(false)
-  const [editInfo, setEditInfo] = useState<Partial<conmon.cuid>>()
+  const [addVisible, { toggle: addDbToggle }] = useBoolean(false)
+  const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
 
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumsState)
@@ -38,7 +40,7 @@ const Mysql: React.FC<any> = () => {
     handleListConnect()
   }
 
-  const handleChangeConnect = async (uuid: conmon.uuid) => {
+  const handleChangeConnect = async (uuid: common.uuid) => {
     let d: any = await mysqlDbQuery(uuid)
     console.log('initData', d)
     setUuid(uuid)
@@ -53,7 +55,7 @@ const Mysql: React.FC<any> = () => {
   const handleTreeSelect = async (keys: string[], optopn: any) => {
     console.log(keys, optopn)
     if (isEmptyArray(keys)) return
-    let key = keys[0].split('_')
+    let key = keys[0].split('.')
     if (key.length === 1) {
       let index = Number(key[0])
       let db = dbList![index]['name']
@@ -92,18 +94,18 @@ const Mysql: React.FC<any> = () => {
   }
 
   /*  connect start */
-  const MySqlConnectDelete = (uuid: conmon.uuid) => {
-    deleteDelete(uuid).then(() => {
+  const MySqlConnectDelete = (uuid: common.uuid) => {
+    mysqlDelete({ uuid: uuid }).then(() => {
       handleListConnect()
     })
   }
 
-  const MySqlConnectEdit = (item: conmon.cuid) => {
+  const MySqlConnectEdit = (item: common.cuid) => {
     setEditInfo(item)
   }
 
   const MySqlConnectAdd = async () => {
-    addDbtoggle(true)
+    addDbToggle(true)
     setEditInfo({})
   }
   /*  connect end */
@@ -114,14 +116,23 @@ const Mysql: React.FC<any> = () => {
   }
 
   const handleAddCancel = () => {
-    addDbtoggle(false)
+    addDbToggle(false)
   }
   /*  add end */
 
   return (
     <section className={style.mysql}>
       <div className="db-connect-wrap">
-        <DbConnectList onAdd={MySqlConnectAdd} onDelete={MySqlConnectDelete} onChange={handleChangeConnect} />
+        <DbConnectList
+          list={connectList}
+          onAdd={MySqlConnectAdd}
+          onDelete={MySqlConnectDelete}
+          onChange={handleChangeConnect}
+          onEdit={(data) => {
+            setEditInfo(data)
+            addDbToggle(true)
+          }}
+        />
       </div>
       <div className="db-data-wrap">
         <div className="db-table">

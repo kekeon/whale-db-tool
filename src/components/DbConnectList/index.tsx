@@ -1,39 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import style from './index.module.less'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import classNames from 'classnames'
-import { mysqlList } from '@/service/mysql'
 import { mysql } from '@/types'
+import { Popconfirm } from 'antd'
 
 interface Props {
-  onDelete: (uuid: conmon.uuid) => void
+  onDelete: (uuid: common.uuid) => void
   onAdd: () => void
-  // onEdit: (item: conmon.cuid) => void
-  onChange: (uuid: conmon.uuid) => void
+  onEdit: (uuid: common.cuid) => void
+  onChange: (uuid: common.uuid) => void
+  list?: mysql.dbList[]
 }
 
 type PropsExtra = Props
 
-const DbConnectList: React.FC<PropsExtra> = (props) => {
-  const [uuidIndex, setUuidIndex] = useState<conmon.uuid>('')
-  const [list, setList] = useState<mysql.dbList[]>()
-  useEffect(() => {
-    initAction()
-  }, [])
-
-  const initAction = async () => {
-    let res = await mysqlList()
-    setList(res.data?.list)
-  }
+const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
+  const [uuidIndex, setUuidIndex] = useState<common.uuid>('')
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault()
   }
 
-  const handleChange = (uuid: conmon.uuid) => {
-    setUuidIndex(uuid)
-    props.onChange && props.onChange(uuid)
-  }
+  const handleChange = useCallback(
+    (uuid: common.uuid) => {
+      if (uuidIndex === uuid) {
+        return
+      }
+      setUuidIndex(uuid)
+      props?.onChange(uuid)
+    },
+    [uuidIndex],
+  )
 
   return (
     <div className={style['db-connect-lsit']}>
@@ -52,22 +50,36 @@ const DbConnectList: React.FC<PropsExtra> = (props) => {
               <span className="db-item">{item.connection_another_name}</span>
               <span className="db-edit-icon-wrap">
                 <EditOutlined
-                  className="ml5"
-                  onClick={() => {
-                    // props.onEdit(item.connection_uuid)
+                  className="ml5 icon_btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    const d: common.cuid = {
+                      uuid: item.connection_uuid,
+                      another_name: item.connection_another_name,
+                      host: item.connection_host,
+                      name: item.connection_account,
+                      password: '',
+                      port: Number(item.connection_port),
+                    }
+                    props?.onEdit(d)
                   }}
                 />
-                <DeleteOutlined
-                  className="ml5"
-                  onClick={() => {
-                    props.onDelete(item.connection_uuid)
+                <Popconfirm
+                  title="确认删除？"
+                  okText="确认"
+                  cancelText="取消"
+                  onConfirm={(e) => {
+                    e?.stopPropagation()
+                    props?.onDelete(item.connection_uuid)
                   }}
-                />
+                >
+                  <DeleteOutlined onClick={(e) => e?.stopPropagation()} className="ml5 icon_btn" />
+                </Popconfirm>
               </span>
             </div>
           ))
         : null}
-      <PlusOutlined className="ml10 cursor" onClick={props.onAdd} />
+      <PlusOutlined className="ml10 cursor icon_btn" onClick={props.onAdd} />
     </div>
   )
 }

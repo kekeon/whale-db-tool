@@ -2,7 +2,7 @@ declare interface IKV<T> {
   [index: string]: T
 }
 
-namespace conmon {
+namespace common {
   export type uuid = string
 
   export type connectItem = {
