@@ -300,6 +300,9 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const handleExport = (data: MenuItem) => {
     let list = getSelectData()
+    if (!list?.length) {
+      return message.warning('请先选中数据哦...')
+    }
     switch (data.idx) {
       case select_excel:
         exportExcel(props.columns as any, list)
@@ -326,6 +329,9 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const handleCopy = (item: MenuItem) => {
     let list = getSelectData()
+    if (!list?.length) {
+      return false
+    }
     switch (item.idx) {
       case copy_excel:
         return copy_excel
@@ -347,7 +353,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
   // 编辑行数据
   const handleEditRowForm = () => {
     const data = props.dataSource?.[selectRowIndex]
-    console.log('data', data)
     setEditRowData(data)
     setEditFormType(mysql.EditFormType.edit)
     editRowToggle(true)

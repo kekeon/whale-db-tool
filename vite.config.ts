@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite'
+// import monacoPlugin from 'rollup-plugin-monaco-editor'
+
 import reactRefresh from '@vitejs/plugin-react-refresh'
 const prefix = `monaco-editor/esm/vs`
 // https://vitejs.dev/config/
@@ -36,7 +38,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          sql: [`${prefix}/basic-languages/sql/sql`],
           jsonWorker: [`${prefix}/language/json/json.worker`],
           cssWorker: [`${prefix}/language/css/css.worker`],
           htmlWorker: [`${prefix}/language/html/html.worker`],
@@ -44,6 +45,11 @@ export default defineConfig({
           editorWorker: [`${prefix}/editor/editor.worker`],
         },
       },
+      plugins: [
+        /* monacoPlugin({
+          languages: ['mysql'],
+        }), */
+      ],
     },
   },
   server: {

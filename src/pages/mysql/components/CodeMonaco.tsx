@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import style from './styles/CodeMonaco.module.less'
 import * as monaco from 'monaco-editor'
 import { mysql } from '@/types'
-
+// import 'monaco-editor/esm/vs/basic-languages/mysql/mysql.contribution'
 interface Props {
   onRun: (sqlList: mysql.queryItem[]) => void
   db: string
@@ -20,13 +20,24 @@ const CodeMonaco: React.FC<PropsExtra> = ({ onRun, db }) => {
   }
 
   useEffect(() => {
-    console.log('CodeMonaco', ref)
+    /*  const mysqlModel = monaco.editor.createModel(
+      '',
+      'mysql', // language
+      monaco.Uri.file('monaco-editor/esm/vs/basic-languages/mysql/mysql.js'), // uri
+    )
+
+    console.log('mysqlModel', mysqlModel)
+ */
     monacoInstanceRef.current = monaco.editor.create(ref.current, {
       value: '',
-      language: 'sql',
-      theme: 'vs-dark',
+      // model: mysqlModel,
+      language: 'json',
+      // theme: 'vs-dark',
     })
-    console.log('monacoInstance', monacoInstanceRef)
+
+    // monacoInstanceRef.current.setModel(mysqlModel)
+
+    console.log('monacoInstance', monaco.editor.getModels())
   }, [])
 
   const handleRun = () => {

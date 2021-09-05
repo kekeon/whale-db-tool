@@ -11,7 +11,7 @@ interface Props {
 type PropsExtra = Props
 
 const DbClipboard: React.FC<PropsExtra> = ({ children, value, textFun }) => {
-  const ref = useRef<HTMLSpanElement>()
+  const ref = useRef<HTMLSpanElement>(null)
 
   const success = () => {
     message.success('拷贝成功')
@@ -20,8 +20,12 @@ const DbClipboard: React.FC<PropsExtra> = ({ children, value, textFun }) => {
   useEffect(() => {
     const clipboard = new ClipboardJS(ref.current as HTMLElement, {
       text: (el: Element) => {
-        success()
         if (textFun) {
+          if (!textFun(el)) {
+            message.warning('请先选中数据哦...')
+            return ''
+          }
+          success()
           return textFun(el)
         }
         return value || ''
