@@ -16,7 +16,7 @@ import { useBoolean } from 'ahooks'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import MySqlAddModal from './components/AddModal'
-import CodeMonaco from './components/CodeMonaco'
+import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
 import { mysql } from '@/types'
@@ -147,7 +147,7 @@ const Mysql: React.FC<any> = () => {
         <div className="db-transaction">
           <div className="db-transaction-tool">
             <div className="db-transaction-sql">
-              <CodeMonaco db={mySqlDbStates.dbName!} onRun={handleRunSql} />
+              <CodeEdit db={mySqlDbStates.dbName!} onRun={handleRunSql} />
             </div>
           </div>
 

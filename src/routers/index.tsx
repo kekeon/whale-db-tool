@@ -2,10 +2,10 @@ import React from 'react'
 import { RouteConfig } from 'react-router-config'
 
 import App from '../App'
-import Index from '../pages/index'
-import Layouts from '../layouts/BasicLayout'
-import Overview from '../pages/overview/index'
-import Mysql from '../pages/mysql/index'
+import Index from '@/pages/index'
+import Layouts from '@/layouts/BasicLayout'
+import Overview from '@/pages/overview/index'
+import Mysql from '@/pages/mysql/index'
 
 export const routes: RouteConfig[] = [
   {

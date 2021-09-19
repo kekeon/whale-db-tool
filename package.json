@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@ant-design/pro-form": "^1.27.1",
+    "ace-builds": "^1.4.12",
     "ahooks": "^2.10.0",
     "antd": "^4.15.0",
     "axios": "^0.21.1",
@@ -20,12 +21,14 @@
     "dayjs": "^1.10.4",
     "rc-resize-observer": "^1.0.0",
     "react": "^17.0.0",
+    "react-ace": "^9.4.3",
     "react-dom": "^17.0.0",
-    "react-monaco-editor": "^0.43.0",
+    "react-router": "^5.2.1",
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
     "react-window": "^1.8.6",
     "recoil": "^0.3.1",
+    "sql-formatter": "^4.0.2",
     "xlsx": "^0.17.0"
   },
   "devDependencies": {
