@@ -2,6 +2,8 @@ import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
 import { Button } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import AceEditor from 'react-ace'
+import { format } from 'sql-formatter'
+
 import 'ace-builds/src-noconflict/mode-mysql'
 import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/theme-monokai'
@@ -23,7 +25,6 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   const editRef = useRef<any>()
   const editInputValueRef = useRef<any>()
   const editSelectValueRef = useRef<any>()
-  const monacoInstanceRef = useRef<any>()
   const editorDidMount = (editor: any, monaco: any) => {
     editor.focus()
   }
@@ -43,20 +44,30 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
     onRun(sqlList)
   }
 
-  const options = {
-    selectOnLineNumbers: true,
-  }
-
   const handleChange = (v: any) => {
     editInputValueRef.current = v
   }
 
-  const handleSelect = (v, e) => {
-    console.log('handleChange v', v)
-    console.log('handleChange v', e)
+  const handleSelect = (v: any, e: any) => {
+    e?.stopPropagation()
+    editSelectValueRef.current = v?.session?.getTextRange?.()
   }
 
-  handleSelect
+  const handleRunSelect = () => {
+    let sqlList: mysql.queryItem[] = [
+      USE_DATABASES_FUN(db || ''),
+      {
+        type: 'query',
+        sql: editSelectValueRef.current,
+      },
+    ]
+    onRun(sqlList)
+  }
+
+  const handleFormat = () => {
+    console.log(editInputValueRef.current)
+    console.log(format(editInputValueRef.current))
+  }
 
   return (
     <div className={style['monaco-wrap']}>
@@ -65,12 +76,12 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
           <CaretRightOutlined />
           运行
         </Button>
-        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleRun}>
+        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleRunSelect}>
           <StepForwardOutlined />
           运行选中
         </Button>
 
-        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleRun}>
+        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleFormat}>
           <FormatPainterOutlined />
           美化
         </Button>
@@ -90,7 +101,6 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
           editorProps={{ $blockScrolling: false }}
           onChange={handleChange}
           onSelectionChange={handleSelect}
-          // onSelection={handleSelect}
           setOptions={{
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,
