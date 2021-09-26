@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import style from './index.module.less'
-import { Tree } from 'antd'
-import { TreeProps } from 'antd/lib/tree/index'
+import { Tooltip, Tree } from 'antd'
+import { DataNode, TreeProps } from 'antd/lib/tree/index'
 import { DownOutlined } from '@ant-design/icons'
 import classnames from 'classnames'
+import DbClipboardNode from '_cp/DbClipboardNode'
 
-type DbTableTreeItem = {
+interface DbTableTreeItem {
   name: string
   list: DbTableTreeItem[]
 }
@@ -52,13 +53,19 @@ const DbTableTree: React.FC<DbTableTreePropsExtra> = (props) => {
       if (item.list) {
         return {
           icon: (
-            <span
-              className={classnames('iconfont', {
-                'icon-biaoge': pk,
-                'icon-shujuku': !pk,
-                is_Load: !pk,
-              })}
-            ></span>
+            <DbClipboardNode
+              icon={
+                <span
+                  className={classnames('iconfont', {
+                    'icon-biaoge': pk,
+                    'icon-shujuku': !pk,
+                    is_Load: !pk,
+                  })}
+                />
+              }
+              isIconColor={false}
+              text={item.name}
+            />
           ),
           title: name,
           key: key,
@@ -67,26 +74,52 @@ const DbTableTree: React.FC<DbTableTreePropsExtra> = (props) => {
       }
       return {
         icon: (
-          <span
-            className={classnames('iconfont', {
-              'icon-biaoge': pk,
-              'icon-shujuku': !pk,
-            })}
-          ></span>
+          <DbClipboardNode
+            icon={
+              <span
+                className={classnames('iconfont', {
+                  'icon-biaoge': pk,
+                  'icon-shujuku': !pk,
+                })}
+              />
+            }
+            isIconColor={false}
+            text={item.name}
+          />
         ),
         title: name,
         key: key,
       }
     })
+  const titleRender = (node: DataNode) => {
+    const t = (node?.title as any).props.children
+    return (
+      <span key={node.key} className="render-title">
+        <Tooltip
+          title={
+            <span>
+              <DbClipboardNode text={t} className={style.tooltipIcon} />
+              {node.title}
+            </span>
+          }
+          placement="right"
+        >
+          {node.title}
+        </Tooltip>
+      </span>
+    )
+  }
 
   return (
     <div className={style['db-table-tree']}>
       <Tree
         onExpand={onExpand}
         showIcon={true}
+        titleRender={titleRender}
         switcherIcon={<DownOutlined />}
         expandedKeys={expandedKeys}
         autoExpandParent={true}
+        blockNode={true}
         treeData={loop(listData)}
         {...props.config}
       />

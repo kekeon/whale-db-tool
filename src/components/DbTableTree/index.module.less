@@ -1,7 +1,6 @@
 .db-table-tree {
   width: 100%;
   height: 100%;
-  overflow: auto;
   padding: 20px 0;
 
   :global {
@@ -10,6 +9,20 @@
     }
     .is_Load {
       color: @bg_blue_default;
+    }
+
+    .ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-normal {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.tooltipIcon {
+  :global {
+    .DbClipboardNodeIcon {
+      margin-right: 5px;
     }
   }
 }
