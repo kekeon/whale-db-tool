@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { VariableSizeGrid as Grid } from 'react-window'
 import ResizeObserver from 'rc-resize-observer'
 import classNames from 'classnames'
-import { Button, Checkbox, Col, InputNumber, message, Modal, Row, Table } from 'antd'
+import { Button, Checkbox, Col, Divider, InputNumber, message, Modal, Row, Table } from 'antd'
 import style from './styles/TableView.module.less'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import {
@@ -65,6 +65,8 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const { dbName, tableName } = useRecoilValue(mySqlState.mySqlDbState)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
+
+  const [jsonBtnDisable, setJsonBtnDisable] = useState<boolean>(true)
 
   let totalWidth = 0
   let unWidthCount = 0
@@ -132,7 +134,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
         setSelectRowIndex(Number(rowIndex))
         menuRef.current!.style.top = e.clientY + 5 + 'px'
         menuRef.current!.style.left = e.clientX + 5 + 'px'
-        console.log('oncontextmenu', e)
         return
       }
 
@@ -155,12 +156,10 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const [editRowVisible, { toggle: editRowToggle }] = useBoolean(false)
 
   const resetVirtualGrid = () => {
-    gridRef &&
-      gridRef.current &&
-      gridRef.current.resetAfterIndices({
-        columnIndex: 0,
-        shouldForceUpdate: false,
-      })
+    gridRef?.current?.resetAfterIndices({
+      columnIndex: 0,
+      shouldForceUpdate: false,
+    })
   }
   useEffect(() => {
     resetVirtualGrid()
@@ -218,44 +217,40 @@ const TableView: React.FC<PropsExtra> = (props) => {
         }}
       >
         {({ columnIndex, rowIndex, style }: { columnIndex: number; rowIndex: number; style: React.CSSProperties }) => {
-          return (
-            <>
-              {columnIndex === 0 ? (
-                <div
-                  style={style}
-                  className={classNames('virtual-table-cell', {
-                    'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
-                    'odd-row': rowIndex % 2 !== 0,
-                  })}
-                >
-                  <Checkbox
-                    checked={isSelectAll || selectkeysMap[rowIndex]}
-                    onChange={(e) => {
-                      handChangeCheckbox(e, rowIndex)
-                    }}
-                  />
-                </div>
-              ) : (
-                <div
-                  className={classNames('virtual-table-cell', {
-                    'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
-                    'odd-row': rowIndex % 2 !== 0,
-                    'select-row-bg': selectRowIndex === rowIndex,
-                  })}
-                  data-col-index={columnIndex}
-                  data-row-index={rowIndex}
-                  style={style}
-                  onClick={(e) => {
-                    handleRowCell(e, rowIndex, columnIndex, rowData)
-                  }}
-                >
-                  {tableRenderData(
-                    (mergedColumns as any)[columnIndex],
-                    (rowData[rowIndex] as any)[(mergedColumns as any)[columnIndex].dataIndex],
-                  )}
-                </div>
+          return columnIndex === 0 ? (
+            <div
+              style={style}
+              className={classNames('virtual-table-cell', {
+                'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+                'odd-row': rowIndex % 2 !== 0,
+              })}
+            >
+              <Checkbox
+                checked={isSelectAll || selectkeysMap[rowIndex]}
+                onChange={(e) => {
+                  handChangeCheckbox(e, rowIndex)
+                }}
+              />
+            </div>
+          ) : (
+            <div
+              className={classNames('virtual-table-cell', {
+                'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+                'odd-row': rowIndex % 2 !== 0,
+                'select-row-bg': selectRowIndex === rowIndex,
+              })}
+              data-col-index={columnIndex}
+              data-row-index={rowIndex}
+              style={style}
+              onClick={(e) => {
+                handleRowCell(e, rowIndex, columnIndex, rowData)
+              }}
+            >
+              {tableRenderData(
+                (mergedColumns as any)[columnIndex],
+                (rowData[rowIndex] as any)[(mergedColumns as any)[columnIndex].dataIndex],
               )}
-            </>
+            </div>
           )
         }}
       </Grid>
@@ -373,7 +368,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
     })
   }, [copyMenuList])
 
-  /* 删除 start*/
+  /* 删除 start */
   const deleteTableData = (list: any[]) => {
     const len = list?.length
     Modal.confirm({
@@ -402,7 +397,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
     deleteTableData([data])
   }
 
-  /* 删除 end*/
+  /* 删除 end */
 
   return (
     <div className={style['table-view']}>
@@ -462,8 +457,27 @@ const TableView: React.FC<PropsExtra> = (props) => {
         />
       )}
       <div className="menu-wrap" ref={menuRef}>
-        <div onClick={handleEditRowForm}>编辑</div>
-        <div onClick={handleDeleteItem}>删除</div>
+        <div className="menu-btn" onClick={handleEditRowForm}>
+          编辑
+        </div>
+        <div className="menu-btn" onClick={handleDeleteItem}>
+          删除
+        </div>
+        <Divider className="btn-divider" />
+        <div
+          className={classNames('menu-btn', {
+            'db-btn-disable': jsonBtnDisable,
+          })}
+          onClick={
+            jsonBtnDisable
+              ? (e) => {
+                  e.stopPropagation()
+                }
+              : handleDeleteItem
+          }
+        >
+          JSON显示
+        </div>
       </div>
     </div>
   )

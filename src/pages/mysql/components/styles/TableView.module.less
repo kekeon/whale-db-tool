@@ -63,16 +63,22 @@
       font-size: 12px;
       cursor: pointer;
       overflow: hidden;
+      background: #fff;
 
-      > div {
+      > .menu-btn {
         padding: 5px 10px;
-        background: #fff;
+        background-color: #fff;
         width: 80px;
-
+        font-size: 12px;
         &:hover {
-          background: @bg_blue_default;
+          background-color: @bg_blue_default;
           color: #fff;
         }
+      }
+
+      .btn-divider {
+        margin: 5px 0;
+        font-size: 12px;
       }
     }
   }

@@ -72,16 +72,16 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   return (
     <div className={style['monaco-wrap']}>
       <div className="monaco-tool-wrap">
-        <Button size="small" type={'primary'} ghost onClick={handleRun}>
+        <Button size="small" type="primary" ghost onClick={handleRun}>
           <CaretRightOutlined />
           运行
         </Button>
-        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleRunSelect}>
+        <Button size="small" className="ml5" type="primary" ghost onClick={handleRunSelect}>
           <StepForwardOutlined />
           运行选中
         </Button>
 
-        <Button size="small" className={'ml5'} type={'primary'} ghost onClick={handleFormat}>
+        <Button size="small" className="ml5" type="primary" ghost onClick={handleFormat}>
           <FormatPainterOutlined />
           美化
         </Button>

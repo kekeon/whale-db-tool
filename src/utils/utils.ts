@@ -1,7 +1,7 @@
-export function uuid(len: number = 16, radix: number = 16): string {
+export function uuid(len = 16, radix = 16): string {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
-  let uuid = [],
-    i
+  let uuid = []
+  let i
   radix = radix || chars.length
 
   if (len) {
@@ -236,5 +236,26 @@ export function generateWhereCondition(
     return '`' + pk.Field + '`=' + "'" + dataItem[pk.Field] + "'"
   } else {
     return generateNotPK(tableDesc, dataItem)
+  }
+}
+
+/**
+ * 判断是否是json 字符串
+ * @param str 字符串
+ * @returns json 对象 or false
+ */
+
+export function isJsonStr(str: unknown): unknown {
+  if (!str || typeof str !== 'string') {
+    return false
+  }
+  try {
+    const result = JSON.parse(str)
+    if (!Array.isArray(result) && typeof result === 'object') {
+      return result
+    }
+    return false
+  } catch (error) {
+    return false
   }
 }
