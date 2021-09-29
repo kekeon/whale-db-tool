@@ -35,7 +35,7 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadJson, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatUpdate } from '@/utils/utils'
+import { formatInsert, formatUpdate, isJsonStr } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
 import { useBoolean } from 'ahooks'
@@ -58,6 +58,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   // 行列相关数据，存储索引，翻页记得清空
   const [selectkeysMap, setSelectkeysMap] = useState<any>({}) // 包含-1， 选择全部行
   const [selectRowIndex, setSelectRowIndex] = useState<number>(-1)
+  const [selectColIndex, setSelectColIndex] = useState<number>(-1)
   const gridRef = useRef<any>()
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [editRowData, setEditRowData] = useState<any>()
@@ -67,6 +68,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
 
   const [jsonBtnDisable, setJsonBtnDisable] = useState<boolean>(true)
+  const [cellJsonData, setCellJsonData] = useState<unknown>()
 
   let totalWidth = 0
   let unWidthCount = 0
@@ -122,16 +124,34 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const rightMenuHide = () => {
     menuRef.current!.style.top = -1000 + 'px'
     menuRef.current!.style.left = '0px'
+    setJsonBtnDisable(true)
   }
 
   useEffect(() => {
     window.oncontextmenu = (e) => {
+      e.preventDefault()
+
       const target = e.target as HTMLElement
       const rowIndex = target?.dataset?.rowIndex
+      const colIndex = target?.dataset?.colIndex
 
       if (rowIndex) {
-        e.preventDefault()
-        setSelectRowIndex(Number(rowIndex))
+        // 获取触发单元格的数据
+        const rowIndexNumber = Number(rowIndex)
+        const colIndexNumber = Number(colIndex) - 1
+        const column: any = props.columns?.[colIndexNumber]
+        setSelectRowIndex(rowIndexNumber)
+        setSelectColIndex(colIndexNumber)
+        const cellData = (props.dataSource as any)[rowIndexNumber]?.[column?.dataIndex]
+        const cellJson = isJsonStr(cellData)
+        console.log('cellJson', cellJson, cellData)
+
+        if (cellJson) {
+          setCellJsonData(cellJson)
+          setJsonBtnDisable(false)
+        } else {
+          setJsonBtnDisable(true)
+        }
         menuRef.current!.style.top = e.clientY + 5 + 'px'
         menuRef.current!.style.left = e.clientX + 5 + 'px'
         return
@@ -140,18 +160,22 @@ const TableView: React.FC<PropsExtra> = (props) => {
       rightMenuHide()
     }
 
-    const leftClick = () => {
+    const rightClick = () => {
       rightMenuHide()
     }
-    document.body.addEventListener('click', leftClick)
+    document.body.addEventListener('click', rightClick)
 
     return () => {
       window.oncontextmenu = null
-      document.body.removeEventListener('click', leftClick)
+      document.body.removeEventListener('click', rightClick)
     }
   }, [])
 
   /* 右键菜单 end */
+
+  /*  显示 json start */
+  const handleShowJson = () => {}
+  /*  显示 json end */
 
   const [editRowVisible, { toggle: editRowToggle }] = useBoolean(false)
 
@@ -473,7 +497,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               ? (e) => {
                   e.stopPropagation()
                 }
-              : handleDeleteItem
+              : handleShowJson
           }
         >
           JSON显示

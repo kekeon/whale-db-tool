@@ -251,7 +251,7 @@ export function isJsonStr(str: unknown): unknown {
   }
   try {
     const result = JSON.parse(str)
-    if (!Array.isArray(result) && typeof result === 'object') {
+    if (typeof result === 'object') {
       return result
     }
     return false
