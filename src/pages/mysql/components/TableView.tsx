@@ -35,7 +35,7 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadJson, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatUpdate, isJsonStr } from '@/utils/utils'
+import { formatInsert, formatUpdate, isJsonStr, JSONFormat } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
 import { useBoolean } from 'ahooks'
@@ -153,7 +153,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         const cellJson = isJsonStr(cellData)
 
         if (cellJson) {
-          setCellJsonData(cellJson)
+          setCellJsonData(JSONFormat(cellData))
           setJsonBtnDisable(false)
         } else {
           setJsonBtnDisable(true)
@@ -487,7 +487,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         />
       )}
       <DbRnd>
-        <DbJsonAce />
+        <DbJsonAce data={cellJsonData} />
       </DbRnd>
       <div className="menu-wrap" ref={menuRef}>
         <div className="menu-btn" onClick={handleEditRowForm}>

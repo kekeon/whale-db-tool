@@ -4,7 +4,7 @@ import styles from './index.module.less'
 
 interface Props {}
 type PropsExtra = Props
-const DbJonDock: React.FC<PropsExtra> = () => {
+const DbJonDock: React.FC<PropsExtra> = (props) => {
   return (
     <Rnd
       className={styles.DbRnd}
@@ -15,7 +15,7 @@ const DbJonDock: React.FC<PropsExtra> = () => {
         height: 200,
       }}
     >
-      Rnd
+      {props.children}
     </Rnd>
   )
 }

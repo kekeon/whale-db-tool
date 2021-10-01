@@ -259,3 +259,72 @@ export function isJsonStr(str: unknown): unknown {
     return false
   }
 }
+
+/**
+ *  格式化 json str
+ * @param json string
+ * @returns
+ */
+
+export function JSONFormat(json: string) {
+  if (!isJsonStr(json)) {
+    return ''
+  }
+
+  let p: any = []
+
+  const push = function (m) {
+    return '\\' + p.push(m) + '\\'
+  }
+  const pop = function (_m: any, i: number) {
+    return p[i - 1]
+  }
+  const tabs = function (count: number) {
+    return new Array(count + 1).join('\t')
+  }
+
+  let out: any = ''
+  let indent: any = 0
+
+  // eslint-disable-next-line no-param-reassign
+  json = json
+    .replace(/\\./g, push)
+    .replace(/(".*?"|'.*?')/g, push)
+    .replace(/\s+/, '')
+
+  // Indent and insert newlines
+  for (let i = 0; i < json.length; i++) {
+    let c = json.charAt(i)
+
+    switch (c) {
+      case '{':
+      case '[':
+        out += c + '\n' + tabs(++indent)
+        break
+      case '}':
+      case ']':
+        out += '\n' + tabs(--indent) + c
+        break
+      case ',':
+        out += ',\n' + tabs(indent)
+        break
+      case ':':
+        out += ': '
+        break
+      default:
+        out += c
+        break
+    }
+  }
+
+  // Strip whitespace from numeric arrays and put backslashes
+  // and strings back in
+  out = out
+    .replace(/\[[\d,\s]+?\]/g, (m: string) => {
+      return m.replace(/\s/g, '')
+    })
+    .replace(/\\(\d+)\\/g, pop) // strings
+    .replace(/\\(\d+)\\/g, pop) // backslashes in strings
+
+  return out
+}
