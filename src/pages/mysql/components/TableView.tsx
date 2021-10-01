@@ -43,6 +43,8 @@ import { mysqlTableDeleteItem } from '@/service/mysql'
 import { mySqlState } from '@/store'
 import { useRecoilValue } from 'recoil'
 import { mysql } from '@/types'
+import { DbRnd } from '_cp/'
+import DbJsonAce from '_cp/DbJsonAce'
 
 interface Props {
   dbName: string
@@ -60,6 +62,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const [selectRowIndex, setSelectRowIndex] = useState<number>(-1)
   const [selectColIndex, setSelectColIndex] = useState<number>(-1)
   const gridRef = useRef<any>()
+  const propsRef = useRef<PropsExtra>(props)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [editRowData, setEditRowData] = useState<any>()
 
@@ -128,23 +131,26 @@ const TableView: React.FC<PropsExtra> = (props) => {
   }
 
   useEffect(() => {
+    propsRef.current = props
+  }, [props])
+
+  useEffect(() => {
     window.oncontextmenu = (e) => {
       e.preventDefault()
 
       const target = e.target as HTMLElement
       const rowIndex = target?.dataset?.rowIndex
       const colIndex = target?.dataset?.colIndex
-
+      const dataSource: any = propsRef.current?.dataSource
       if (rowIndex) {
         // 获取触发单元格的数据
         const rowIndexNumber = Number(rowIndex)
         const colIndexNumber = Number(colIndex) - 1
-        const column: any = props.columns?.[colIndexNumber]
         setSelectRowIndex(rowIndexNumber)
         setSelectColIndex(colIndexNumber)
-        const cellData = (props.dataSource as any)[rowIndexNumber]?.[column?.dataIndex]
+        const column: any = propsRef.current?.columns?.[colIndexNumber]
+        const cellData = dataSource[rowIndexNumber]?.[column?.dataIndex]
         const cellJson = isJsonStr(cellData)
-        console.log('cellJson', cellJson, cellData)
 
         if (cellJson) {
           setCellJsonData(cellJson)
@@ -480,6 +486,9 @@ const TableView: React.FC<PropsExtra> = (props) => {
           formType={editFormType}
         />
       )}
+      <DbRnd>
+        <DbJsonAce />
+      </DbRnd>
       <div className="menu-wrap" ref={menuRef}>
         <div className="menu-btn" onClick={handleEditRowForm}>
           编辑

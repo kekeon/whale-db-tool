@@ -97,7 +97,7 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
           placeholder="Placeholder SQL"
           mode="mysql"
           theme={theme}
-          name="UNIQUE_ID_OF_DIV"
+          name="DB_MYSQL_ACE"
           editorProps={{ $blockScrolling: false }}
           onChange={handleChange}
           onSelectionChange={handleSelect}
