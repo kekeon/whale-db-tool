@@ -43,8 +43,7 @@ import { mysqlTableDeleteItem } from '@/service/mysql'
 import { mySqlState } from '@/store'
 import { useRecoilValue } from 'recoil'
 import { mysql } from '@/types'
-import { DbRnd } from '_cp/'
-import DbJsonAce from '_cp/DbJsonAce'
+import { DbRnd, DbJsonAce } from '_cp/index'
 
 interface Props {
   dbName: string
@@ -180,7 +179,16 @@ const TableView: React.FC<PropsExtra> = (props) => {
   /* 右键菜单 end */
 
   /*  显示 json start */
-  const handleShowJson = () => {}
+  const [jsonRndVisible, setJsonRndVisible] = useState(false)
+  const handleShowJson = () => {
+    setJsonRndVisible(true)
+  }
+
+  const handleJsonClose = () => {
+    console.log('handleJsonClose')
+
+    setJsonRndVisible(false)
+  }
   /*  显示 json end */
 
   const [editRowVisible, { toggle: editRowToggle }] = useBoolean(false)
@@ -486,9 +494,11 @@ const TableView: React.FC<PropsExtra> = (props) => {
           formType={editFormType}
         />
       )}
-      <DbRnd>
-        <DbJsonAce data={cellJsonData} />
-      </DbRnd>
+      {jsonRndVisible && (
+        <DbRnd onClose={handleJsonClose}>
+          <DbJsonAce readonly={true} data={cellJsonData} />
+        </DbRnd>
+      )}
       <div className="menu-wrap" ref={menuRef}>
         <div className="menu-btn" onClick={handleEditRowForm}>
           编辑

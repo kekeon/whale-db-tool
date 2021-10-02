@@ -3,9 +3,10 @@ import AceEditor from 'react-ace'
 
 interface Props {
   data?: any
+  readonly?: boolean
 }
 type PropsExtra = Props
-const DbJsonAce: React.FC<PropsExtra> = (props) => {
+const DbJsonAce: React.FC<PropsExtra> = ({ readonly, data }) => {
   const [theme, setTheme] = useState<string>('monokai')
   const editRef = useRef<any>()
   const editInputValueRef = useRef<any>()
@@ -37,7 +38,8 @@ const DbJsonAce: React.FC<PropsExtra> = (props) => {
       mode="json"
       theme={theme}
       name="DB_JSON_ACE"
-      value={props.data}
+      value={data}
+      readOnly={readonly}
       editorProps={{ $blockScrolling: false }}
       onChange={handleChange}
       onSelectionChange={handleSelect}
