@@ -33,9 +33,9 @@ class CacheManager {
     this.localStorage.setItem(key, JSON.stringify(cacheData))
   }
 
-  getLocal(key: string, defaultValue?: any): void {
+  getLocal<T>(key: string, defaultValue?: any): T {
     let val = this.localStorage.getItem(key)
-    let nowTime = +new Date()
+    let nowTime = Number(new Date())
 
     let obj = JSON.parse(val as string)
     if (!obj) {

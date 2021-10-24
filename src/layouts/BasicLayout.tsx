@@ -11,17 +11,17 @@ const Content = Layout.Content
 
 type MainProps = RouteConfig
 
-class Main extends React.Component<MainProps> {
-  render() {
-    return (
-      <Layout className={styles['main-page']}>
-        <NavHeader />
-        <Layout>
-          <Content className={'content-wrap'}>{renderRoutes(this.props.route.routes)}</Content>
-        </Layout>
+const Main: React.FC<MainProps> = (props) => {
+  console.log('props', props)
+
+  return (
+    <Layout className={styles['main-page']}>
+      <NavHeader />
+      <Layout>
+        <Content className="content-wrap">{renderRoutes(props.route.routes)}</Content>
       </Layout>
-    )
-  }
+    </Layout>
+  )
 }
 
 export default Main

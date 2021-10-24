@@ -18,6 +18,7 @@ export default defineConfig({
       },
     },
   },
+  base: './',
   resolve: {
     alias: [
       {
@@ -34,31 +35,13 @@ export default defineConfig({
       },
     ],
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          jsonWorker: [`${prefix}/language/json/json.worker`],
-          cssWorker: [`${prefix}/language/css/css.worker`],
-          htmlWorker: [`${prefix}/language/html/html.worker`],
-          tsWorker: [`${prefix}/language/typescript/ts.worker`],
-          editorWorker: [`${prefix}/editor/editor.worker`],
-        },
-      },
-      plugins: [
-        /* monacoPlugin({
-          languages: ['mysql'],
-        }), */
-      ],
-    },
-  },
   server: {
     proxy: {
       // 选项写法
       '^/api/.*': {
         target: 'http://localhost:8090/',
         changeOrigin: true,
-        //rewrite: (path) => path.replace(/^\/api/, '')
+        // rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
   },

@@ -1,4 +1,5 @@
 // axios 和 公共请求方法封装
+import { AUTH_TOKEN } from '@/constant/js/storageKey'
 import axios from 'axios'
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios/index'
 import storage from './storage'
@@ -30,13 +31,13 @@ export interface Response extends AxiosResponse {
 }
 
 declare interface HttpInstance {
-  get<T>(url: string, params?: object, opt?: GetOpt): Promise<requestResponse<T>>
+  get: <T>(url: string, params?: object, opt?: GetOpt) => Promise<requestResponse<T>>
 
-  post<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
+  post: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
 
-  put<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
+  put: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
 
-  delete<T>(url: string, params: object, opt?: PostOpt): Promise<requestResponse<T>>
+  delete: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
 }
 
 interface ErrorMessage {
@@ -86,7 +87,7 @@ class Http implements HttpInstance {
           }
         }
         // 设置token
-        const token = 'Bearer ' + storage().getLocal('AUTH_TOKEN', 'o2222')
+        const token = 'Bearer ' + storage().getLocal(AUTH_TOKEN, '')
         token && (config.headers.Authorization = token)
         return config
       },
