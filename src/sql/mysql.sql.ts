@@ -1,4 +1,5 @@
 import { mysql } from '@/types'
+import { isEmpty } from '@/utils/utils'
 
 export const SHOW_DATABASES: mysql.queryItem = {
   type: 'query',
@@ -25,10 +26,20 @@ export const SHOW_TABLES_COLUMNS_FUN = (db: string, table: string): mysql.queryI
   sql: `SHOW FULL COLUMNS FROM ${db}.${table};`,
 })
 
-export const SELECT_FORM_ALL_FUN = (db: string, table: string): mysql.queryItem => ({
-  type: 'query',
-  sql: `SELECT * FROM ${db}.${table}`,
-})
+export const SELECT_FORM_ALL_FUN = (db: string, table: string, limit?: number, offset?: number): mysql.queryItem => {
+  const item: mysql.queryItem = {
+    type: 'query',
+    sql: `SELECT * FROM ${db}.${table}`,
+  }
+
+  if (typeof offset === 'number') {
+  }
+
+  if (typeof limit === 'number') {
+  }
+
+  return item
+}
 
 export const DESC_TABLE_FUN = (db: string, table: string): mysql.queryItem => ({
   type: 'query',
