@@ -73,7 +73,10 @@ const Mysql: React.FC<any> = () => {
       let tableList = dbList![index]['list']
       let table = tableList[Number(key[1])]['name']
       let db = dbList![index]['name']
-      let data = await mysqlTableDataQuery(uuid, dbList![index]['name'], table)
+      let data = await mysqlTableDataQuery(uuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!, {
+        limit: mySqlDbStates.limit,
+        offset: mySqlDbStates.offset,
+      })
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       console.log('data', data)
       setColumns(data.columns)
@@ -83,7 +86,10 @@ const Mysql: React.FC<any> = () => {
 
   // refresh table data
   const handleRefreshTable = async () => {
-    let data = await mysqlTableDataQuery(uuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!)
+    let data = await mysqlTableDataQuery(uuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!, {
+      limit: mySqlDbStates.limit,
+      offset: mySqlDbStates.offset,
+    })
     setTableData(data.list)
   }
 

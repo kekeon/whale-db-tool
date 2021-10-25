@@ -32,10 +32,12 @@ export const SELECT_FORM_ALL_FUN = (db: string, table: string, limit?: number, o
     sql: `SELECT * FROM ${db}.${table}`,
   }
 
-  if (typeof offset === 'number') {
+  if (typeof limit === 'number') {
+    item.sql += ` LIMIT ${limit}`
   }
 
-  if (typeof limit === 'number') {
+  if (typeof offset === 'number') {
+    item.sql += ` OFFSET ${offset}`
   }
 
   return item

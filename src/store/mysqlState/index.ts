@@ -12,6 +12,8 @@ export const mySqlDbState = atom<Partial<MySqlDbStateType>>({
   default: {
     tableName: '',
     dbName: '',
+    limit: 1000,
+    offset: 0,
   },
 })
 

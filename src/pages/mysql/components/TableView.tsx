@@ -41,7 +41,7 @@ import EditRowForm from './EditRowForm'
 import { useBoolean } from 'ahooks'
 import { mysqlTableDeleteItem } from '@/service/mysql'
 import { mySqlState } from '@/store'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { mysql } from '@/types'
 import { DbRnd, DbJsonAce } from '_cp/index'
 
@@ -65,7 +65,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [editRowData, setEditRowData] = useState<any>()
 
-  const { dbName, tableName } = useRecoilValue(mySqlState.mySqlDbState)
+  const [{ dbName, tableName, offset, limit }, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
 
@@ -457,12 +457,12 @@ const TableView: React.FC<PropsExtra> = (props) => {
             <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
             <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
             <DbLabelText text="页码">
-              <Button type="text" icon={<CaretLeftOutlined title="上一行" />} />
-              <InputNumber size="small" min={0} defaultValue={0} />
+              <Button type="text" icon={<CaretLeftOutlined title="上一页" />} />
+              <InputNumber size="small" min={0} value={(offset || 0) / (limit || 0) + 1 || 0} />
               <Button type="text" icon={<CaretRightOutlined title="下一页" />} />
             </DbLabelText>
             <DbLabelText text="行数">
-              <InputNumber size="small" min={0} defaultValue={0} />
+              <InputNumber size="small" min={0} value={limit || 0} />
             </DbLabelText>
           </Row>
         </Col>
