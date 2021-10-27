@@ -2,10 +2,10 @@ declare interface IKV<T> {
   [index: string]: T
 }
 
-namespace common {
+export namespace common {
   export type uuid = string
 
-  export type connectItem = {
+  export interface connectItem {
     another_name: string
     host: string
     name: string
@@ -13,7 +13,7 @@ namespace common {
     port: number
   }
 
-  export type connectUuid = {
+  export interface connectUuid {
     uuid: uuid
   }
 
