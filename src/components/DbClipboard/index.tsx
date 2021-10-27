@@ -1,6 +1,5 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import ClipboardJS from 'clipboard'
-import { useEffect } from 'react'
 import { message } from 'antd'
 
 type value = string

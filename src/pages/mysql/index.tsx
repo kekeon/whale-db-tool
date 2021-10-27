@@ -19,7 +19,7 @@ import MySqlAddModal from './components/AddModal'
 import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
-import { mysql } from '@/types'
+import { common, mysql } from '@/types'
 
 const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()

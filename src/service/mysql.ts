@@ -8,7 +8,7 @@ import {
   SHOW_TABLES_FUN,
   USE_DATABASES_FUN,
 } from '@/sql/mysql.sql'
-import { mysql } from '@/types'
+import { common, mysql } from '@/types'
 import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
 import { MYSQL_ADD, MYSQL_DELETE, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY, MYSQL_UPDATE } from './api'

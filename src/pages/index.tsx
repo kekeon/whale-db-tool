@@ -1,5 +1,5 @@
 import { systemLogin } from '@/service/system'
-import { system } from '@/types/system'
+import { system } from '@/types'
 import storage from '@/utils/storage'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, Input } from 'antd'
@@ -27,12 +27,12 @@ const Login: React.FC<any> = () => {
 
   return (
     <div className={styles['login']}>
-      <div className={'login-wrap-card'}>
+      <div className="login-wrap-card">
         <div className="sys-logo">
           <img src="/src/assets/img/img-01.webp" alt="" />
         </div>
         <div className="sys-form">
-          <div className={'sys-form-title'}>User Login</div>
+          <div className="sys-form-title">User Login</div>
           <Form<LoginForm>
             name="basic"
             labelCol={{ span: 0 }}
@@ -60,7 +60,7 @@ const Login: React.FC<any> = () => {
             </Form.Item>
 
             <Form.Item>
-              <Button className="login-btn" type="primary" htmlType={'submit'}>
+              <Button className="login-btn" type="primary" htmlType="submit">
                 Login
               </Button>
             </Form.Item>

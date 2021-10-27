@@ -1,4 +1,5 @@
 import { CONNECT_LIST } from '@/constant/js/storageKey'
+import { common } from '@/types'
 import { PostOpt } from '@/utils/request'
 import storage from '@/utils/storage'
 import { uuid } from '@/utils/utils'
