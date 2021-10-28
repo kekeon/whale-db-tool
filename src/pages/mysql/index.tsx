@@ -29,7 +29,7 @@ const Mysql: React.FC<any> = () => {
   const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
 
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
-  const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumsState)
+  const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumnsState)
   const [uuid, setUuid] = useRecoilState(mySqlState.mySqlDbUUid)
 
   useEffect(() => {

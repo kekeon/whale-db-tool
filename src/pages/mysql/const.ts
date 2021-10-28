@@ -12,7 +12,7 @@ interface DataItem {
  * @param fieldList
  * @returns
  */
-export function generateEditJson(fieldList: mysql.tableColumsInfo[], editRowData?: any) {
+export function generateEditJson(fieldList: mysql.tableColumnsInfo[], editRowData?: any) {
   if (isEmptyArray(fieldList)) return
 
   let list: ProFormColumnsType<DataItem>[] = fieldList.map((item) => {

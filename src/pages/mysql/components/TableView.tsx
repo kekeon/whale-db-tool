@@ -66,7 +66,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const [editRowData, setEditRowData] = useState<any>()
 
   const [{ dbName, tableName, offset, limit }, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
-  const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
+  const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
 
   const [jsonBtnDisable, setJsonBtnDisable] = useState<boolean>(true)
@@ -373,7 +373,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       case copy_inset_sql:
         return formatInsert(dbName!, tableName!, columns, list)
       case copy_update_sql:
-        return formatUpdate(dbName!, tableName!, columns, list)
+        return formatUpdate(dbName!, tableName!, columns as any, list)
     }
   }
 
@@ -416,7 +416,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       okText: '确认',
       cancelText: '取消',
       onOk: async () => {
-        await mysqlTableDeleteItem(uuid, dbName!, tableName!, props.columns, list)
+        await mysqlTableDeleteItem({ dbName: dbName!, tableName: tableName!, uuid: uuid }, props.columns as any, list)
         setSelectkeysMap({})
         queryData?.()
         setSelectRowIndex(-1)

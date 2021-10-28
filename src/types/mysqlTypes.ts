@@ -24,7 +24,7 @@ export interface queryResponse {
   data: any[]
 }
 
-export interface tableColumsInfo {
+export interface tableColumnsInfo {
   Collation: string
   Comment: string
   Default: string

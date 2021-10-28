@@ -45,7 +45,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
 
   const mySqlDbStates = useRecoilValue(mySqlState.mySqlDbState)
   const dbUuid = useRecoilValue(mySqlState.mySqlDbUUid)
-  const columns = useRecoilValue(mySqlState.mySqlDbTableColumsState)
+  const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
   useEffect(() => {
     visible && handleTableColumns()
   }, [visible])

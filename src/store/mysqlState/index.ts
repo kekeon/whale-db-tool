@@ -1,5 +1,6 @@
 import { MySqlDbStateType } from '@/store/mysqlState/types'
 import { mysql } from '@/types'
+import { ColumnProps } from 'antd/lib/table'
 import { atom } from 'recoil'
 
 export const mySqlDbUUid = atom<string>({
@@ -17,7 +18,7 @@ export const mySqlDbState = atom<Partial<MySqlDbStateType>>({
   },
 })
 
-export const mySqlDbTableColumsState = atom<Partial<mysql.tableColumsInfo>[]>({
+export const mySqlDbTableColumnsState = atom<Partial<mysql.tableColumnsInfo> & ColumnProps<any>[]>({
   key: 'mySqlDbTableInfoState',
   default: [],
 })
