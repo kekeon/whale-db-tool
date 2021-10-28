@@ -9,6 +9,7 @@ import {
   USE_DATABASES_FUN,
 } from '@/sql/mysql.sql'
 import { common, mysql } from '@/types'
+import { IKV, TableConnectDesc } from '@/types/commonTypes'
 import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
 import { MYSQL_ADD, MYSQL_DELETE, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY, MYSQL_UPDATE } from './api'
@@ -173,9 +174,7 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
 
 // 删除 sql
 export async function mysqlTableDeleteItem(
-  uuid: string,
-  db: string,
-  table: string,
+  connectionDesc: TableConnectDesc,
   tableDesc: IKV<string>[],
   deleteList: IKV<string>[],
   option?: PostOpt,
@@ -185,12 +184,12 @@ export async function mysqlTableDeleteItem(
   const sqlList: mysql.queryItem[] = deleteList.map((item) => {
     const condition: string = generateWhereCondition(tableDesc, item, pk)
 
-    return DELETE_ITEM_SQL_FUN(db, table, condition)
+    return DELETE_ITEM_SQL_FUN(connectionDesc.dbName, connectionDesc.tableName, condition)
   })
 
   const res = await mysqlQuery(
     {
-      uuid: uuid,
+      uuid: connectionDesc.uuid,
       sql_list: sqlList,
     },
     option,

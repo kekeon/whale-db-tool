@@ -19,7 +19,10 @@ module.exports = {
     // myGlobal: false
   },
   rules: {
-
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "max-params": ["error", 5],
+    "prefer-promise-reject-errors": "off",
+    "complexity": "off",
     // 自定义你的规则
   },
 };

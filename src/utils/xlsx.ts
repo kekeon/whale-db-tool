@@ -1,6 +1,8 @@
 import XLSX, { WorkBook } from 'xlsx'
 import dayjs from 'dayjs'
-export interface ExcelHeader extends IKV<unknown> {
+export interface ExcelHeader {
+  key: number
+  width: number
   dataIndex: number
   title: string
 }
@@ -35,7 +37,7 @@ function getPosition(i: number) {
   return p
 }
 
-export function exportExcel(headers: ExcelHeader[], data: IKV<unknown>[], fileName = 'data') {
+export function exportExcel(headers: ExcelHeader[], data: unknown[], fileName = 'data') {
   const formatDate = dayjs().format('YYYYMMDDhmmss')
   let filename = `${fileName}_${formatDate}.xlsx`
   const _headers = headers
@@ -48,20 +50,14 @@ export function exportExcel(headers: ExcelHeader[], data: IKV<unknown>[], fileNa
         position: getPosition(i) + 1,
       }
     })
-    .reduce(
-      (prev, next) =>
-        Object.assign({}, prev, {
-          [next.position]: { key: next.key, v: next.title },
-        }),
-      {},
-    )
+    .reduce((prev, next) => ({ ...prev, [next.position]: { key: next.key, v: next.title } }), {})
   // return
   let _data = {}
-  if (data && data.length) {
+  if (data?.length) {
     _data = data
       .map((col, i) =>
         headers.map((item, j) => {
-          let compiledContent = col[item.dataIndex] || ''
+          let compiledContent = (col as any)[item.dataIndex] || ''
           return {
             content: compiledContent,
             position: getPosition(j) + (i + 2),
@@ -71,26 +67,23 @@ export function exportExcel(headers: ExcelHeader[], data: IKV<unknown>[], fileNa
       // 对刚才的结果进行降维处理（二维数组变成一维数组）
       .reduce((prev, next) => prev.concat(next))
       // 转换成 worksheet 需要的结构
-      .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { v: next.content } }), {})
+      .reduce((prev, next) => ({ ...prev, [next.position]: { v: next.content } }), {})
   }
 
   // 合并 headers 和 data
-  const output = Object.assign({}, _headers, _data)
+  const output = { ..._headers, ..._data }
   // 获取所有单元格的位置
   const outputPos = Object.keys(output)
   // 计算出范围 ,["A1",..., "H2"]
-  const ref: string = `${outputPos[0]}:${outputPos[outputPos.length - 1]}`
-  const colsWidth: IKV<unknown>[] = (headers || []).map((item) => ({
+  const ref = `${outputPos[0]}:${outputPos[outputPos.length - 1]}`
+  const colsWidth: unknown[] = (headers || []).map((item) => ({
     wpx: item.width || 100,
   }))
   // 构建 workbook 对象
   const wb: WorkBook = {
     SheetNames: ['sheet'],
     Sheets: {
-      sheet: Object.assign({}, output, {
-        '!ref': ref,
-        '!cols': colsWidth,
-      }),
+      sheet: { ...output, '!ref': ref, '!cols': colsWidth as any },
     },
   }
   // 导出 Excel
@@ -98,7 +91,7 @@ export function exportExcel(headers: ExcelHeader[], data: IKV<unknown>[], fileNa
 }
 
 // 下载文本
-export function downloadJson(content: string, suffix: string = 'text', fileName: string = 'data') {
+export function downloadJson(content: string, suffix = 'text', fileName = 'data') {
   let filename = `${fileName}_${dayjs().format('YYYYMMDDhhmmss')}`
   let a = document.createElement('a')
   let blob: any = new Blob([content])

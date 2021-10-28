@@ -37,7 +37,7 @@ export async function deleteDelete(uuid: string, option?: PostOpt) {
   let res: common.cuid[] = storage().getLocal(CONNECT_LIST, [])
   let inx = res.findIndex((item) => item.uuid === uuid)
   if (inx < 0) {
-    return Promise.reject({ msg: '不存在' })
+    return Promise.reject(new Error('不存在'))
   }
 
   res.splice(inx, 1)

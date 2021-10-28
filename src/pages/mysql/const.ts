@@ -1,8 +1,9 @@
 import { mysql } from '@/types'
+import { IKV } from '@/types/commonTypes'
 import { isEmpty, isEmptyArray } from '@/utils/utils'
 import { ProFormColumnsType } from '@ant-design/pro-form'
 
-type DataItem = {
+interface DataItem {
   name: string
   state: string
 }
@@ -76,37 +77,41 @@ export function generateEditJson(fieldList: mysql.tableColumsInfo[], editRowData
       case mysql.TableFieldType.json:
         o.valueType = 'jsonCode'
         break
-      case mysql.TableFieldType.binary:
+      /*   case mysql.TableFieldType.binary:
       case mysql.TableFieldType.varbinary:
         o.valueType = 'jsonCode'
-        break
+        break */
       case mysql.TableFieldType.set:
-        o.valueType = 'select'
-        let setList: string[] = item.Type.replace(/set|\(|\)|\'/g, '').split(',')
-        let valueEnumSet: any = {}
-        setList.forEach((s: string) => {
-          if (s) {
-            valueEnumSet[s] = {
-              text: s,
-              status: s,
+        {
+          o.valueType = 'select'
+          let setList: string[] = item.Type.replace(/set|\(|\)|\'/g, '').split(',')
+          let valueEnumSet: any = {}
+          setList.forEach((s: string) => {
+            if (s) {
+              valueEnumSet[s] = {
+                text: s,
+                status: s,
+              }
             }
-          }
-        })
-        o.valueEnum = valueEnumSet
+          })
+          o.valueEnum = valueEnumSet
+        }
         break
       case mysql.TableFieldType.enum:
-        o.valueType = 'select'
-        let enumList: string[] = item.Type.replace(/enum|\(|\)|\'/g, '').split(',')
-        let valueEnumEnum: any = {}
-        enumList.forEach((s: string) => {
-          if (s) {
-            valueEnumEnum[s] = {
-              text: s,
-              status: s,
+        {
+          o.valueType = 'select'
+          let enumList: string[] = item.Type.replace(/enum|\(|\)|\'/g, '').split(',')
+          let valueEnumEnum: any = {}
+          enumList.forEach((s: string) => {
+            if (s) {
+              valueEnumEnum[s] = {
+                text: s,
+                status: s,
+              }
             }
-          }
-        })
-        o.valueEnum = valueEnumEnum
+          })
+          o.valueEnum = valueEnumEnum
+        }
         break
     }
 
@@ -126,9 +131,10 @@ export function generateEditJson(fieldList: mysql.tableColumsInfo[], editRowData
   return list
 }
 
-export function tableRenderData(rowField: IKV<string>, value: any) {
+export function tableRenderData(rowField: IKV<string>, val: any) {
   const type = rowField?.Type?.replace(/\(.+/g, '').toLocaleLowerCase()
   const vNull = '[ null ]'
+  let value = val
   switch (type) {
     // 数字
     case mysql.TableFieldType.tinyint:
@@ -177,10 +183,10 @@ export function tableRenderData(rowField: IKV<string>, value: any) {
     case mysql.TableFieldType.json:
       value = value === null ? vNull : value
       break
-    case mysql.TableFieldType.binary:
+    /*     case mysql.TableFieldType.binary:
     case mysql.TableFieldType.varbinary:
       value = value === null ? vNull : value
-      break
+      break */
     case mysql.TableFieldType.set:
     case mysql.TableFieldType.enum:
       value = isEmpty(value) ? vNull : value

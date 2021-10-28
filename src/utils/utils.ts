@@ -1,3 +1,5 @@
+import { IKV } from '@/types/commonTypes'
+
 export function uuid(len = 16, radix = 16): string {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
   let uuid = []
@@ -210,7 +212,7 @@ export function queryPriOrUni(tableFieldList: IKV<string>[]) {
  */
 export function generateWhereCondition(
   tableDesc: IKV<string>[],
-  dataItem: IKV<string>,
+  dataItem: Tab,
   primaryOrUniqueKeyDesc?: IKV<string> | null,
 ) {
   const pk = primaryOrUniqueKeyDesc || queryPriOrUni(tableDesc)
@@ -273,7 +275,7 @@ export function JSONFormat(json: string) {
 
   let p: any = []
 
-  const push = function (m) {
+  const push = function (m: unknown) {
     return '\\' + p.push(m) + '\\'
   }
   const pop = function (_m: any, i: number) {

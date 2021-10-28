@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-// import monacoPlugin from 'rollup-plugin-monaco-editor'
 
 import reactRefresh from '@vitejs/plugin-react-refresh'
 const prefix = `monaco-editor/esm/vs`
