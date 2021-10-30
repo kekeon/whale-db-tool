@@ -147,11 +147,11 @@ class Http implements HttpInstance {
 
       if (opt.isCache && !opt.isRefresh) {
         const key = url.replace(/\//g, '_').toLocaleUpperCase()
-        const res = storage().gGetLocal(key, false)
+        const res = storage().getLocal(key, false)
         // 缓存中存在有效
         if (res) {
-          resolve(res)
-          return false
+          resolve({ data: res as T })
+          return
         }
       }
 
@@ -189,11 +189,13 @@ class Http implements HttpInstance {
   public post<T>(url: string, params: object, opt: PostOpt = { text: '操作成功', hidden: true }) {
     return new Promise<requestResponse<T>>((resolve, reject) => {
       // 添加后缀
+      const { hidden, text, ...axiosOpt } = opt
+
       this.instance
-        .post(url, params, opt)
+        .post(url, params, axiosOpt)
         .then((res) => {
-          if (!opt.hidden) {
-            successTip(opt.text ? opt.text : '操作成功')
+          if (!hidden) {
+            successTip(text ? text : '操作成功')
           }
           resolve(res.data)
         })
@@ -208,11 +210,12 @@ class Http implements HttpInstance {
   public put<T>(url: string, params: object, opt: PostOpt = { text: '更新成功', hidden: true }) {
     return new Promise<requestResponse<T>>((resolve, reject) => {
       // 添加后缀
+      const { hidden, text, ...axiosOpt } = opt
       this.instance
-        .put(url, params, opt)
+        .put(url, params, axiosOpt)
         .then((res) => {
-          if (!opt.hidden) {
-            successTip(opt.text ? opt.text : '更新成功')
+          if (!hidden) {
+            successTip(text ? text : '更新成功')
           }
           resolve(res.data)
         })

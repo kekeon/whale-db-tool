@@ -46,8 +46,6 @@ import { mysql } from '@/types'
 import { DbRnd, DbJsonAce } from '_cp/index'
 
 interface Props {
-  dbName: string
-  tableName: string
   queryData?: (...args: any) => void
 }
 type PropsExtra = Props & Parameters<typeof Table>[0]

@@ -163,6 +163,8 @@ const Mysql: React.FC<any> = () => {
               dataSource={tableData}
               scroll={{ y: 300, x: '100vw' }}
               queryData={handleRefreshTable}
+              dbName=""
+              tableName=""
             />
           </div>
         </div>

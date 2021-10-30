@@ -235,7 +235,7 @@ export function generateWhereCondition(
   }
 
   if (pk) {
-    return '`' + pk.Field + '`=' + "'" + dataItem[pk.Field] + "'"
+    return '`' + pk.Field + '`="' + dataItem[pk.Field] + "'"
   } else {
     return generateNotPK(tableDesc, dataItem)
   }
