@@ -1,7 +1,7 @@
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
 import { addConnect, updateConnect } from '@/service/dbInstance'
 import { mysqlAdd, mysqlPing, mysqlUpdate } from '@/service/mysql'
-import { mysql } from '@/types'
+import { common, mysql } from '@/types'
 import { Modal, Form, Input, InputNumber, Button } from 'antd'
 import React, { useState } from 'react'
 interface Props {
@@ -74,7 +74,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   const { initInfo } = props
 
   return (
-    <div className={'MySqlAddModal'}>
+    <div className="MySqlAddModal">
       <Modal
         title="MySql"
         visible={props.visible}
@@ -141,7 +141,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             rules={[
               {
                 ...inputRequired,
-                required: !Boolean(initInfo?.uuid),
+                required: !initInfo?.uuid,
               },
               {
                 max: 100,

@@ -4,11 +4,11 @@ export function uuid(len = 16, radix = 16): string {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
   let uuid = []
   let i
-  radix = radix || chars.length
+  let radixNum = radix || chars.length
 
   if (len) {
     // Compact form
-    for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)]
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radixNum)]
   } else {
     // rfc4122, version 4 form
     let r
@@ -22,6 +22,7 @@ export function uuid(len = 16, radix = 16): string {
     for (i = 0; i < 36; i++) {
       if (!uuid[i]) {
         r = 0 | (Math.random() * 16)
+        // eslint-disable-next-line eqeqeq
         uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r]
       }
     }
@@ -54,7 +55,7 @@ export function undefinedToValue(val: unknown, fieldDesc: any) {
   if (fieldDesc.Null === 'NO' && !val) {
     return ''
   }
-  return val === undefined ? null : `'${val}'`
+  return val === undefined ? 'null' : `'${val}'`
 }
 
 /**
@@ -98,7 +99,7 @@ export function formatUpdate(
   let c = oldData ? generateWhereCondition(tableDesc, oldData!, pk) : ''
   let sqlList: string[] = newDataList.map((item) => {
     let arr = tableDesc.map((k) => {
-      return '`' + k.Field + '`=' + `${undefinedToValue(item[k.Field], k)}`
+      return '`' + k.Field + '`=' + undefinedToValue(item[k.Field], k)
     })
     c = c || generateWhereCondition(tableDesc, item, pk)
     return `UPDATE  \`${db}\`.\`${table}\` SET ${arr.join(',')} WHERE ${c} LIMIT 1;`
@@ -120,11 +121,11 @@ function isEqual(v1: unknown, v2: unknown) {
     return true
   }
 
-  if ([undefined, null, ''].includes(v1 as null) && v2 == null) {
+  if ([undefined, null, ''].includes(v1 as null) && v2 === null) {
     return true
   }
 
-  if ([undefined, null, ''].includes(v2 as null) && v1 == null) {
+  if ([undefined, null, ''].includes(v2 as null) && v1 === null) {
     return true
   }
   return false
@@ -142,22 +143,21 @@ function isEqual(v1: unknown, v2: unknown) {
 export function formatUpdateValid(
   db: string,
   table: string,
-  tableDesc: IKV<string>[],
-  newDataList: IKV<string>[],
+  tableDesc: any[],
+  newDataList:  IKV<string>[],
   oldData?: IKV<string>,
 ) {
   let pk = queryPriOrUni(tableDesc)
   let c = oldData ? generateWhereCondition(tableDesc, oldData!, pk) : ''
   let sqlList: string[] = []
-  for (let i = 0; i < newDataList.length; i++) {
-    const newValue = newDataList[i]
+  for (const newValue of newDataList) {
     const updateValueList = []
-    for (let index = 0; index < tableDesc.length; index++) {
-      const fieldName = tableDesc[index]?.Field
+    for (const colDesc of tableDesc) {
+      const fieldName = colDesc?.Field
       if (isEqual(oldData?.[fieldName], newValue[fieldName])) {
         continue
       }
-      updateValueList.push('`' + fieldName + '`=' + `${undefinedToValue(newValue[fieldName], tableDesc[index])}`)
+      updateValueList.push('`' + fieldName + '`=' + undefinedToValue(newValue[fieldName], colDesc))
     }
 
     if (isEmptyArray(updateValueList)) {
@@ -212,7 +212,7 @@ export function queryPriOrUni(tableFieldList: IKV<string>[]) {
  */
 export function generateWhereCondition(
   tableDesc: IKV<string>[],
-  dataItem: Tab,
+  dataItem: IKV<string>,
   primaryOrUniqueKeyDesc?: IKV<string> | null,
 ) {
   const pk = primaryOrUniqueKeyDesc || queryPriOrUni(tableDesc)
@@ -226,7 +226,7 @@ export function generateWhereCondition(
       }
 
       if (!isEmpty(item[field.Field])) {
-        str += '`' + field.Field + '`=' + "'" + item[field.Field] + "'"
+        str += '`' + field.Field + "`='" + item[field.Field] + "'"
       } else {
         str += '`' + field.Field + '` IS NULL'
       }
@@ -235,7 +235,7 @@ export function generateWhereCondition(
   }
 
   if (pk) {
-    return '`' + pk.Field + '`="' + dataItem[pk.Field] + "'"
+    return '`' + pk.Field + "`='" + dataItem[pk.Field] + "'"
   } else {
     return generateNotPK(tableDesc, dataItem)
   }

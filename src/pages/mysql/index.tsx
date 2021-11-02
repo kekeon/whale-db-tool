@@ -52,10 +52,10 @@ const Mysql: React.FC<any> = () => {
     setConnectList(r.data.list)
   }
 
-  const handleTreeSelect = async (keys: string[], optopn: any) => {
+  const handleTreeSelect = async (keys: unknown[], optopn: any) => {
     console.log(keys, optopn)
     if (isEmptyArray(keys)) return
-    let key = keys[0].split('.')
+    let key = (keys[0] as string).split('.')
     if (key.length === 1) {
       let index = Number(key[0])
       let db = dbList![index]['name']
@@ -143,7 +143,7 @@ const Mysql: React.FC<any> = () => {
       <div className="db-data-wrap">
         <div className="db-table">
           <DbTableTree
-            list={dbList}
+            list={dbList!}
             config={{
               onSelect: handleTreeSelect,
             }}
@@ -163,8 +163,6 @@ const Mysql: React.FC<any> = () => {
               dataSource={tableData}
               scroll={{ y: 300, x: '100vw' }}
               queryData={handleRefreshTable}
-              dbName=""
-              tableName=""
             />
           </div>
         </div>

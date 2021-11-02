@@ -1,4 +1,4 @@
-import { system } from '@/types/systemTypes'
+import { system } from '@/types'
 import request, { PostOpt } from '@/utils/request'
 import { SYSTEM_USER } from './api'
 

@@ -34,7 +34,7 @@ const valueEnum = {
   },
 }
 
-type DataItem = {
+interface DataItem {
   name: string
   state: string
 }
@@ -56,7 +56,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
     const editInfo = generateEditJson(res, editData)
     console.log('editData', editData, editInfo)
 
-    setColumnsList(editInfo)
+    setColumnsList(editInfo!)
   }, [mySqlDbStates, editData])
 
   const handleSave = useCallback(
@@ -100,27 +100,25 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
     return null
   }
   return (
-    <>
-      <BetaSchemaForm<DataItem>
-        layoutType={layoutType}
-        layout={'horizontal'}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 14 }}
-        visible={visible}
-        onReset={() => {}}
-        onFinish={async (values) => {
-          console.log(values)
-          handleSave(values)
-        }}
-        onChange={() => {
-          console.log('TODO.')
-        }}
-        onVisibleChange={(bool) => {
-          toggle(bool)
-        }}
-        columns={columnsList}
-      />
-    </>
+    <BetaSchemaForm<DataItem>
+      layoutType={layoutType}
+      layout="horizontal"
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 14 }}
+      visible={visible}
+      onReset={() => {}}
+      onFinish={async (values) => {
+        console.log(values)
+        handleSave(values)
+      }}
+      onChange={() => {
+        console.log('TODO.')
+      }}
+      onVisibleChange={(bool) => {
+        toggle(bool)
+      }}
+      columns={columnsList}
+    />
   )
 }
 

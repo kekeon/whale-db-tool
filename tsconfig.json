@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "ES6"],
     "types": ["vite/client"],
     "allowJs": false,
     "skipLibCheck": false,
@@ -16,11 +16,14 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": ".",
+    "typeRoots": [
+        "node_modules/@types"
+        ],
     "paths": {
       "_cp/*": ["src/components/*"],
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["./src"],
   "exclude": ["node_modules"]
 }

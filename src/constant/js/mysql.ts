@@ -1,1 +1,1 @@
-enum Enum {}
+export enum Enum {}

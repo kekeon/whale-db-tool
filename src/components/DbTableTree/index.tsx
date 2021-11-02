@@ -29,7 +29,7 @@ const DbTableTree: React.FC<DbTableTreePropsExtra> = (props) => {
     }
   }, [props.list])
 
-  const onExpand = (expandedKeys: string[]) => {
+  const onExpand = (expandedKeys: any[]) => {
     setExpandedKeys(expandedKeys)
   }
 
