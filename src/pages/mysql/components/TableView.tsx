@@ -435,6 +435,13 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   /* 删除 end */
 
+  const handleRowChange = (v) => {
+    setMySqlDbStates((s) => ({
+      ...s,
+      limit: v || 1000,
+    }))
+  }
+
   return (
     <div className={style['table-view']}>
       <Row className="table-toolbar" justify="space-between" align="middle">
@@ -460,7 +467,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               <Button type="text" icon={<CaretRightOutlined title="下一页" />} />
             </DbLabelText>
             <DbLabelText text="行数">
-              <InputNumber size="small" min={0} value={limit || 0} />
+              <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
             </DbLabelText>
           </Row>
         </Col>

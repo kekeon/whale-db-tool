@@ -20,6 +20,7 @@ import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
 import { common, mysql } from '@/types'
+import { useStateRef } from '@/hooks'
 
 const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()
@@ -31,7 +32,7 @@ const Mysql: React.FC<any> = () => {
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumnsState)
   const [uuid, setUuid] = useRecoilState(mySqlState.mySqlDbUUid)
-
+  const mySqlDbStatesRef = useStateRef(mySqlDbStates)
   useEffect(() => {
     initData()
   }, [])
@@ -73,10 +74,15 @@ const Mysql: React.FC<any> = () => {
       let tableList = dbList![index]['list']
       let table = tableList[Number(key[1])]['name']
       let db = dbList![index]['name']
-      let data = await mysqlTableDataQuery(uuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!, {
-        limit: mySqlDbStates.limit,
-        offset: mySqlDbStates.offset,
-      })
+      let data = await mysqlTableDataQuery(
+        uuid,
+        mySqlDbStatesRef.current.dbName!,
+        mySqlDbStatesRef.current.tableName!,
+        {
+          limit: mySqlDbStates.limit,
+          offset: mySqlDbStates.offset,
+        },
+      )
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       console.log('data', data)
       setColumns(data.columns)
@@ -86,9 +92,9 @@ const Mysql: React.FC<any> = () => {
 
   // refresh table data
   const handleRefreshTable = async () => {
-    let data = await mysqlTableDataQuery(uuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!, {
-      limit: mySqlDbStates.limit,
-      offset: mySqlDbStates.offset,
+    let data = await mysqlTableDataQuery(uuid, mySqlDbStatesRef.current.dbName!, mySqlDbStatesRef.current.tableName!, {
+      limit: mySqlDbStatesRef.current.limit,
+      offset: mySqlDbStatesRef.current.offset,
     })
     setTableData(data.list)
   }
@@ -153,7 +159,7 @@ const Mysql: React.FC<any> = () => {
         <div className="db-transaction">
           <div className="db-transaction-tool">
             <div className="db-transaction-sql">
-              <CodeEdit db={mySqlDbStates.dbName!} onRun={handleRunSql} />
+              <CodeEdit db={mySqlDbStatesRef.current.dbName!} onRun={handleRunSql} />
             </div>
           </div>
 
