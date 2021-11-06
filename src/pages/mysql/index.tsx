@@ -28,6 +28,7 @@ const Mysql: React.FC<any> = () => {
   const [tableData, setTableData] = useState<any[]>([])
   const [addVisible, { toggle: addDbToggle }] = useBoolean(false)
   const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
+  const [treeSelectedKeys, setTreeSelectedKeys] = useState<string[]>()
 
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumnsState)
@@ -56,6 +57,7 @@ const Mysql: React.FC<any> = () => {
   const handleTreeSelect = async (keys: unknown[], optopn: any) => {
     console.log(keys, optopn)
     if (isEmptyArray(keys)) return
+    setTreeSelectedKeys(keys as string[])
     let key = (keys[0] as string).split('.')
     if (key.length === 1) {
       let index = Number(key[0])
@@ -74,15 +76,12 @@ const Mysql: React.FC<any> = () => {
       let tableList = dbList![index]['list']
       let table = tableList[Number(key[1])]['name']
       let db = dbList![index]['name']
-      let data = await mysqlTableDataQuery(
-        uuid,
-        mySqlDbStatesRef.current.dbName!,
-        mySqlDbStatesRef.current.tableName!,
-        {
-          limit: mySqlDbStates.limit,
-          offset: mySqlDbStates.offset,
-        },
-      )
+      console.log('mySqlDbStatesRef', mySqlDbStatesRef)
+
+      let data = await mysqlTableDataQuery(uuid, db, table, {
+        limit: mySqlDbStates.limit,
+        offset: mySqlDbStates.offset,
+      })
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       console.log('data', data)
       setColumns(data.columns)
@@ -152,6 +151,7 @@ const Mysql: React.FC<any> = () => {
             list={dbList!}
             config={{
               onSelect: handleTreeSelect,
+              selectedKeys: treeSelectedKeys,
             }}
           />
         </div>
