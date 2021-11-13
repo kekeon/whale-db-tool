@@ -2,6 +2,8 @@ import { UserOutlined } from '@ant-design/icons'
 import { Avatar, Layout, Menu } from 'antd'
 import React from 'react'
 import { Link, withRouter } from 'react-router-dom'
+import Personal from './Personal'
+
 import NavHeaderStyles from './style/NavHeader.module.less'
 
 const Header = Layout.Header
@@ -36,7 +38,7 @@ class NavHeader extends React.Component<any> {
           </Menu>
         </div>
         <div className="right-wrap">
-          <Avatar size="small" icon={<UserOutlined />} />
+          <Personal />
         </div>
       </Header>
     )
