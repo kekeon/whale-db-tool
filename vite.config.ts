@@ -17,7 +17,7 @@ export default defineConfig({
       },
     },
   },
-  base: './',
+  base: '/',
   resolve: {
     alias: [
       {
@@ -33,6 +33,34 @@ export default defineConfig({
         replacement: '',
       },
     ],
+  },
+  build: {
+    base: '/',
+    rollupOptions: {
+      output: {
+        chunkFileNames: 'static/js/[name]-[hash].js',
+        entryFileNames: 'static/js/[name]-[hash].js',
+        assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+        manualChunks:
+          // (id) => {
+          //   if (id.includes('node_modules')) {
+          //     const modules = id.toString().split('node_modules/')
+          //     return modules[modules.length - 1].split('/')[0].toString()
+          //   }
+          // },
+          {
+            react: ['react'],
+            antd: ['antd'],
+            ahooks: ['ahooks'],
+            '@ant-design/icons': ['@ant-design/icons'],
+            '@ant-design/pro-form': ['@ant-design/pro-form'],
+            recoil: ['recoil'],
+            'ace-builds': ['ace-builds'],
+            'react-dom': ['react-dom'],
+            'react-window': ['react-window'],
+          },
+      },
+    },
   },
   server: {
     proxy: {
