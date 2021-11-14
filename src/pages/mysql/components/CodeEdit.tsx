@@ -22,7 +22,7 @@ type PropsExtra = Props
 const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   //  const [code, setCode] = useState<string>('')
   const [theme, setTheme] = useState<string>('monokai')
-  const editRef = useRef<any>()
+  const editRef = useRef<AceEditor>()
   const editInputValueRef = useRef<any>()
   const editSelectValueRef = useRef<any>()
   const editorDidMount = (editor: any, monaco: any) => {
@@ -65,8 +65,8 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   }
 
   const handleFormat = () => {
-    console.log(editInputValueRef.current)
-    console.log(format(editInputValueRef.current))
+    const sqlStr = format(editInputValueRef.current)
+    editRef.current?.editor.setValue(sqlStr)
   }
 
   return (
