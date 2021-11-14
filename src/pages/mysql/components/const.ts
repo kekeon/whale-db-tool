@@ -29,20 +29,20 @@ export const copy_json = 'copy_json'
 export const copy_inset_sql = 'copy_inset_sql'
 export const copy_update_sql = 'copy_update_sql'
 export const copyMenuList: MenuItem[] = [
-  {
-    title: '选中项[table]',
-    id: copy_excel,
-  },
+  // {
+  //   title: '选中项[table]',
+  //   idx: copy_excel,
+  // },
   {
     title: '选中项[json]',
-    id: copy_json,
+    idx: copy_json,
   },
   {
     title: '选中项[insetSQL]',
-    id: copy_inset_sql,
+    idx: copy_inset_sql,
   },
   {
     title: '选中项[updateSQL]',
-    id: copy_update_sql,
+    idx: copy_update_sql,
   },
 ]

@@ -16,7 +16,7 @@ function App(props: any) {
   const init = () => {
     const val = storage().getLocal<string>(AUTH_TOKEN, '')
     if (val) {
-      props.history?.replace('main/overview')
+      props.history?.replace('/main/overview')
     } else {
       props.history?.replace('/login')
     }

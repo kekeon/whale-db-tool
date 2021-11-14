@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VariableSizeGrid as Grid } from 'react-window'
 import ResizeObserver from 'rc-resize-observer'
 import classNames from 'classnames'
@@ -44,6 +44,8 @@ import { mySqlState } from '@/store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { mysql } from '@/types'
 import { DbRnd, DbJsonAce } from '_cp/index'
+import { unSelectMsg } from '@/utils/tips'
+import { useStateRef } from '@/hooks'
 
 interface Props {
   queryData?: (...args: any) => void
@@ -55,11 +57,12 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const [editFormType, setEditFormType] = useState<mysql.EditFormType>(mysql.EditFormType.new)
 
   // 行列相关数据，存储索引，翻页记得清空
-  const [selectkeysMap, setSelectkeysMap] = useState<any>({}) // 包含-1， 选择全部行
+  const [selectKeysMap, setSelectKeysMap] = useState<any>({}) // 包含-1， 选择全部行
   const [selectRowIndex, setSelectRowIndex] = useState<number>(-1)
   const [selectColIndex, setSelectColIndex] = useState<number>(-1)
   const gridRef = useRef<any>()
-  const propsRef = useRef<PropsExtra>(props)
+  const propsRef = useStateRef<PropsExtra>(props)
+  const selectKeysMapRef = useStateRef<any>(selectKeysMap)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [editRowData, setEditRowData] = useState<any>()
 
@@ -102,8 +105,8 @@ const TableView: React.FC<PropsExtra> = (props) => {
   }, [columns])
 
   let isSelectAll = useMemo(() => {
-    return selectkeysMap['-1']
-  }, [selectkeysMap])
+    return selectKeysMap['-1']
+  }, [selectKeysMap])
 
   const [connectObject] = useState<any>(() => {
     const obj = {}
@@ -126,10 +129,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
     menuRef.current!.style.left = '0px'
     setJsonBtnDisable(true)
   }
-
-  useEffect(() => {
-    propsRef.current = props
-  }, [props])
 
   useEffect(() => {
     window.oncontextmenu = (e) => {
@@ -183,8 +182,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
   }
 
   const handleJsonClose = () => {
-    console.log('handleJsonClose')
-
     setJsonRndVisible(false)
   }
   /*  显示 json end */
@@ -203,28 +200,28 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const handChangeCheckbox = (e: CheckboxChangeEvent, rowIndex: number) => {
     let v = e.target.checked
-    selectkeysMap[rowIndex] = v
+    selectKeysMap[rowIndex] = v
 
     // 取消全选
     if (rowIndex === -1 && !v) {
-      setSelectkeysMap({})
+      setSelectKeysMap({})
       return
     }
 
     // 全选中，取消其中一个
-    if (selectkeysMap[-1] && rowIndex >= 0 && !v) {
-      selectkeysMap[-1] = false
+    if (selectKeysMap[-1] && rowIndex >= 0 && !v) {
+      selectKeysMap[-1] = false
       let o: any = {}
       props.dataSource?.forEach((row, index) => {
         o[index] = true
       })
 
       o[rowIndex] = false
-      setSelectkeysMap(o)
+      setSelectKeysMap(o)
       return
     }
 
-    setSelectkeysMap({ ...selectkeysMap })
+    setSelectKeysMap({ ...selectKeysMap })
   }
 
   const handleRowCell = (e: React.MouseEvent, rowIndex: number, colIndex: number, rowData: any) => {
@@ -262,7 +259,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               })}
             >
               <Checkbox
-                checked={isSelectAll || selectkeysMap[rowIndex]}
+                checked={isSelectAll || selectKeysMap[rowIndex]}
                 onChange={(e) => {
                   handChangeCheckbox(e, rowIndex)
                 }}
@@ -317,24 +314,24 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const getSelectData = () => {
     let data: any = []
-    if (selectkeysMap['-1']) {
-      data = props.dataSource
+    const selectKeysMapData = selectKeysMapRef.current
+    if (selectKeysMapData['-1']) {
+      data = propsRef.current.dataSource
       return data
     }
 
-    if (selectkeysMap && Object.keys(selectkeysMap).length > 0) {
-      data = props.dataSource?.filter((item, index) => selectkeysMap[index])
+    if (selectKeysMapData && Object.keys(selectKeysMapData).length > 0) {
+      data = propsRef.current.dataSource?.filter((item, index) => selectKeysMapData[index])
     }
-
     return data
   }
 
   const handleExport = (data: MenuItem) => {
     let list = getSelectData()
     if (!list?.length) {
-      return message.warning('请先选中数据哦...')
+      return unSelectMsg()
     }
-    switch (data.idx) {
+    switch (data.id) {
       case select_excel:
         exportExcel(props.columns as any, list)
         break
@@ -360,9 +357,11 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const handleCopy = (item: MenuItem) => {
     let list = getSelectData()
+
     if (!list?.length) {
       return false
     }
+
     switch (item.idx) {
       case copy_excel:
         return copy_excel
@@ -415,7 +414,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       cancelText: '取消',
       onOk: async () => {
         await mysqlTableDeleteItem({ dbName: dbName!, tableName: tableName!, uuid: uuid }, props.columns as any, list)
-        setSelectkeysMap({})
+        setSelectKeysMap({})
         queryData?.()
         setSelectRowIndex(-1)
         message.success('删除成功')

@@ -12,8 +12,6 @@ const Content = Layout.Content
 type MainProps = RouteConfig
 
 const Main: React.FC<MainProps> = (props) => {
-  console.log('props', props)
-
   return (
     <Layout className={styles['main-page']}>
       <NavHeader />

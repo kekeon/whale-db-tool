@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import ClipboardJS from 'clipboard'
 import { message } from 'antd'
+import { unSelectMsg } from '@/utils/tips'
 
 type value = string
 interface Props {
@@ -20,8 +21,10 @@ const DbClipboard: React.FC<PropsExtra> = ({ children, value, textFun }) => {
     const clipboard = new ClipboardJS(ref.current as HTMLElement, {
       text: (el: Element) => {
         if (textFun) {
+          console.log('textFun(el)', textFun(el))
+
           if (!textFun(el)) {
-            message.warning('请先选中数据哦...')
+            unSelectMsg()
             return ''
           }
           success()

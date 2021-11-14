@@ -76,7 +76,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   return (
     <div className="MySqlAddModal">
       <Modal
-        title="MySql"
+        title="MySQL"
         visible={props.visible}
         okText="确认"
         cancelText="取消"

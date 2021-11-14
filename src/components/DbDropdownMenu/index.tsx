@@ -18,7 +18,7 @@ const DbDropdownMenu: React.FC<PropsExtra> = (props) => {
         <Menu.Item
           key={index}
           onClick={() => {
-            props.onClick && props.onClick(item)
+            props.onClick?.(item)
           }}
         >
           {item.title}

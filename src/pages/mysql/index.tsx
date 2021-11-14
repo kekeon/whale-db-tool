@@ -44,14 +44,13 @@ const Mysql: React.FC<any> = () => {
 
   const handleChangeConnect = async (uuid: common.uuid) => {
     let d: any = await mysqlDbQuery(uuid)
-    console.log('initData', d)
     setUuid(uuid)
     setDbList(d)
   }
 
   const handleListConnect = async () => {
-    let r = await mysqlList()
-    setConnectList(r.data.list)
+    let dbList = await mysqlList()
+    setConnectList(dbList)
   }
 
   const handleTreeSelect = async (keys: unknown[], optopn: any) => {
