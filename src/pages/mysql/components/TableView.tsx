@@ -52,7 +52,7 @@ interface Props {
 }
 type PropsExtra = Props & Parameters<typeof Table>[0]
 const TableView: React.FC<PropsExtra> = (props) => {
-  const { scroll, queryData } = props
+  const { scroll, queryData, dataSource = [] } = props
   const [tableWidth, setTableWidth] = useState(0)
   const [editFormType, setEditFormType] = useState<mysql.EditFormType>(mysql.EditFormType.new)
 
@@ -441,6 +441,33 @@ const TableView: React.FC<PropsExtra> = (props) => {
     }))
   }
 
+  const pageIndex = useMemo(() => {
+    if (offset === 0 || limit === 0) {
+      return 1
+    }
+
+    return Math.floor(offset! / limit!) + 1
+  }, [limit, offset])
+
+  const handleTurnPageUp = useCallback(() => {
+    const offsetNum = offset! - limit!
+    if (offsetNum < 0) {
+      return
+    }
+    setMySqlDbStates((s) => ({
+      ...s,
+      offset: offsetNum,
+    }))
+  }, [[limit, offset]])
+
+  const handleTurnPageDown = useCallback(() => {
+    const offsetNum = offset! + limit!
+    setMySqlDbStates((s) => ({
+      ...s,
+      offset: offsetNum,
+    }))
+  }, [[limit, offset]])
+
   return (
     <div className={style['table-view']}>
       <Row className="table-toolbar" justify="space-between" align="middle">
@@ -453,17 +480,28 @@ const TableView: React.FC<PropsExtra> = (props) => {
           </DbDropdownMenu>
           <Button title="插入" type="text" className="ml5" onClick={handleAddRow} icon={<AppstoreAddOutlined />} />
           <Button title="删除" type="text" className="ml5" onClick={handleDeleteItems} icon={<DeleteOutlined />} />
-          <Button title="表格查看" type="text" className="ml5" icon={<TableOutlined />} />
-          <Button title="表单查看" type="text" className="ml5" icon={<ProfileOutlined />} />
+          {/* <Button title="表格查看" type="text" className="ml5" icon={<TableOutlined />} />
+          <Button title="表单查看" type="text" className="ml5" icon={<ProfileOutlined />} /> */}
         </Col>
         <Col span={12} className="left">
           <Row justify="end" align="middle">
-            <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
+            {/*             <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
+             */}{' '}
             <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
             <DbLabelText text="页码">
-              <Button type="text" icon={<CaretLeftOutlined title="上一页" />} />
-              <InputNumber size="small" min={0} value={(offset || 0) / (limit || 0) + 1 || 0} />
-              <Button type="text" icon={<CaretRightOutlined title="下一页" />} />
+              <Button
+                type="text"
+                onClick={handleTurnPageUp}
+                disabled={pageIndex === 1}
+                icon={<CaretLeftOutlined title="上一页" />}
+              />
+              <InputNumber size="small" min={0} value={pageIndex} />
+              <Button
+                type="text"
+                onClick={handleTurnPageDown}
+                disabled={dataSource?.length < limit! ? true : false}
+                icon={<CaretRightOutlined title="下一页" />}
+              />
             </DbLabelText>
             <DbLabelText text="行数">
               <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
