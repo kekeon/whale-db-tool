@@ -125,48 +125,56 @@ const TableView: React.FC<PropsExtra> = (props) => {
   /* 右键菜单 start */
 
   const rightMenuHide = () => {
-    menuRef.current!.style.top = -1000 + 'px'
-    menuRef.current!.style.left = '0px'
+    if (menuRef.current && menuRef.current!.style) {
+      menuRef.current!.style.top = -1000 + 'px'
+      menuRef.current!.style.left = '0px'
+    }
     setJsonBtnDisable(true)
   }
 
   useEffect(() => {
-    window.oncontextmenu = (e) => {
-      e.preventDefault()
+    if (gridRef.current?._outerRef) {
+      gridRef.current._outerRef.oncontextmenu = (e: {
+        preventDefault: () => void
+        target: HTMLElement
+        clientY: number
+        clientX: number
+      }) => {
+        const target = e.target as HTMLElement
+        const rowIndex = target?.dataset?.rowIndex
+        const colIndex = target?.dataset?.colIndex
+        const dataSource: any = propsRef.current?.dataSource
+        if (rowIndex) {
+          // 获取触发单元格的数据
+          const rowIndexNumber = Number(rowIndex)
+          const colIndexNumber = Number(colIndex) - 1
+          setSelectRowIndex(rowIndexNumber)
+          setSelectColIndex(colIndexNumber)
+          const column: any = propsRef.current?.columns?.[colIndexNumber]
+          const cellData = dataSource[rowIndexNumber]?.[column?.dataIndex]
+          const cellJson = isJsonStr(cellData)
 
-      const target = e.target as HTMLElement
-      const rowIndex = target?.dataset?.rowIndex
-      const colIndex = target?.dataset?.colIndex
-      const dataSource: any = propsRef.current?.dataSource
-      if (rowIndex) {
-        // 获取触发单元格的数据
-        const rowIndexNumber = Number(rowIndex)
-        const colIndexNumber = Number(colIndex) - 1
-        setSelectRowIndex(rowIndexNumber)
-        setSelectColIndex(colIndexNumber)
-        const column: any = propsRef.current?.columns?.[colIndexNumber]
-        const cellData = dataSource[rowIndexNumber]?.[column?.dataIndex]
-        const cellJson = isJsonStr(cellData)
-
-        if (cellJson) {
-          setCellJsonData(JSONFormat(cellData))
-          setJsonBtnDisable(false)
-        } else {
-          setJsonBtnDisable(true)
+          if (cellJson) {
+            setCellJsonData(JSONFormat(cellData))
+            setJsonBtnDisable(false)
+          } else {
+            setJsonBtnDisable(true)
+          }
+          menuRef.current!.style.top = e.clientY + 5 + 'px'
+          menuRef.current!.style.left = e.clientX + 5 + 'px'
+          e.preventDefault()
+          return
         }
-        menuRef.current!.style.top = e.clientY + 5 + 'px'
-        menuRef.current!.style.left = e.clientX + 5 + 'px'
-        return
-      }
 
-      rightMenuHide()
+        rightMenuHide()
+      }
     }
 
     const rightClick = () => {
       rightMenuHide()
     }
-    document.body.addEventListener('click', rightClick)
 
+    document.body.addEventListener('click', rightClick)
     return () => {
       window.oncontextmenu = null
       document.body.removeEventListener('click', rightClick)

@@ -21,8 +21,6 @@ const DbClipboard: React.FC<PropsExtra> = ({ children, value, textFun }) => {
     const clipboard = new ClipboardJS(ref.current as HTMLElement, {
       text: (el: Element) => {
         if (textFun) {
-          console.log('textFun(el)', textFun(el))
-
           if (!textFun(el)) {
             unSelectMsg()
             return ''

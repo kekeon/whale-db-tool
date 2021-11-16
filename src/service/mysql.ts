@@ -30,7 +30,13 @@ export async function mysqlDelete(props: common.connectUuid, option?: PostOpt) {
 
 // ping 检测
 export async function mysqlPing(props: mysql.dbBase, option?: PostOpt) {
-  return request.post(MYSQL_PING, props, option)
+  try {
+    const res = await request.post(MYSQL_PING, props, option)
+    return res.data
+  } catch (error) {
+    console.warn(error)
+    return false
+  }
 }
 
 // list
@@ -40,7 +46,7 @@ export async function mysqlList(option?: GetOpt) {
 
     return res.data?.list
   } catch (error) {
-    console.log(error)
+    console.warn(error)
     return []
   }
 }

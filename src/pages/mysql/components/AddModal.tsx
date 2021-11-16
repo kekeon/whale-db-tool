@@ -1,8 +1,7 @@
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
-import { addConnect, updateConnect } from '@/service/dbInstance'
 import { mysqlAdd, mysqlPing, mysqlUpdate } from '@/service/mysql'
 import { common, mysql } from '@/types'
-import { Modal, Form, Input, InputNumber, Button } from 'antd'
+import { Modal, Form, Input, InputNumber, Button, message } from 'antd'
 import React, { useState } from 'react'
 interface Props {
   visible: boolean
@@ -21,7 +20,6 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   const handleOk = () => {
     form.validateFields().then(
       (value) => {
-        console.log(value)
         setLoading(true)
         if (props.initInfo?.uuid) {
           mysqlUpdate({
@@ -59,7 +57,11 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
           port: value.port,
         }
         const res = await mysqlPing(data)
-        console.log('res', res)
+        if (res) {
+          message.success('连接成功')
+        } else {
+          message.warn('连接失败')
+        }
       },
       (error) => {
         console.log('error', error)
@@ -169,7 +171,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             <InputNumber style={{ width: '100%' }} placeholder={inputPlaceholder} />
           </Item>
 
-          <Item name="" label="">
+          <Item name="" label="" wrapperCol={{ offset: 4 }}>
             <Button onClick={handlePing}>检测</Button>
           </Item>
         </Form>
