@@ -91,11 +91,11 @@ export function exportExcel(headers: ExcelHeader[], data: unknown[], fileName = 
 }
 
 // 下载文本
-export function downloadJson(content: string, suffix = 'text', fileName = 'data') {
-  let filename = `${fileName}_${dayjs().format('YYYYMMDDhhmmss')}`
+export function downloadText(content: string, suffix = '.txt', fileName = 'data') {
+  let filename = `${fileName}-${dayjs().format('YYYYMMDDhhmmss')}`
   let a = document.createElement('a')
   let blob: any = new Blob([content])
-  a.download = filename + '.json'
+  a.download = filename + suffix
   a.href = URL.createObjectURL(blob)
   a.click()
   URL.revokeObjectURL(blob)

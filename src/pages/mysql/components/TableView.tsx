@@ -34,7 +34,7 @@ import {
 } from './const'
 
 import { tableRenderData } from '../const'
-import { downloadJson, exportExcel } from '@/utils/xlsx'
+import { downloadText, exportExcel } from '@/utils/xlsx'
 import { formatInsert, formatUpdate, isJsonStr, JSONFormat } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
@@ -339,25 +339,27 @@ const TableView: React.FC<PropsExtra> = (props) => {
     if (!list?.length) {
       return unSelectMsg()
     }
-    switch (data.id) {
+    const fileName = `${dbName}-${tableName}`
+    switch (data.idx) {
       case select_excel:
         exportExcel(props.columns as any, list)
         break
       case select_json:
-        downloadJson(JSON.stringify(list), 'json')
+        downloadText(JSON.stringify(list), '.json', fileName)
         break
       case select_inset_sql:
-        downloadJson(formatInsert(dbName!, tableName!, columns, list), 'json')
+        downloadText(formatInsert(dbName!, tableName!, columns, list), '.txt', fileName)
         break
       case select_update_sql:
-        downloadJson(
+        downloadText(
           formatUpdate(
             dbName!,
             tableName!,
             (props as any).columns.map((d: any) => d.dataIndex),
             list,
           ),
-          'json',
+          '.txt',
+          fileName,
         )
         break
     }
