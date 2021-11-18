@@ -35,6 +35,7 @@ export default defineConfig({
     ],
   },
   build: {
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         chunkFileNames: 'static/js/[name]-[hash].js',

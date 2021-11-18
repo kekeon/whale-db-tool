@@ -6,7 +6,7 @@ import { Button, Checkbox, Form, Input } from 'antd'
 import React from 'react'
 import { useHistory } from 'react-router'
 import styles from './styles/index.module.less'
-
+import LoginImg from '@/assets/img/img-01.webp'
 interface LoginForm extends system.Login {
   remember: boolean
 }
@@ -29,7 +29,7 @@ const Login: React.FC<any> = () => {
     <div className={styles['login']}>
       <div className="login-wrap-card">
         <div className="sys-logo">
-          <img src="/src/assets/img/img-01.webp" alt="" />
+          <img src={LoginImg} alt="" />
         </div>
         <div className="sys-form">
           <div className="sys-form-title">User Login</div>
@@ -44,11 +44,7 @@ const Login: React.FC<any> = () => {
               <Input placeholder="Enter your username" prefix={<UserOutlined className="site-form-item-icon" />} />
             </Form.Item>
 
-            <Form.Item
-              label="密码"
-              name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
-            >
+            <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
               <Input.Password
                 placeholder="Enter your password"
                 prefix={<LockOutlined className="site-form-item-icon" />}

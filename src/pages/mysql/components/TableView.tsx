@@ -43,7 +43,7 @@ import { mysqlTableDeleteItem } from '@/service/mysql'
 import { mySqlState } from '@/store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { mysql } from '@/types'
-import { DbRnd, DbJsonAce } from '_cp/index'
+import { DbRnd, DbJsonView } from '_cp/index'
 import { unSelectMsg } from '@/utils/tips'
 import { useStateRef } from '@/hooks'
 
@@ -155,7 +155,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
           const cellJson = isJsonStr(cellData)
 
           if (cellJson) {
-            setCellJsonData(JSONFormat(cellData))
+            setCellJsonData(cellData)
             setJsonBtnDisable(false)
           } else {
             setJsonBtnDisable(true)
@@ -546,7 +546,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       )}
       {jsonRndVisible && (
         <DbRnd onClose={handleJsonClose}>
-          <DbJsonAce readonly={true} data={cellJsonData} />
+          <DbJsonView readonly={true} data={cellJsonData} />
         </DbRnd>
       )}
       <div className="menu-wrap" ref={menuRef}>
