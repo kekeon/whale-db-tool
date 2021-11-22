@@ -48,8 +48,6 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   const handlePing = () => {
     form.validateFields().then(
       async (value) => {
-        console.log(value)
-
         const data: mysql.dbBase = {
           password: value.password,
           user: value.user,

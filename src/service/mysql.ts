@@ -168,8 +168,6 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
     list: [],
   }
   if (Array.isArray(res.data) && res.data[1] && Array.isArray(res.data[1]['data'])) {
-    let keys = Object.keys(res.data[1]['data'][0])
-
     data.columns = res.data[1]['columns'].map((col: any) => ({
       dataIndex: col.Field,
       title: col.Field,
@@ -177,8 +175,6 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
     }))
     data.list = res.data[1]['data']
   }
-  console.log('data', data)
-
   return data
 }
 

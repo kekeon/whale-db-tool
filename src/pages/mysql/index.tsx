@@ -53,7 +53,6 @@ const Mysql: React.FC<any> = () => {
   }
 
   const handleTreeSelect = async (keys: unknown[], optopn: any) => {
-    console.log(keys, optopn)
     if (isEmptyArray(keys)) return
     setTreeSelectedKeys(keys as string[])
     let key = (keys[0] as string).split('.')
@@ -74,14 +73,12 @@ const Mysql: React.FC<any> = () => {
       let tableList = dbList![index]['list']
       let table = tableList[Number(key[1])]['name']
       let db = dbList![index]['name']
-      console.log('mySqlDbStatesRef', mySqlDbStatesRef)
 
       let data = await mysqlTableDataQuery(uuid, db, table, {
         limit: mySqlDbStates.limit,
         offset: mySqlDbStates.offset,
       })
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
-      console.log('data', data)
       setColumns(data.columns)
       setTableData(data.list)
     }
