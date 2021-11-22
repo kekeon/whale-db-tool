@@ -4,7 +4,6 @@ import {
   mysqlDbQuery,
   mysqlDelete,
   mysqlList,
-  mysqlTableColumnsShowFull,
   mysqlTableDataQuery,
   mysqlTableExecQuery,
   mysqlTableQuery,

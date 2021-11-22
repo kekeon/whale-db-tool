@@ -103,7 +103,7 @@ export async function mysqlTableDataQuery(
 ) {
   let p: mysql.queryProps = {
     uuid: uuid,
-    sql_list: [SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset), DESC_TABLE_FUN(db, table)],
+    sql_list: [SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset) /* DESC_TABLE_FUN(db, table) */],
   }
   const res = await mysqlQuery(p, option)
   let data: any = {
@@ -111,7 +111,7 @@ export async function mysqlTableDataQuery(
     list: [],
   }
   if (Array.isArray(res.data) && res.data[0] && Array.isArray(res.data[0]['data'])) {
-    data.columns = res.data[1]['data'].map((item: any) => {
+    data.columns = res.data[0]['columns'].map((item: any) => {
       let o = {
         dataIndex: item['Field'],
         title: item['Field'],
@@ -135,10 +135,6 @@ export async function mysqlTableDescQuery(uuid: string, db: string, table: strin
   }
   const res = await mysqlQuery(p, option)
   if (Array.isArray(res.data) && res.data[0] && Array.isArray(res.data[0]['data'])) {
-    /* let d: any = res.data[1]["data"].map((item: any) => ({
-          name: item[`Tables_in_${db}`],
-        }));
-        return d; */
     return res.data[0]['data']
   }
 
@@ -154,10 +150,6 @@ export async function mysqlTableColumnsShowFull(uuid: string, db: string, table:
   }
   const res = await mysqlQuery(p, option)
   if (Array.isArray(res.data) && res.data[0] && Array.isArray(res.data[0]['data'])) {
-    /* let d: any = res.data[1]["data"].map((item: any) => ({
-              name: item[`Tables_in_${db}`],
-            }));
-            return d; */
     return res.data[0]['data']
   }
 
@@ -178,12 +170,14 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
   if (Array.isArray(res.data) && res.data[1] && Array.isArray(res.data[1]['data'])) {
     let keys = Object.keys(res.data[1]['data'][0])
 
-    data.columns = keys.map((k: any) => ({
-      dataIndex: k,
-      title: k,
+    data.columns = res.data[1]['columns'].map((col: any) => ({
+      dataIndex: col.Field,
+      title: col.Field,
+      Type: col.Type,
     }))
     data.list = res.data[1]['data']
   }
+  console.log('data', data)
 
   return data
 }

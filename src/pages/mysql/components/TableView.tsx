@@ -35,7 +35,7 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadText, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatUpdate, isJsonStr, JSONFormat } from '@/utils/utils'
+import { formatInsert, formatUpdate, isJsonStr } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
 import { useBoolean } from 'ahooks'
@@ -96,6 +96,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         width: w < 150 ? 150 : w,
       }
     })
+
     columnList.unshift({
       width: 30,
       dataIndex: '__checkbox__',
