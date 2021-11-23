@@ -498,7 +498,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
           <Row justify="end" align="middle">
             {/*             <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
              */}{' '}
-            <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
             <DbLabelText text="页码">
               <Button
                 type="text"
@@ -517,6 +516,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
             <DbLabelText text="行数">
               <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
             </DbLabelText>
+            <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
           </Row>
         </Col>
       </Row>

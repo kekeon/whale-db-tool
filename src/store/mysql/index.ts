@@ -1,4 +1,4 @@
-import { MySqlDbStateType } from '@/store/mysqlState/types'
+import { MySqlDbStateType } from '@/store/mysql/types'
 import { mysql } from '@/types'
 import { ColumnProps } from 'antd/lib/table'
 import { atom } from 'recoil'

@@ -4,7 +4,7 @@ import { renderRoutes, RouteConfig } from 'react-router-config'
 
 export type BasicLayoutComponent<P> = React.FC<P>
 
-export interface BasicLayoutProps extends React.Props<HTMLElement> {}
+export type BasicLayoutProps = React.HTMLProps<HTMLElement>
 
 const BasicLayout: BasicLayoutComponent<BasicLayoutProps & RouteConfig> = (props) => {
   return <div className={styles.normal}>{renderRoutes(props.route.routes)}</div>

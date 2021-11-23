@@ -1,35 +1,30 @@
-import React from 'react'
+import { lazy } from 'react'
 import { RouteConfig } from 'react-router-config'
-
-import App from '../App'
-import Index from '@/pages/index'
-import Layouts from '@/layouts/BasicLayout'
-import Overview from '@/pages/overview/index'
-import Mysql from '@/pages/mysql/index'
 
 export const routes: RouteConfig[] = [
   {
-    component: App,
+    component: lazy(() => import('@/App')),
     routes: [
       {
         path: '/login',
         exact: true,
-        component: Index,
+        component: lazy(() => import('@/pages/index')),
       },
       {
         path: '/main',
         // exact: true,
-        component: Layouts,
+        component: lazy(() => import('@/layouts/BasicLayout')),
         routes: [
           {
             path: '/main/overview',
             exact: true,
-            component: Overview,
+            component: lazy(() => import('@/pages/overview/index')),
           },
           {
             path: '/main/mysql',
             exact: true,
-            component: Mysql,
+            // component: Mysql,
+            component: lazy(() => import('@/pages/mysql/index')),
           },
         ],
       },

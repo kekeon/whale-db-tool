@@ -19,7 +19,7 @@ import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
 import { common, mysql } from '@/types'
-import { useStateRef } from '@/hooks'
+import { useStateRef, useAsyncLoading } from '@/hooks'
 
 const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()
@@ -41,18 +41,18 @@ const Mysql: React.FC<any> = () => {
     handleListConnect()
   }
 
-  const handleChangeConnect = async (uuid: common.uuid) => {
+  const handleChangeConnect = useAsyncLoading(async (uuid: common.uuid) => {
     let d: any = await mysqlDbQuery(uuid)
     setUuid(uuid)
     setDbList(d)
-  }
+  })
 
   const handleListConnect = async () => {
     let dbList = await mysqlList()
     setConnectList(dbList)
   }
 
-  const handleTreeSelect = async (keys: unknown[], optopn: any) => {
+  const handleTreeSelect = useAsyncLoading(async (keys: unknown[], optopn: any) => {
     if (isEmptyArray(keys)) return
     setTreeSelectedKeys(keys as string[])
     let key = (keys[0] as string).split('.')
@@ -82,22 +82,22 @@ const Mysql: React.FC<any> = () => {
       setColumns(data.columns)
       setTableData(data.list)
     }
-  }
+  })
 
   // refresh table data
-  const handleRefreshTable = async () => {
+  const handleRefreshTable = useAsyncLoading(async () => {
     let data = await mysqlTableDataQuery(uuid, mySqlDbStatesRef.current.dbName!, mySqlDbStatesRef.current.tableName!, {
       limit: mySqlDbStatesRef.current.limit,
       offset: mySqlDbStatesRef.current.offset,
     })
     setTableData(data.list)
-  }
+  })
 
-  const handleRunSql = async (sqlList: mysql.queryItem[]) => {
+  const handleRunSql = useAsyncLoading(async (sqlList: mysql.queryItem[]) => {
     let data: any = await mysqlTableExecQuery(uuid, sqlList)
     setColumns(data.columns)
     setTableData(data.list)
-  }
+  })
 
   /*  connect start */
   const MySqlConnectDelete = (uuid: common.uuid) => {
