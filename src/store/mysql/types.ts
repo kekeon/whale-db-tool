@@ -4,3 +4,8 @@ export interface MySqlDbStateType {
   offset: number
   limit: number
 }
+
+export enum mySqlQueryType {
+  SYSTEM,
+  SELF,
+}

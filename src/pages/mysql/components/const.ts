@@ -20,7 +20,7 @@ export const exportMenuList: MenuItem[] = [
   },
   {
     title: '选中项[UpdateSQL]',
-    idx: 'select_update_sql',
+    idx: select_update_sql,
   },
 ]
 

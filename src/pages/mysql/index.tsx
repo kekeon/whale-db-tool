@@ -13,13 +13,14 @@ import { isEmptyArray } from '@/utils/utils'
 import DbConnectList from '_cp/DbConnectList'
 import { useBoolean } from 'ahooks'
 import React, { useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import MySqlAddModal from './components/AddModal'
 import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
 import { common, mysql } from '@/types'
 import { useStateRef, useAsyncLoading } from '@/hooks'
+import { mySqlQueryType } from '@/store/mysql/types'
 
 const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()
@@ -29,6 +30,7 @@ const Mysql: React.FC<any> = () => {
   const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
   const [treeSelectedKeys, setTreeSelectedKeys] = useState<string[]>()
 
+  const setMySqlQueryTypeState = useSetRecoilState(mySqlState.mySqlQueryTypeState)
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumnsState)
   const [uuid, setUuid] = useRecoilState(mySqlState.mySqlDbUUid)
@@ -81,6 +83,7 @@ const Mysql: React.FC<any> = () => {
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       setColumns(data.columns)
       setTableData(data.list)
+      setMySqlQueryTypeState(mySqlQueryType.SYSTEM)
     }
   })
 
@@ -125,6 +128,8 @@ const Mysql: React.FC<any> = () => {
     addDbToggle(false)
   }
   /*  add end */
+
+  /* 切换表、运行SQL 重置翻页等数据 */
 
   return (
     <section className={style.mysql}>

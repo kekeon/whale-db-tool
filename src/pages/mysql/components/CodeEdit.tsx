@@ -13,6 +13,9 @@ import style from './styles/CodeMonaco.module.less'
 import { CaretRightOutlined, StepForwardOutlined, FormatPainterOutlined } from '@ant-design/icons'
 import { mysql } from '@/types'
 import { isEmpty } from '@/utils/utils'
+import { useSetRecoilState } from 'recoil'
+import { mySqlQueryTypeState } from '@/store/mysql'
+import { mySqlQueryType } from '@/store/mysql/types'
 interface Props {
   onRun: (sqlList: mysql.queryItem[]) => void
   db: string
@@ -21,6 +24,8 @@ type PropsExtra = Props
 
 const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   //  const [code, setCode] = useState<string>('')
+  const setMySqlQueryTypeState = useSetRecoilState(mySqlQueryTypeState)
+
   const [theme, setTheme] = useState<string>('monokai')
   const editRef = useRef<AceEditor>(null)
   const editInputValueRef = useRef<any>()
@@ -33,7 +38,6 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
 
   const handleRun = () => {
     if (isEmpty(editInputValueRef.current)) return
-    // setCode(val)
     let sqlList: mysql.queryItem[] = [
       USE_DATABASES_FUN(db || ''),
       {
@@ -41,6 +45,7 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
         sql: editInputValueRef.current,
       },
     ]
+    setMySqlQueryTypeState(mySqlQueryType.SELF)
     onRun(sqlList)
   }
 

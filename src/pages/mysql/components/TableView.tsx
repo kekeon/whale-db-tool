@@ -46,6 +46,7 @@ import { mysql } from '@/types'
 import { DbRnd, DbJsonView } from '_cp/index'
 import { unSelectMsg } from '@/utils/tips'
 import { useStateRef } from '@/hooks'
+import { mySqlQueryType } from '@/store/mysql/types'
 
 interface Props {
   queryData?: (...args: any) => void
@@ -66,6 +67,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [editRowData, setEditRowData] = useState<any>()
 
+  const mySqlQueryTypeState = useRecoilValue(mySqlState.mySqlQueryTypeState)
   const [{ dbName, tableName, offset, limit }, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
@@ -233,6 +235,11 @@ const TableView: React.FC<PropsExtra> = (props) => {
     setSelectKeysMap({ ...selectKeysMap })
   }
 
+  // 切换表、翻页、行数、删除数据清空选中
+  useEffect(() => {
+    setSelectKeysMap({})
+  }, [tableName, limit, offset])
+
   const handleRowCell = (e: React.MouseEvent, rowIndex: number, colIndex: number, rowData: any) => {
     e.preventDefault()
     setSelectRowIndex(rowIndex)
@@ -399,21 +406,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
     editRowToggle(true)
   }
 
-  const copyMenuListMemo = useMemo(() => {
-    return copyMenuList.map((item) => {
-      item.title = (
-        <DbClipboard
-          textFun={() => {
-            return handleCopy(item) as string
-          }}
-        >
-          {item.title}
-        </DbClipboard>
-      )
-      return item
-    })
-  }, [copyMenuList])
-
   /* 删除 start */
   const deleteTableData = (list: any[]) => {
     const len = list?.length
@@ -479,18 +471,57 @@ const TableView: React.FC<PropsExtra> = (props) => {
     }))
   }, [[limit, offset]])
 
+  const exportMenuListLimit = useMemo(() => {
+    if (mySqlQueryTypeState === mySqlQueryType.SYSTEM) return exportMenuList
+    return exportMenuList.filter((item) => [select_excel, select_json].includes(item.idx as string))
+  }, [mySqlQueryTypeState])
+
+  const copyMenuListMemoLimit = useMemo(() => {
+    if (mySqlQueryTypeState === mySqlQueryType.SYSTEM) return copyMenuList
+    return copyMenuList.filter((item) => [copy_json].includes(item.idx as string))
+  }, [mySqlQueryTypeState])
+
+  const copyMenuListMemo = useMemo(() => {
+    return copyMenuListMemoLimit.map((item) => {
+      item.title = (
+        <DbClipboard
+          textFun={() => {
+            return handleCopy(item) as string
+          }}
+        >
+          {item.title}
+        </DbClipboard>
+      )
+      return item
+    })
+  }, [copyMenuListMemoLimit])
+
   return (
     <div className={style['table-view']}>
       <Row className="table-toolbar" justify="space-between" align="middle">
         <Col span={12}>
-          <DbDropdownMenu list={exportMenuList} onClick={handleExport}>
+          <DbDropdownMenu list={exportMenuListLimit} onClick={handleExport}>
             <Button title="导出" type="text" className="ml5" icon={<ExportOutlined />} />
           </DbDropdownMenu>
           <DbDropdownMenu list={copyMenuListMemo}>
             <Button title="复制" type="text" className="ml5" icon={<CopyOutlined />} />
           </DbDropdownMenu>
-          <Button title="插入" type="text" className="ml5" onClick={handleAddRow} icon={<AppstoreAddOutlined />} />
-          <Button title="删除" type="text" className="ml5" onClick={handleDeleteItems} icon={<DeleteOutlined />} />
+          <Button
+            title="插入"
+            disabled={mySqlQueryTypeState === mySqlQueryType.SELF}
+            type="text"
+            className="ml5"
+            onClick={handleAddRow}
+            icon={<AppstoreAddOutlined />}
+          />
+          <Button
+            title="删除"
+            disabled={mySqlQueryTypeState === mySqlQueryType.SELF}
+            type="text"
+            className="ml5"
+            onClick={handleDeleteItems}
+            icon={<DeleteOutlined />}
+          />
           {/* <Button title="表格查看" type="text" className="ml5" icon={<TableOutlined />} />
           <Button title="表单查看" type="text" className="ml5" icon={<ProfileOutlined />} /> */}
         </Col>
@@ -553,13 +584,17 @@ const TableView: React.FC<PropsExtra> = (props) => {
         </DbRnd>
       )}
       <div className="menu-wrap" ref={menuRef}>
-        <div className="menu-btn" onClick={handleEditRowForm}>
-          编辑
-        </div>
-        <div className="menu-btn" onClick={handleDeleteItem}>
-          删除
-        </div>
-        <Divider className="btn-divider" />
+        {mySqlQueryTypeState === mySqlQueryType.SYSTEM && (
+          <>
+            <div className="menu-btn" onClick={handleEditRowForm}>
+              编辑
+            </div>
+            <div className="menu-btn" onClick={handleDeleteItem}>
+              删除
+            </div>
+            <Divider className="btn-divider" />
+          </>
+        )}
         <div
           className={classNames('menu-btn', {
             'db-btn-disable': jsonBtnDisable,
