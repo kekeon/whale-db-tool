@@ -103,3 +103,8 @@ export interface dbList {
 export interface dbObjList {
   list: dbList[]
 }
+
+export interface runSqlError {
+  Number: number
+  Message: string
+}

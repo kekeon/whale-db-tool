@@ -168,12 +168,13 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
     list: [],
   }
   if (Array.isArray(res.data) && res.data[1] && Array.isArray(res.data[1]['data'])) {
-    data.columns = res.data[1]['columns'].map((col: any) => ({
+    data.columns = res.data[1]?.['columns'].map((col: any) => ({
       dataIndex: col.Field,
       title: col.Field,
       Type: col.Type,
     }))
-    data.list = res.data[1]['data']
+    data.list = res?.data[1]?.['data']
+    data.errMsg = res?.data[1]?.['err_msg']
   }
   return data
 }

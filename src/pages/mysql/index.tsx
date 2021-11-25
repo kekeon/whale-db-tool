@@ -21,11 +21,16 @@ import style from './index.module.less'
 import { common, mysql } from '@/types'
 import { useStateRef, useAsyncLoading } from '@/hooks'
 import { mySqlQueryType } from '@/store/mysql/types'
+import { Alert, Button } from 'antd'
+import classNames from 'classnames'
+import { CloseOutlined } from '@ant-design/icons'
 
 const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()
   const [dbList, setDbList] = useState<any[]>()
   const [tableData, setTableData] = useState<any[]>([])
+  const [tableDataError, setTableDataError] = useState<mysql.runSqlError | null>()
+
   const [addVisible, { toggle: addDbToggle }] = useBoolean(false)
   const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
   const [treeSelectedKeys, setTreeSelectedKeys] = useState<string[]>()
@@ -100,6 +105,7 @@ const Mysql: React.FC<any> = () => {
     let data: any = await mysqlTableExecQuery(uuid, sqlList)
     setColumns(data.columns)
     setTableData(data.list)
+    setTableDataError(data?.errMsg)
   })
 
   /*  connect start */
@@ -169,7 +175,37 @@ const Mysql: React.FC<any> = () => {
               dataSource={tableData}
               scroll={{ y: 300, x: '100vw' }}
               queryData={handleRefreshTable}
+              className={classNames({
+                'wrap-hide': tableDataError,
+              })}
             />
+
+            <div
+              className={classNames('db-transaction-run-sql-info', {
+                'wrap-hide': !tableDataError,
+              })}
+            >
+              <Alert
+                message="SQL 错误"
+                description={
+                  <>
+                    <p>错误码：{tableDataError?.Number}</p>
+                    <p>错误信息：{tableDataError?.Message}</p>
+                  </>
+                }
+                type="error"
+                showIcon
+                action={
+                  <Button
+                    onClick={() => {
+                      setTableDataError(null)
+                    }}
+                    type="text"
+                    icon={<CloseOutlined />}
+                  />
+                }
+              />
+            </div>
           </div>
         </div>
       </div>

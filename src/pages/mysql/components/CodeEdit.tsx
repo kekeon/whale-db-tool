@@ -70,7 +70,12 @@ const CodeEdit: React.FC<PropsExtra> = ({ onRun, db }) => {
   }
 
   const handleFormat = () => {
-    const sqlStr = format(editInputValueRef.current)
+    const sqlStr = format(editInputValueRef.current, {
+      language: 'mysql',
+      indent: '  ',
+      uppercase: true,
+      linesBetweenQueries: 1, // Defaults to 1
+    })
     editRef.current?.editor.setValue(sqlStr)
   }
 

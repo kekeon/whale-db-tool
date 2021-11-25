@@ -28,4 +28,3 @@
 
 - [ ] 表数据自定义筛选
 - [ ] Redis、MongoDB、ElasticSearch 的支持
-- [ ] 监控功能开发
