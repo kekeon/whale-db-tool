@@ -36,6 +36,24 @@ export interface tableColumnsInfo {
   Type: string
 }
 
+export interface IPrimaryKey {
+  Cardinality?: number
+  Collation: string
+  Column_name: string
+  Comment: string
+  Expression: string
+  Index_comment: string
+  Index_type: string
+  Key_name: string
+  Non_unique?: number
+  Null: string
+  Packed?: any
+  Seq_in_index?: number
+  Sub_part?: any
+  Table: string
+  Visible: string
+}
+
 export enum TableFieldType {
   tinyint = 'tinyint',
   smallint = 'smallint',

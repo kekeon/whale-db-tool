@@ -53,7 +53,7 @@ export function isEmptyArray(val: unknown) {
 
 export function undefinedToValue(val: unknown, fieldDesc: any) {
   if (fieldDesc.Null === 'NO' && !val) {
-    return ''
+    return `''`
   }
   return val === undefined ? 'null' : `'${val}'`
 }
@@ -144,7 +144,7 @@ export function formatUpdateValid(
   db: string,
   table: string,
   tableDesc: any[],
-  newDataList:  IKV<string>[],
+  newDataList: IKV<string>[],
   oldData?: IKV<string>,
 ) {
   let pk = queryPriOrUni(tableDesc)

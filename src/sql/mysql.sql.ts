@@ -1,5 +1,4 @@
 import { mysql } from '@/types'
-import { isEmpty } from '@/utils/utils'
 
 export const SHOW_DATABASES: mysql.queryItem = {
   type: 'query',
@@ -15,6 +14,11 @@ export const SHOW_TABLES: mysql.queryItem = {
   type: 'query',
   sql: `SHOW TABLES;`,
 }
+
+export const SHOW_KEYS_FUN = (db: string, table: string): mysql.queryItem => ({
+  type: 'query',
+  sql: `SHOW KEYS FROM ${db}.${table}`,
+})
 
 export const SHOW_TABLES_FUN = (db: string): mysql.queryItem => ({
   type: 'query',

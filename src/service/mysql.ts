@@ -3,6 +3,7 @@ import {
   DESC_TABLE_FUN,
   SELECT_FORM_ALL_FUN,
   SHOW_DATABASES,
+  SHOW_KEYS_FUN,
   SHOW_TABLES,
   SHOW_TABLES_COLUMNS_FUN,
   SHOW_TABLES_FUN,
@@ -103,7 +104,10 @@ export async function mysqlTableDataQuery(
 ) {
   let p: mysql.queryProps = {
     uuid: uuid,
-    sql_list: [SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset) /* DESC_TABLE_FUN(db, table) */],
+    sql_list: [
+      SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset),
+      SHOW_TABLES_COLUMNS_FUN(db, table),
+    ],
   }
   const res = await mysqlQuery(p, option)
   let data: any = {
@@ -111,16 +115,19 @@ export async function mysqlTableDataQuery(
     list: [],
   }
   if (Array.isArray(res.data) && res.data[0] && Array.isArray(res.data[0]['data'])) {
-    data.columns = res.data[0]['columns'].map((item: any) => {
+    data.list = res.data[0]['data'].map((item) => {
+      return item
+    })
+  }
+
+  if (Array.isArray(res.data) && res.data[1] && Array.isArray(res.data[1]['data'])) {
+    data.columns = res.data[1]['data'].map((item: any) => {
       let o = {
         dataIndex: item['Field'],
         title: item['Field'],
         ...item,
       }
       return o
-    })
-    data.list = res.data[0]['data'].map((item) => {
-      return item
     })
   }
 
@@ -176,6 +183,11 @@ export async function mysqlTableExecQuery(uuid: string, sqlList: mysql.queryItem
     data.list = res?.data[1]?.['data']
     data.errMsg = res?.data[1]?.['err_msg']
   }
+
+  if (Array.isArray(res.data) && res.data[1] && res?.data[1]?.['err_msg']) {
+    data.errMsg = res?.data[1]?.['err_msg']
+  }
+
   return data
 }
 

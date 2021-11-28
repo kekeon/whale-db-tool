@@ -3,11 +3,12 @@ import { mysqlTableColumnsShowFull, mysqlTableExecQuery } from '@/service/mysql'
 import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
 import { mySqlState } from '@/store'
 import { mysql } from '@/types'
+import { runSqlError } from '@/types/mysqlTypes'
 import { formatInsert, formatUpdateValid, isEmptyArray } from '@/utils/utils'
 import { BetaSchemaForm, ProFormColumnsType, ProFormLayoutType } from '@ant-design/pro-form'
 import { message } from 'antd'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 interface EditRowFormProps {
   visible: boolean
@@ -46,6 +47,8 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
   const mySqlDbStates = useRecoilValue(mySqlState.mySqlDbState)
   const dbUuid = useRecoilValue(mySqlState.mySqlDbUUid)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
+  const setMySqlQueryErrorState = useSetRecoilState(mySqlState.mySqlQueryErrorState)
+
   useEffect(() => {
     visible && handleTableColumns()
   }, [visible])
@@ -54,13 +57,12 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
     const res = await mysqlTableColumnsShowFull(dbUuid, mySqlDbStates.dbName!, mySqlDbStates.tableName!)
 
     const editInfo = generateEditJson(res, editData)
-    console.log('editData', editData, editInfo)
-
     setColumnsList(editInfo!)
   }, [mySqlDbStates, editData])
 
   const handleSave = useCallback(
-    async (values) => {
+    async (formValues) => {
+      let values = { ...formValues }
       const columnList: string[] = []
       columnsList.forEach((item) => {
         let k: string = item.dataIndex as string
@@ -70,6 +72,20 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
       })
 
       if (!isEmptyArray(columnList)) {
+        // 筛选出自动增长键，如果未填写将其过滤
+        const autoColumns: {
+          columnsName: string
+          index: number
+        }[] = []
+        columns.forEach((col, inx) => {
+          if (/auto_increment/.test((col as mysql.tableColumnsInfo).Extra! || '')) {
+            autoColumns.push({
+              columnsName: (col as mysql.tableColumnsInfo).Field,
+              index: inx,
+            })
+          }
+        })
+
         let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columns, [values])
 
         if (formType === mysql.EditFormType.edit) {
@@ -89,8 +105,12 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
           },
         ]
         let data: any = await mysqlTableExecQuery(dbUuid, sqlList)
-        toggle(false)
-        onSuccess?.()
+
+        setMySqlQueryErrorState(data?.errMsg)
+        if (!data?.errMsg) {
+          toggle(false)
+          onSuccess?.()
+        }
       }
     },
     [columnsList, mySqlDbStates],
@@ -108,7 +128,6 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
       visible={visible}
       onReset={() => {}}
       onFinish={async (values) => {
-        console.log(values)
         handleSave(values)
       }}
       onChange={() => {

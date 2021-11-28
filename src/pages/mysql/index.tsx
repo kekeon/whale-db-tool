@@ -4,6 +4,7 @@ import {
   mysqlDbQuery,
   mysqlDelete,
   mysqlList,
+  mysqlTableColumnsShowFull,
   mysqlTableDataQuery,
   mysqlTableExecQuery,
   mysqlTableQuery,
@@ -29,15 +30,16 @@ const Mysql: React.FC<any> = () => {
   const [connectList, setConnectList] = useState<mysql.dbList[]>()
   const [dbList, setDbList] = useState<any[]>()
   const [tableData, setTableData] = useState<any[]>([])
-  const [tableDataError, setTableDataError] = useState<mysql.runSqlError | null>()
 
   const [addVisible, { toggle: addDbToggle }] = useBoolean(false)
   const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
   const [treeSelectedKeys, setTreeSelectedKeys] = useState<string[]>()
 
+  const [mySqlQueryErrorState, setMySqlQueryErrorState] = useRecoilState(mySqlState.mySqlQueryErrorState)
   const setMySqlQueryTypeState = useSetRecoilState(mySqlState.mySqlQueryTypeState)
   const [mySqlDbStates, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const [columns, setColumns] = useRecoilState(mySqlState.mySqlDbTableColumnsState)
+
   const [uuid, setUuid] = useRecoilState(mySqlState.mySqlDbUUid)
   const mySqlDbStatesRef = useStateRef(mySqlDbStates)
   useEffect(() => {
@@ -87,6 +89,8 @@ const Mysql: React.FC<any> = () => {
       })
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       setColumns(data.columns)
+      console.log('data.columns', data.columns)
+
       setTableData(data.list)
       setMySqlQueryTypeState(mySqlQueryType.SYSTEM)
     }
@@ -98,6 +102,7 @@ const Mysql: React.FC<any> = () => {
       limit: mySqlDbStatesRef.current.limit,
       offset: mySqlDbStatesRef.current.offset,
     })
+
     setTableData(data.list)
   })
 
@@ -105,7 +110,7 @@ const Mysql: React.FC<any> = () => {
     let data: any = await mysqlTableExecQuery(uuid, sqlList)
     setColumns(data.columns)
     setTableData(data.list)
-    setTableDataError(data?.errMsg)
+    setMySqlQueryErrorState(data?.errMsg)
   })
 
   /*  connect start */
@@ -176,21 +181,21 @@ const Mysql: React.FC<any> = () => {
               scroll={{ y: 300, x: '100vw' }}
               queryData={handleRefreshTable}
               className={classNames({
-                'wrap-hide': tableDataError,
+                'wrap-hide': mySqlQueryErrorState,
               })}
             />
 
             <div
               className={classNames('db-transaction-run-sql-info', {
-                'wrap-hide': !tableDataError,
+                'wrap-hide': !mySqlQueryErrorState,
               })}
             >
               <Alert
                 message="SQL 错误"
                 description={
                   <>
-                    <p>错误码：{tableDataError?.Number}</p>
-                    <p>错误信息：{tableDataError?.Message}</p>
+                    <p>错误码：{mySqlQueryErrorState?.Number}</p>
+                    <p>错误信息：{mySqlQueryErrorState?.Message}</p>
                   </>
                 }
                 type="error"
@@ -198,7 +203,7 @@ const Mysql: React.FC<any> = () => {
                 action={
                   <Button
                     onClick={() => {
-                      setTableDataError(null)
+                      setMySqlQueryErrorState(null)
                     }}
                     type="text"
                     icon={<CloseOutlined />}
