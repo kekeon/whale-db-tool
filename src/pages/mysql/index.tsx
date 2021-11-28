@@ -1,10 +1,8 @@
 import DbTableTree from '@/components/DbTableTree/index'
-import { deleteDelete, listConnect } from '@/service/dbInstance'
 import {
   mysqlDbQuery,
   mysqlDelete,
   mysqlList,
-  mysqlTableColumnsShowFull,
   mysqlTableDataQuery,
   mysqlTableExecQuery,
   mysqlTableQuery,
@@ -89,7 +87,6 @@ const Mysql: React.FC<any> = () => {
       })
       setMySqlDbStates((s) => ({ ...s, dbName: db, tableName: table }))
       setColumns(data.columns)
-      console.log('data.columns', data.columns)
 
       setTableData(data.list)
       setMySqlQueryTypeState(mySqlQueryType.SYSTEM)

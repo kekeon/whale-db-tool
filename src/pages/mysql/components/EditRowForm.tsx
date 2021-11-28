@@ -4,7 +4,7 @@ import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
 import { mySqlState } from '@/store'
 import { mysql } from '@/types'
 import { runSqlError } from '@/types/mysqlTypes'
-import { formatInsert, formatUpdateValid, isEmptyArray } from '@/utils/utils'
+import { formatInsert, formatUpdateValid, isEmpty, isEmptyArray } from '@/utils/utils'
 import { BetaSchemaForm, ProFormColumnsType, ProFormLayoutType } from '@ant-design/pro-form'
 import { message } from 'antd'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -86,10 +86,19 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
           }
         })
 
-        let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columns, [values])
+        const curColumns = [].concat(columns as any)
+        if (!isEmptyArray(autoColumns)) {
+          autoColumns.forEach((autoCol) => {
+            if (values[autoCol.columnsName] === undefined) {
+              curColumns.splice(autoCol.index, 1)
+            }
+          })
+        }
+
+        let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, curColumns, [values])
 
         if (formType === mysql.EditFormType.edit) {
-          sql = formatUpdateValid(mySqlDbStates.dbName!, mySqlDbStates.tableName!, columns, [values], editData)
+          sql = formatUpdateValid(mySqlDbStates.dbName!, mySqlDbStates.tableName!, curColumns, [values], editData)
         }
 
         if (!sql) {
