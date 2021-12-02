@@ -18,23 +18,6 @@ interface EditRowFormProps {
   editData?: any
 }
 
-const valueEnum = {
-  all: { text: '全部', status: 'Default' },
-  open: {
-    text: '未解决',
-    status: 'Error',
-  },
-  closed: {
-    text: '已解决',
-    status: 'Success',
-    disabled: true,
-  },
-  processing: {
-    text: '解决中',
-    status: 'Processing',
-  },
-}
-
 interface DataItem {
   name: string
   state: string
