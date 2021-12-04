@@ -7,15 +7,39 @@ interface DataItem {
   name: string
   state: string
 }
+
+const FILTER_CONDITION = {
+  '=': {
+    text: '=',
+    status: '=',
+  },
+  '>': {
+    text: '>',
+    status: '>',
+  },
+  '<': {
+    text: '<',
+    status: '<',
+  },
+  like: {
+    text: 'like',
+    status: 'like',
+  },
+}
+
 /**
  * 生成form json
  * @param fieldList
  * @returns
  */
-export function generateEditJson(fieldList: mysql.tableColumnsInfo[], editRowData?: any) {
+export function generateEditJson(
+  fieldList: mysql.tableColumnsInfo[],
+  editRowData?: any,
+  schemaType?: mysql.FormSchemaType,
+) {
   if (isEmptyArray(fieldList)) return
 
-  let list: ProFormColumnsType<DataItem>[] = fieldList.map((item) => {
+  let list: ProFormColumnsType<DataItem>[] = fieldList.map((item, index) => {
     let o: ProFormColumnsType<DataItem> = {
       title: item.Field,
       dataIndex: item.Field,
@@ -62,7 +86,7 @@ export function generateEditJson(fieldList: mysql.tableColumnsInfo[], editRowDat
       case mysql.TableFieldType.mediumblob:
       case mysql.TableFieldType.binary:
       case mysql.TableFieldType.varbinary:
-        o.valueType = 'textarea'
+        o.valueType = schemaType === mysql.FormSchemaType.FILTER ? 'text' : 'textarea'
         break
       case mysql.TableFieldType.tinytext:
       case mysql.TableFieldType.tinyblob:
@@ -75,7 +99,7 @@ export function generateEditJson(fieldList: mysql.tableColumnsInfo[], editRowDat
         break
       // json
       case mysql.TableFieldType.json:
-        o.valueType = 'jsonCode'
+        o.valueType = schemaType === mysql.FormSchemaType.FILTER ? 'text' : 'jsonCode'
         break
       /*   case mysql.TableFieldType.binary:
       case mysql.TableFieldType.varbinary:
@@ -124,6 +148,21 @@ export function generateEditJson(fieldList: mysql.tableColumnsInfo[], editRowDat
 
     if (editRowData && ![null, undefined].includes(editRowData[item.Field])) {
       o.initialValue = [null, ''].includes(editRowData[item.Field]) ? undefined : editRowData[item.Field]
+    }
+
+    if (schemaType === mysql.FormSchemaType.FILTER) {
+      const o2 = JSON.parse(JSON.stringify(o))
+      o2.dataIndex = `${o.dataIndex}.${index}.value`
+      o.valueType = 'formSet'
+      o.columns = [
+        {
+          dataIndex: `${o.dataIndex}.${index}.condition`,
+          valueType: 'select',
+          valueEnum: FILTER_CONDITION,
+          initialValue: '=',
+        },
+        o2,
+      ]
     }
     return o
   })

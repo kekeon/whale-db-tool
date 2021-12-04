@@ -1,0 +1,33 @@
+.filterForm {
+  padding: 10px 5px 0px 5px;
+  background: #fff;
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 5px;
+    }
+
+    .ant-form-item .ant-form-item-label label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      line-height: 32px;
+    }
+
+    .ant-form-item-control-input-content > .ant-space {
+      width: 100%;
+    }
+
+    .ant-space.ant-space-align-start > .ant-space-item:nth-child(1) {
+      width: 85px;
+    }
+
+    .ant-space.ant-space-align-start > .ant-space-item:nth-child(2) {
+      flex: 1;
+    }
+
+    .filter-sql-btn {
+      margin-right: 5px;
+    }
+  }
+}

@@ -47,6 +47,7 @@ import { DbRnd, DbJsonView } from '_cp/index'
 import { unSelectMsg } from '@/utils/tips'
 import { useStateRef } from '@/hooks'
 import { mySqlQueryType } from '@/store/mysql/types'
+import FilterForm from './filterForm'
 
 interface Props {
   queryData?: (...args: any) => void
@@ -499,6 +500,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   return (
     <div className={classNames(style['table-view'], props.className)}>
+      {mySqlQueryTypeState === mySqlQueryType.SYSTEM && <FilterForm />}
       <Row className="table-toolbar" justify="space-between" align="middle">
         <Col span={12}>
           <DbDropdownMenu list={exportMenuListLimit} onClick={handleExport}>

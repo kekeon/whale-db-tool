@@ -126,3 +126,8 @@ export interface runSqlError {
   Number: number
   Message: string
 }
+
+export enum FormSchemaType {
+  EDIT = 1,
+  FILTER,
+}
