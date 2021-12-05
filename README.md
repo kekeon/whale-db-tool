@@ -8,14 +8,8 @@
 
 ## 🛠 安装
 
-- 下载 [pkg](./pkg/) 中的压缩包解压后，可直接运行 whale / whale.exe 可执行文件， 在目录下 config 可修改相关配置
+- 下载 [package](https://github.com/kekeon/whale-db-tool-release) 中的压缩包解压后
 - 初始登录账号： admin, 密码: 123456
-- Windows
-  ...
-- Max
-  ...
-- Linux
-  ...
 
 ## 🎯 功能清单
 
@@ -29,4 +23,4 @@
 ## 🍭 后续
 
 - [ ] 表数据自定义筛选
-- [ ] Redis、MongoDB、ElasticSearch 的支持
+- [ ] Redis、MongoDB 的支持
