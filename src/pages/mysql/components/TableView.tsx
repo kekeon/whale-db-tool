@@ -13,10 +13,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   ExportOutlined,
-  FilterOutlined,
-  ProfileOutlined,
   SyncOutlined,
-  TableOutlined,
 } from '@ant-design/icons'
 import DbLabelText from '_cp/DbLabelText'
 import DbDropdownMenu, { MenuItem } from '_cp/DbDropdownMenu'
@@ -35,7 +32,7 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadText, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatUpdate, isJsonStr } from '@/utils/utils'
+import { formatInsert, formatSqlWhere, formatUpdate, isJsonStr } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
 import { useBoolean } from 'ahooks'
@@ -76,6 +73,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const [jsonBtnDisable, setJsonBtnDisable] = useState<boolean>(true)
   const [cellJsonData, setCellJsonData] = useState<unknown>()
+  const sqlWhereRef = useRef<string>()
 
   let totalWidth = 0
   let unWidthCount = 0
@@ -420,7 +418,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       onOk: async () => {
         await mysqlTableDeleteItem({ dbName: dbName!, tableName: tableName!, uuid: uuid }, props.columns as any, list)
         setSelectKeysMap({})
-        queryData?.()
+        handleQueryData()
         setSelectRowIndex(-1)
         message.success('删除成功')
       },
@@ -498,9 +496,32 @@ const TableView: React.FC<PropsExtra> = (props) => {
     })
   }, [copyMenuListMemoLimit])
 
+  const handleQueryData = () => {
+    queryData?.(sqlWhereRef.current)
+  }
+
+  /* ====== 查询 SLQ start ====== */
+
+  const handleFilterQuery = (values) => {
+    const sqlWhere = formatSqlWhere(values)
+    // console.log('values', values, sqlWhere)
+    sqlWhereRef.current = sqlWhere
+    queryData?.(sqlWhere)
+  }
+
+  const handleSqlReset = () => {
+    sqlWhereRef.current = undefined
+    queryData?.()
+  }
+  const handleSqlQuery = (values) => {}
+
+  /* ====== 查询 SLQ end ====== */
+
   return (
     <div className={classNames(style['table-view'], props.className)}>
-      {mySqlQueryTypeState === mySqlQueryType.SYSTEM && <FilterForm />}
+      {mySqlQueryTypeState === mySqlQueryType.SYSTEM && (
+        <FilterForm onSearch={handleFilterQuery} onReset={handleSqlReset} onShowSql={handleSqlQuery} />
+      )}
       <Row className="table-toolbar" justify="space-between" align="middle">
         <Col span={12}>
           <DbDropdownMenu list={exportMenuListLimit} onClick={handleExport}>
@@ -525,13 +546,9 @@ const TableView: React.FC<PropsExtra> = (props) => {
             onClick={handleDeleteItems}
             icon={<DeleteOutlined />}
           />
-          {/* <Button title="表格查看" type="text" className="ml5" icon={<TableOutlined />} />
-          <Button title="表单查看" type="text" className="ml5" icon={<ProfileOutlined />} /> */}
         </Col>
         <Col span={12} className="left">
           <Row justify="end" align="middle">
-            {/*             <Button type="text" className="ml5" icon={<FilterOutlined title="筛选" />} />
-             */}{' '}
             <DbLabelText text="页码">
               <Button
                 type="text"
@@ -550,7 +567,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
             <DbLabelText text="行数">
               <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
             </DbLabelText>
-            <Button type="text" className="ml5" onClick={queryData} icon={<SyncOutlined title="刷新" />} />
+            <Button type="text" className="ml5" onClick={handleQueryData} icon={<SyncOutlined title="刷新" />} />
           </Row>
         </Col>
       </Row>
@@ -576,7 +593,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         <EditRowForm
           visible={editRowVisible}
           toggle={editRowToggle}
-          onSuccess={queryData}
+          onSuccess={handleQueryData}
           editData={editRowData}
           formType={editFormType}
         />

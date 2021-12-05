@@ -94,10 +94,11 @@ const Mysql: React.FC<any> = () => {
   })
 
   // refresh table data
-  const handleRefreshTable = useAsyncLoading(async () => {
+  const handleRefreshTable = useAsyncLoading(async (where?: string) => {
     let data = await mysqlTableDataQuery(uuid, mySqlDbStatesRef.current.dbName!, mySqlDbStatesRef.current.tableName!, {
       limit: mySqlDbStatesRef.current.limit,
       offset: mySqlDbStatesRef.current.offset,
+      where: where,
     })
 
     setTableData(data.list)

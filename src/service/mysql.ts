@@ -98,14 +98,15 @@ export async function mysqlTableDataQuery(
   table: string,
   extraParams?: {
     limit?: number
-    offset?: number
+    offset?: number,
+    where?: string
   },
   option?: PostOpt,
 ) {
   let p: mysql.queryProps = {
     uuid: uuid,
     sql_list: [
-      SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset),
+      SELECT_FORM_ALL_FUN(db, table, extraParams?.limit, extraParams?.offset, extraParams?.where),
       SHOW_TABLES_COLUMNS_FUN(db, table),
     ],
   }

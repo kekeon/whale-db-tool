@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import type { ProFormColumnsType, ProFormLayoutType } from '@ant-design/pro-form'
-import { BetaSchemaForm, ProFormSelect } from '@ant-design/pro-form'
+import React, { useMemo } from 'react'
+import { BetaSchemaForm } from '@ant-design/pro-form'
 import { useRecoilValue } from 'recoil'
 import { generateEditJson } from '../../const'
 import { mySqlState } from '@/store'
@@ -8,62 +7,52 @@ import { FormSchemaType } from '@/types/mysqlTypes'
 
 import style from './index.module.less'
 import { Button } from 'antd'
+import { mysql } from '@/types'
+import { useForm } from 'antd/lib/form/Form'
+import classNames from 'classnames'
 
-interface DataItem {
-  name: string
-  state: string
+interface FilterForm {
+  onSearch?: (values: mysql.FilterDataItem) => void
+  onShowSql?: (values: mysql.FilterDataItem) => void
+  onReset?: () => void
 }
-
-interface FilterForm {}
-const FilterForm: React.FC<FilterForm> = () => {
-  const [layoutType, setLayoutType] = useState<ProFormLayoutType>('QueryFilter')
-  const [columnsList, setColumnsList] = useState<ProFormColumnsType<DataItem>[]>([])
+const FilterForm: React.FC<FilterForm> = ({ onSearch, onShowSql, onReset }) => {
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
-  const mySqlDbStates = useRecoilValue(mySqlState.mySqlDbState)
-
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    visible && handleTableColumns()
-  }, [visible])
-
-  const handleTableColumns = useCallback(() => {
-    console.log('columns', columns)
-
-    const editInfo = generateEditJson(columns, {}, FormSchemaType.FILTER) || []
-    console.log('editInfo', editInfo)
-
-    setColumnsList(editInfo!)
-  }, [mySqlDbStates, columns])
-
+  const filterForm = useForm<mysql.FilterDataItem>()
   const filterColumns = useMemo(() => {
-    const editInfo = generateEditJson(columns, {}, FormSchemaType.FILTER) || []
+    const editInfo =
+      generateEditJson<mysql.FilterDataItem>(columns as mysql.tableColumnsInfo[], {}, FormSchemaType.FILTER) || []
     return editInfo
   }, [columns])
 
-  useEffect(() => {
-    // handleTableColumns()
-    setTimeout(() => {
-      setVisible(true)
-    }, 1000)
-  }, [])
+  const handleSql = () => {
+    const values = filterForm[0]?.getFieldsValue?.()
+    onShowSql?.(values)
+  }
 
   return (
-    <div className={style.filterForm}>
-      <BetaSchemaForm<DataItem>
-        layoutType={layoutType}
+    <div
+      className={classNames(style.filterForm, {
+        [style.formHide]: filterColumns.length === 0,
+      })}
+    >
+      <BetaSchemaForm<mysql.FilterDataItem>
+        layoutType="QueryFilter"
         layout="inline"
-        onReset={() => {}}
-        onFinish={async (values) => {}}
-        onChange={() => {
-          console.log('TODO.')
+        onReset={onReset}
+        onFinish={async (values) => {
+          onSearch?.(values)
         }}
+        ref={filterForm}
         onVisibleChange={(bool) => {}}
         columns={filterColumns}
-        optionRender={(searchConfig, _a, dom) => {
+        // eslint-disable-next-line react/no-unstable-nested-components
+        optionRender={(_searchConfig, _a, dom) => {
           return (
             <div>
-              <Button className="filter-sql-btn">SQL</Button>
+              <Button className="filter-sql-btn" onClick={handleSql}>
+                SQL
+              </Button>
               {dom[0]}
               <span style={{ marginLeft: 5 }} />
               {dom[1]}

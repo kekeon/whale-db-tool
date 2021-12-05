@@ -131,3 +131,7 @@ export enum FormSchemaType {
   EDIT = 1,
   FILTER,
 }
+
+export type FilterDataItem = {
+  [key in string]: number[] | string[] | number | string
+}

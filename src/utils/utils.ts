@@ -1,4 +1,5 @@
 import { IKV } from '@/types/commonTypes'
+import { FilterDataItem } from '@/types/mysqlTypes'
 
 export function uuid(len = 16, radix = 16): string {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
@@ -329,4 +330,29 @@ export function JSONFormat(json: string) {
     .replace(/\\(\d+)\\/g, pop) // backslashes in strings
 
   return out
+}
+
+export function formatSqlWhere(filter: FilterDataItem) {
+  let sqlWhereList: string[] = []
+  const keys = Object.keys(filter)
+  if (isEmptyArray(keys)) {
+    return
+  }
+
+  keys.forEach((k) => {
+    const item = filter[k] as string | number[]
+
+    if (!isEmpty(item[0] as string)) {
+      if (item[0] === '=' && typeof item[1] === 'string' && item[1].toLocaleUpperCase() === 'NULL') {
+        const where = `${k} IS  NULL`
+        sqlWhereList.push(where)
+      } else {
+        const value = item[1] === undefined || item[1] === null ? '' : item[1]
+        const where = `${k} ${item[0]} '${value}'`
+        sqlWhereList.push(where)
+      }
+    }
+  })
+
+  return sqlWhereList.join(' AND ')
 }

@@ -30,10 +30,14 @@ export const SHOW_TABLES_COLUMNS_FUN = (db: string, table: string): mysql.queryI
   sql: `SHOW FULL COLUMNS FROM ${db}.${table};`,
 })
 
-export const SELECT_FORM_ALL_FUN = (db: string, table: string, limit?: number, offset?: number): mysql.queryItem => {
+export const SELECT_FORM_ALL_FUN = (db: string, table: string, limit?: number, offset?: number, where?: string): mysql.queryItem => {
   const item: mysql.queryItem = {
     type: 'query',
     sql: `SELECT * FROM ${db}.${table}`,
+  }
+
+  if (typeof where === 'string') {
+    item.sql += ` WHERE ${where}`
   }
 
   if (typeof limit === 'number') {

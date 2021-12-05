@@ -3,11 +3,6 @@ import { IKV } from '@/types/commonTypes'
 import { isEmpty, isEmptyArray } from '@/utils/utils'
 import { ProFormColumnsType } from '@ant-design/pro-form'
 
-interface DataItem {
-  name: string
-  state: string
-}
-
 const FILTER_CONDITION = {
   '=': {
     text: '=',
@@ -32,15 +27,15 @@ const FILTER_CONDITION = {
  * @param fieldList
  * @returns
  */
-export function generateEditJson(
+export function generateEditJson<T>(
   fieldList: mysql.tableColumnsInfo[],
   editRowData?: any,
   schemaType?: mysql.FormSchemaType,
 ) {
   if (isEmptyArray(fieldList)) return
 
-  let list: ProFormColumnsType<DataItem>[] = fieldList.map((item, index) => {
-    let o: ProFormColumnsType<DataItem> = {
+  let list: ProFormColumnsType<T>[] = fieldList.map((item, index) => {
+    let o: ProFormColumnsType<T> = {
       title: item.Field,
       dataIndex: item.Field,
     }
@@ -166,6 +161,7 @@ export function generateEditJson(
     }
     return o
   })
+  console.log('list--', list)
 
   return list
 }
