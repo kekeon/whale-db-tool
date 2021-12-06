@@ -23,8 +23,12 @@ export const routes: RouteConfig[] = [
           {
             path: '/main/mysql',
             exact: true,
-            // component: Mysql,
             component: lazy(() => import('@/pages/mysql/index')),
+          },
+          {
+            path: '/main/redis',
+            exact: true,
+            component: lazy(() => import('@/pages/redis/index')),
           },
         ],
       },

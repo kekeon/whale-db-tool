@@ -21,6 +21,9 @@ const NavHeader = () => {
           <Menu.Item key="/main/mysql">
             <Link to="/main/mysql">MySQL</Link>
           </Menu.Item>
+          <Menu.Item key="/main/redis">
+            <Link to="/main/redis">Redis</Link>
+          </Menu.Item>
         </Menu>
       </div>
       <div className="right-wrap">
