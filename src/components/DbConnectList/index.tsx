@@ -35,7 +35,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
 
   return (
     <div className={style['db-connect-lsit']}>
-      {list && list.length
+      {list?.length
         ? list.map((item, index: number) => (
             <div
               className={classNames('db-item-wrap', {
