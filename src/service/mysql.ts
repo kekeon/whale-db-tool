@@ -10,7 +10,7 @@ import {
   USE_DATABASES_FUN,
 } from '@/sql/mysql.sql'
 import { common, mysql } from '@/types'
-import { IKV, TableConnectDesc } from '@/types/commonTypes'
+import { IDBItem, IDBList, IKV, TableConnectDesc } from '@/types/commonTypes'
 import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
 import { MYSQL_ADD, MYSQL_DELETE, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY, MYSQL_UPDATE } from './api'
@@ -43,7 +43,7 @@ export async function mysqlPing(props: mysql.dbBase, option?: PostOpt) {
 // list
 export async function mysqlList(option?: GetOpt) {
   try {
-    const res = await request.get<mysql.dbObjList>(MYSQL_LIST, {}, option)
+    const res = await request.get<IDBList>(MYSQL_LIST, {}, option)
 
     return res.data?.list
   } catch (error) {
@@ -98,7 +98,7 @@ export async function mysqlTableDataQuery(
   table: string,
   extraParams?: {
     limit?: number
-    offset?: number,
+    offset?: number
     where?: string
   },
   option?: PostOpt,

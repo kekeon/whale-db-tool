@@ -23,9 +23,10 @@ import { mySqlQueryType } from '@/store/mysql/types'
 import { Alert, Button } from 'antd'
 import classNames from 'classnames'
 import { CloseOutlined } from '@ant-design/icons'
+import { IDBItem } from '@/types/commonTypes'
 
 const Mysql: React.FC<any> = () => {
-  const [connectList, setConnectList] = useState<mysql.dbList[]>()
+  const [connectList, setConnectList] = useState<IDBItem[]>()
   const [dbList, setDbList] = useState<any[]>()
   const [tableData, setTableData] = useState<any[]>([])
 

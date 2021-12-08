@@ -24,3 +24,18 @@ export interface TableConnectDesc {
 }
 
 export type cuid = connectItem & connectUuid
+
+export interface IDBItem {
+  connection_uuid: uuid
+  connection_host: string
+  connection_another_name: string
+  connection_port: string
+  connection_account: string
+  create_time: string
+  other_info: string
+  update_time: string
+}
+
+export interface IDBList {
+  list: IDBItem[]
+}

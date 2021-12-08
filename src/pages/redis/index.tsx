@@ -1,11 +1,11 @@
+import { IDBItem } from '@/types/commonTypes'
 import React, { useState } from 'react'
 import DbConnectList from '_cp/DbConnectList'
 import style from './index.module.less'
 
-interface PropsExtra {}
-const Redis: React.FC<PropsExtra> = () => {
-  const [connectList, setConnectList] = useState<unknown[]>()
-
+interface RedisPageProps {}
+const Redis: React.FC<RedisPageProps> = () => {
+  const [connectList, setConnectList] = useState<IDBItem[]>()
   return (
     <section className={style.redis}>
       <div className="db-connect-wrap">
@@ -17,4 +17,4 @@ const Redis: React.FC<PropsExtra> = () => {
     </section>
   )
 }
-export default Redis
+export default RedisPageProps

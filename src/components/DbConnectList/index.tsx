@@ -4,13 +4,14 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import classNames from 'classnames'
 import { common, mysql } from '@/types'
 import { Popconfirm } from 'antd'
+import { IDBItem } from '@/types/commonTypes'
 
 interface Props {
   onDelete: (uuid: common.uuid) => void
   onAdd: () => void
   onEdit: (uuid: common.cuid) => void
   onChange: (uuid: common.uuid) => void
-  list?: mysql.dbList[]
+  list?: IDBItem[]
 }
 
 type PropsExtra = Props
