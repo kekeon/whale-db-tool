@@ -8,7 +8,7 @@ export const routes: RouteConfig[] = [
       {
         path: '/login',
         exact: true,
-        component: lazy(() => import('@/pages/index')),
+        component: lazy(() => import('@/pages')),
       },
       {
         path: '/main',
@@ -18,17 +18,17 @@ export const routes: RouteConfig[] = [
           {
             path: '/main/overview',
             exact: true,
-            component: lazy(() => import('@/pages/overview/index')),
+            component: lazy(() => import('@/pages/overview')),
           },
           {
             path: '/main/mysql',
             exact: true,
-            component: lazy(() => import('@/pages/mysql/index')),
+            component: lazy(() => import('@/pages/mysql')),
           },
           {
             path: '/main/redis',
             exact: true,
-            component: lazy(() => import('@/pages/redis/index')),
+            component: lazy(() => import('@/pages/redis')),
           },
         ],
       },

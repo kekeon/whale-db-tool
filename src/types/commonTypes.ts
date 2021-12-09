@@ -23,6 +23,22 @@ export interface TableConnectDesc {
   tableName: string
 }
 
+export interface connectedBase {
+  user: string
+  password: string
+  host: string
+  port: number
+}
+
+export interface connectedAdd extends connectedBase {
+  user: string
+  password: string
+  host: string
+  port: number
+  type: string
+  another_name: string
+}
+
 export type cuid = connectItem & connectUuid
 
 export interface IDBItem {

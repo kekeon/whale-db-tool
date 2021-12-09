@@ -9,25 +9,11 @@ import {
   SHOW_TABLES_FUN,
   USE_DATABASES_FUN,
 } from '@/sql/mysql.sql'
-import { common, mysql } from '@/types'
-import { IDBItem, IDBList, IKV, TableConnectDesc } from '@/types/commonTypes'
+import { mysql } from '@/types'
+import { IKV, TableConnectDesc } from '@/types/commonTypes'
 import request, { GetOpt, PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
-import { MYSQL_ADD, MYSQL_DELETE, MYSQL_LIST, MYSQL_PING, MYSQL_QUERY, MYSQL_UPDATE } from './api'
-
-// 新增
-export async function mysqlAdd(props: mysql.dbAdd, option?: PostOpt) {
-  return request.post(MYSQL_ADD, props, option)
-}
-
-// 更新
-export async function mysqlUpdate(props: mysql.dbAdd & common.connectUuid, option?: PostOpt) {
-  return request.put(MYSQL_UPDATE, props, option)
-}
-// 删除
-export async function mysqlDelete(props: common.connectUuid, option?: PostOpt) {
-  return request.delete(MYSQL_DELETE, props, option)
-}
+import { MYSQL_PING, MYSQL_QUERY } from './api'
 
 // ping 检测
 export async function mysqlPing(props: mysql.dbBase, option?: PostOpt) {
@@ -37,18 +23,6 @@ export async function mysqlPing(props: mysql.dbBase, option?: PostOpt) {
   } catch (error) {
     console.warn(error)
     return false
-  }
-}
-
-// list
-export async function mysqlList(option?: GetOpt) {
-  try {
-    const res = await request.get<IDBList>(MYSQL_LIST, {}, option)
-
-    return res.data?.list
-  } catch (error) {
-    console.warn(error)
-    return []
   }
 }
 

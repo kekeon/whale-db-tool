@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import style from './index.module.less'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import classNames from 'classnames'
-import { common, mysql } from '@/types'
+import { common } from '@/types'
 import { Popconfirm } from 'antd'
 import { IDBItem } from '@/types/commonTypes'
 

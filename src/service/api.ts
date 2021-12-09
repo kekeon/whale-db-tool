@@ -1,7 +1,10 @@
 export const SYSTEM_USER = '/system/login'
 export const MYSQL_QUERY = '/mysql/query'
 export const MYSQL_PING = '/mysql/ping'
-export const MYSQL_ADD = '/mysql/add'
-export const MYSQL_LIST = '/mysql/list'
-export const MYSQL_UPDATE = '/mysql/update'
-export const MYSQL_DELETE = '/mysql/delete'
+
+export const CONNECTED_ADD = '/connected/add'
+export const CONNECTED_LIST = '/connected/list'
+export const CONNECTED_UPDATE = '/connected/update'
+export const CONNECTED_DELETE = '/connected/delete'
+
+export const REDIS_CMD = '/redis/cmd'

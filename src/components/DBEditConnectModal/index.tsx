@@ -1,30 +1,34 @@
+import { ConnectedEnum } from '@/constant/js'
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
-import { mysqlAdd, mysqlPing, mysqlUpdate } from '@/service/mysql'
+import { connectedAdd, connectedUpdate } from '@/service/connected'
+import { mysqlPing } from '@/service/mysql'
 import { common, mysql } from '@/types'
 import { Modal, Form, Input, InputNumber, Button, message } from 'antd'
 import React, { useState } from 'react'
-interface Props {
+interface DBEditConnectModalProps {
+  title: string
+  type: ConnectedEnum
   visible: boolean
   initInfo: Partial<common.cuid>
   onCancel: () => void
   onOk: () => void
 }
 
-type PropsExtra = Props
-
 const Item = Form.Item
 
-const MySqlAddModal: React.FC<PropsExtra> = (props) => {
+const DBEditConnectModal: React.FC<DBEditConnectModalProps> = (props) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const { type, title } = props
+
   const handleOk = () => {
     form.validateFields().then(
       (value) => {
         setLoading(true)
         if (props.initInfo?.uuid) {
-          mysqlUpdate({
+          connectedUpdate({
             ...value,
-            type: 'mysql',
+            type: type,
             uuid: props.initInfo?.uuid || '',
           }).then(() => {
             setLoading(false)
@@ -32,7 +36,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             props?.onOk()
           })
         } else {
-          mysqlAdd({ ...value, type: 'mysql' }).then(() => {
+          connectedAdd({ ...value, type: type }).then(() => {
             setLoading(false)
             props?.onCancel()
             props?.onOk()
@@ -49,7 +53,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
     form.validateFields().then(
       async (value) => {
         const data: mysql.dbBase = {
-          password: value.password,
+          password: value.password || '',
           user: value.user,
           host: value.host,
           port: value.port,
@@ -76,7 +80,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
   return (
     <div className="MySqlAddModal">
       <Modal
-        title="MySQL"
+        title={title}
         visible={props.visible}
         okText="确认"
         cancelText="取消"
@@ -141,7 +145,7 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
             rules={[
               {
                 ...inputRequired,
-                required: !initInfo?.uuid,
+                required: false,
               },
               {
                 max: 100,
@@ -177,4 +181,4 @@ const MySqlAddModal: React.FC<PropsExtra> = (props) => {
     </div>
   )
 }
-export default MySqlAddModal
+export default DBEditConnectModal

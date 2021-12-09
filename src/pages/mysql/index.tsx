@@ -1,37 +1,26 @@
 import DbTableTree from '@/components/DbTableTree/index'
-import {
-  mysqlDbQuery,
-  mysqlDelete,
-  mysqlList,
-  mysqlTableDataQuery,
-  mysqlTableExecQuery,
-  mysqlTableQuery,
-} from '@/service/mysql'
+import { mysqlDbQuery, mysqlTableDataQuery, mysqlTableExecQuery, mysqlTableQuery } from '@/service/mysql'
 import { mySqlState } from '@/store'
 import { isEmptyArray } from '@/utils/utils'
 import DbConnectList from '_cp/DbConnectList'
-import { useBoolean } from 'ahooks'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
-import MySqlAddModal from './components/AddModal'
 import CodeEdit from './components/CodeEdit'
 import TableView from './components/TableView'
 import style from './index.module.less'
 import { common, mysql } from '@/types'
-import { useStateRef, useAsyncLoading } from '@/hooks'
+import { useStateRef, useAsyncLoading, useConnectedList } from '@/hooks'
 import { mySqlQueryType } from '@/store/mysql/types'
 import { Alert, Button } from 'antd'
 import classNames from 'classnames'
 import { CloseOutlined } from '@ant-design/icons'
-import { IDBItem } from '@/types/commonTypes'
+import { ConnectedEnum } from '@/constant/js'
+import DBEditConnectModal from '_cp/DBEditConnectModal'
 
 const Mysql: React.FC<any> = () => {
-  const [connectList, setConnectList] = useState<IDBItem[]>()
   const [dbList, setDbList] = useState<any[]>()
   const [tableData, setTableData] = useState<any[]>([])
 
-  const [addVisible, { toggle: addDbToggle }] = useBoolean(false)
-  const [editInfo, setEditInfo] = useState<Partial<common.cuid>>()
   const [treeSelectedKeys, setTreeSelectedKeys] = useState<string[]>()
 
   const [mySqlQueryErrorState, setMySqlQueryErrorState] = useRecoilState(mySqlState.mySqlQueryErrorState)
@@ -46,7 +35,8 @@ const Mysql: React.FC<any> = () => {
   }, [])
 
   const initData = async () => {
-    handleListConnect()
+    // TDDO.
+    // handleListConnect()
   }
 
   const handleChangeConnect = useAsyncLoading(async (uuid: common.uuid) => {
@@ -54,11 +44,6 @@ const Mysql: React.FC<any> = () => {
     setUuid(uuid)
     setDbList(d)
   })
-
-  const handleListConnect = async () => {
-    let dbList = await mysqlList()
-    setConnectList(dbList)
-  }
 
   const handleTreeSelect = useAsyncLoading(async (keys: unknown[], optopn: any) => {
     if (isEmptyArray(keys)) return
@@ -113,20 +98,16 @@ const Mysql: React.FC<any> = () => {
   })
 
   /*  connect start */
-  const MySqlConnectDelete = (uuid: common.uuid) => {
-    mysqlDelete({ uuid: uuid }).then(() => {
-      handleListConnect()
-    })
-  }
-
-  const MySqlConnectEdit = (item: common.cuid) => {
-    setEditInfo(item)
-  }
-
-  const MySqlConnectAdd = async () => {
-    addDbToggle(true)
-    setEditInfo({})
-  }
+  const {
+    connectList,
+    addVisible,
+    editInfo,
+    handleListConnect,
+    handleConnectAddForm,
+    handleConnectedEdit,
+    handleConnectedDelete,
+    handleConnectedFormVisible,
+  } = useConnectedList({ type: ConnectedEnum.MYSQL })
   /*  connect end */
 
   /*  add start */
@@ -135,7 +116,9 @@ const Mysql: React.FC<any> = () => {
   }
 
   const handleAddCancel = () => {
-    addDbToggle(false)
+    console.log('handleAddCancel')
+
+    handleConnectedFormVisible(false)
   }
   /*  add end */
 
@@ -146,13 +129,10 @@ const Mysql: React.FC<any> = () => {
       <div className="db-connect-wrap">
         <DbConnectList
           list={connectList}
-          onAdd={MySqlConnectAdd}
-          onDelete={MySqlConnectDelete}
+          onAdd={handleConnectAddForm}
+          onDelete={handleConnectedDelete}
           onChange={handleChangeConnect}
-          onEdit={(data) => {
-            setEditInfo(data)
-            addDbToggle(true)
-          }}
+          onEdit={handleConnectedEdit}
         />
       </div>
       <div className="db-data-wrap">
@@ -214,7 +194,14 @@ const Mysql: React.FC<any> = () => {
         </div>
       </div>
       {addVisible && (
-        <MySqlAddModal visible={addVisible} onOk={handleAddOk} onCancel={handleAddCancel} initInfo={editInfo || {}} />
+        <DBEditConnectModal
+          type={ConnectedEnum.MYSQL}
+          title="MySql"
+          visible={addVisible}
+          onOk={handleAddOk}
+          onCancel={handleAddCancel}
+          initInfo={editInfo || {}}
+        />
       )}
     </section>
   )
