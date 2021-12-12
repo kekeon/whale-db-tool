@@ -2,6 +2,7 @@ import { ConnectedEnum } from '@/constant/js'
 import { formLayout, inputPlaceholder, inputRequired } from '@/constant/js/form'
 import { connectedAdd, connectedUpdate } from '@/service/connected'
 import { mysqlPing } from '@/service/mysql'
+import { redisPing } from '@/service/redis'
 import { common, mysql } from '@/types'
 import { Modal, Form, Input, InputNumber, Button, message } from 'antd'
 import React, { useState } from 'react'
@@ -58,7 +59,10 @@ const DBEditConnectModal: React.FC<DBEditConnectModalProps> = (props) => {
           host: value.host,
           port: value.port,
         }
-        const res = await mysqlPing(data)
+
+        const pingFunc = type === ConnectedEnum.MYSQL ? mysqlPing : redisPing
+
+        const res = await pingFunc(data)
         if (res) {
           message.success('连接成功')
         } else {
@@ -160,7 +164,7 @@ const DBEditConnectModal: React.FC<DBEditConnectModalProps> = (props) => {
           <Item
             name="port"
             label="端口"
-            initialValue={initInfo?.port || 3306}
+            initialValue={initInfo?.port || type === ConnectedEnum.MYSQL ? 3306 : 6739}
             rules={[
               inputRequired,
               {

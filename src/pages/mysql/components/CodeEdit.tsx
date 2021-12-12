@@ -1,4 +1,4 @@
-import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
+import { USE_DATABASES_FUN } from '@/statement/mysql.sql'
 import { Button } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import AceEditor from 'react-ace'

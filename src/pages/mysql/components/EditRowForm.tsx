@@ -1,6 +1,6 @@
 import { generateEditJson } from '@/pages/mysql/const'
 import { mysqlTableColumnsShowFull, mysqlTableExecQuery } from '@/service/mysql'
-import { USE_DATABASES_FUN } from '@/sql/mysql.sql'
+import { USE_DATABASES_FUN } from '@/statement/mysql.sql'
 import { mySqlState } from '@/store'
 import { mysql } from '@/types'
 import { runSqlError } from '@/types/mysqlTypes'

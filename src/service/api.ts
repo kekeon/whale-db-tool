@@ -8,3 +8,4 @@ export const CONNECTED_UPDATE = '/connected/update'
 export const CONNECTED_DELETE = '/connected/delete'
 
 export const REDIS_CMD = '/redis/cmd'
+export const REDIS_PING = '/redis/ping'

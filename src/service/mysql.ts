@@ -8,7 +8,7 @@ import {
   SHOW_TABLES_COLUMNS_FUN,
   SHOW_TABLES_FUN,
   USE_DATABASES_FUN,
-} from '@/sql/mysql.sql'
+} from '@/statement/mysql.sql'
 import { mysql } from '@/types'
 import { IKV, TableConnectDesc } from '@/types/commonTypes'
 import request, { GetOpt, PostOpt } from '@/utils/request'
