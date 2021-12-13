@@ -7,22 +7,22 @@ import React from 'react'
 import { useHistory } from 'react-router'
 import styles from './styles/index.module.less'
 import LoginImg from '@/assets/img/img-01.webp'
+import { useAsyncVisible } from '@/hooks'
 interface LoginForm extends system.Login {
   remember: boolean
 }
 
 const Login: React.FC<any> = () => {
   const history = useHistory()
-
+  const { visible: loginVisible, action: loginAction } = useAsyncVisible(systemLogin)
   const handleSubmit = async (value: LoginForm) => {
-    const res = await systemLogin({
-      account: value.account,
-      password: value.password,
-    })
+    const res = await loginAction({ account: value.account, password: value.password })
 
-    storage().setLocal('AUTH_TOKEN', res.data.token)
+    if (res?.data) {
+      storage().setLocal('AUTH_TOKEN', res?.data.token)
 
-    history.replace('/main/mysql')
+      history.replace('/main/mysql')
+    }
   }
 
   return (
@@ -41,11 +41,16 @@ const Login: React.FC<any> = () => {
             onFinish={handleSubmit}
           >
             <Form.Item name="account" rules={[{ required: true, message: 'Please input your username!' }]}>
-              <Input placeholder="Enter your username" prefix={<UserOutlined className="site-form-item-icon" />} />
+              <Input
+                placeholder="Enter your username"
+                disabled={loginVisible}
+                prefix={<UserOutlined className="site-form-item-icon" />}
+              />
             </Form.Item>
 
             <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
               <Input.Password
+                disabled={loginVisible}
                 placeholder="Enter your password"
                 prefix={<LockOutlined className="site-form-item-icon" />}
               />
@@ -56,7 +61,7 @@ const Login: React.FC<any> = () => {
             </Form.Item>
 
             <Form.Item>
-              <Button className="login-btn" type="primary" htmlType="submit">
+              <Button loading={loginVisible} className="login-btn" type="primary" htmlType="submit">
                 Login
               </Button>
             </Form.Item>

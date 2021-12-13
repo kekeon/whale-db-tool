@@ -67,10 +67,16 @@ const Redis: React.FC<RedisPageProps> = () => {
         />
       </div>
       <div className="db-data-wrap">
-        <div className="db-db-keys">
+        <div className="db-table">
           <Select value={selectDb} style={{ width: 120 }} onChange={handleChange}>
             {...dbListOption}
           </Select>
+
+          <div className="db-keys-list">
+            <div className="db-keys-item">abc</div>
+            <div className="db-keys-item select-active">abd</div>
+          </div>
+          <div />
         </div>
       </div>
 
