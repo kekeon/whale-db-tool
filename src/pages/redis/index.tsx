@@ -1,8 +1,11 @@
 import { ConnectedEnum } from '@/constant/js'
 import { useConnectedList } from '@/hooks'
-import { redisConfigCmd, redisKeysCmd } from '@/service/redis'
+import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisSelectDb } from '@/service/redis'
+import { redisDbUUidState } from '@/store/redis'
 import { Select } from 'antd'
-import React, { useCallback, useMemo, useState } from 'react'
+import classNames from 'classnames'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { useRecoilState } from 'recoil'
 import DbConnectList from '_cp/DbConnectList'
 import DBEditConnectModal from '_cp/DBEditConnectModal'
 import style from './index.module.less'
@@ -13,6 +16,24 @@ interface RedisPageProps {
   to: string
 }
 const Redis: React.FC<RedisPageProps> = () => {
+  const [keyList, setKeyList] = useState<string[]>([])
+  const [dbNumber, setDbNumber] = useState(1)
+  const [selectDb, setSelectDb] = useState(0)
+  const [selectKey, setSelectKey] = useState('')
+  const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
+  const redisDbUUidRef = useRef('')
+  const initData = () => {}
+
+  const getDbNumber = async (uuid: string) => {
+    const res = await redisDbNumber(uuid)
+    setDbNumber(Number(res))
+  }
+
+  const getDbKeys = async (index: number) => {
+    const res = await redisKeysCmd(redisDbUUidRef.current)
+    setKeyList(res)
+  }
+
   /*  connect start */
   const {
     connectList,
@@ -25,9 +46,12 @@ const Redis: React.FC<RedisPageProps> = () => {
     handleConnectedFormVisible,
   } = useConnectedList({ type: ConnectedEnum.REDIS })
 
-  const handleChangeConnect = async (uuid) => {
-    const res = await redisKeysCmd(uuid)
-    console.log('res', res)
+  const handleChangeConnect = async (uuid: string) => {
+    // 查询库数量
+    redisDbUUidRef.current = uuid
+    setRedisDbUUid(uuid)
+    getDbNumber(uuid)
+    getDbKeys(selectDb)
   }
   const handleAddOk = () => {}
   const handleAddCancel = () => {
@@ -35,9 +59,6 @@ const Redis: React.FC<RedisPageProps> = () => {
   }
 
   /*  connect end */
-
-  const [dbNumber, setDbNumber] = useState(16)
-  const [selectDb, setSelectDb] = useState(0)
 
   const dbListOption = useMemo(() => {
     let dom = []
@@ -51,8 +72,15 @@ const Redis: React.FC<RedisPageProps> = () => {
     return dom
   }, [dbNumber])
 
-  const handleChange = (v) => {
+  const handleDbChange = (v: number) => {
     setSelectDb(v)
+    redisSelectDb(redisDbUUidRef.current, v)
+    getDbKeys(v)
+    // handleDbChange(0)
+  }
+
+  const handleSelectKey = (v: string) => {
+    setSelectKey(v)
   }
 
   return (
@@ -68,13 +96,22 @@ const Redis: React.FC<RedisPageProps> = () => {
       </div>
       <div className="db-data-wrap">
         <div className="db-table">
-          <Select value={selectDb} style={{ width: 120 }} onChange={handleChange}>
+          <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
             {...dbListOption}
           </Select>
 
           <div className="db-keys-list">
-            <div className="db-keys-item">abc</div>
-            <div className="db-keys-item select-active">abd</div>
+            {keyList.map((key, index) => (
+              <div
+                key={index}
+                onClick={() => handleSelectKey(key)}
+                className={classNames('db-keys-item', {
+                  'select-active': selectKey === key,
+                })}
+              >
+                {key}
+              </div>
+            ))}
           </div>
           <div />
         </div>

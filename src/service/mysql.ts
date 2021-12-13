@@ -3,15 +3,12 @@ import {
   DESC_TABLE_FUN,
   SELECT_FORM_ALL_FUN,
   SHOW_DATABASES,
-  SHOW_KEYS_FUN,
-  SHOW_TABLES,
   SHOW_TABLES_COLUMNS_FUN,
   SHOW_TABLES_FUN,
-  USE_DATABASES_FUN,
 } from '@/statement/mysql.sql'
 import { mysql } from '@/types'
 import { IKV, TableConnectDesc } from '@/types/commonTypes'
-import request, { GetOpt, PostOpt } from '@/utils/request'
+import request, { PostOpt } from '@/utils/request'
 import { generateWhereCondition, isEmpty, queryPriOrUni } from '@/utils/utils'
 import { MYSQL_PING, MYSQL_QUERY } from './api'
 

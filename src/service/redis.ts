@@ -1,12 +1,12 @@
-import { QUERY_DB_CONFIG_FUNC, QUERY_DB_KEYS } from '@/statement/redis.cmd'
+import { QUERY_DB_CONFIG_FUNC, QUERY_DB_KEYS, QUERY_SELECT_DB_FUNC } from '@/statement/redis.cmd'
 import { dbBase } from '@/types/mysqlTypes'
-import { RedisCmdItem } from '@/types/redisType'
+import { IRedisQueryResponseBase, RedisCmdItem } from '@/types/redisType'
 import request, { PostOpt } from '@/utils/request'
 import { REDIS_CMD, REDIS_PING } from './api'
 
 // 基础查询
-export async function redisCmd(uuid: string, cmdList: RedisCmdItem[], option?: PostOpt) {
-  return request.post(
+export async function redisCmd<T>(uuid: string, cmdList: RedisCmdItem[], option?: PostOpt) {
+  return request.post<T>(
     REDIS_CMD,
     {
       uuid: uuid,
@@ -26,12 +26,8 @@ export async function redisPing(props: dbBase, option?: PostOpt) {
   }
 }
 
-export async function redisKeysCmd(uuid: string, option?: PostOpt) {
-  return redisCmd(uuid, QUERY_DB_KEYS, option)
-}
-
-export async function redisConfigCmd(uuid: string, field: string, option?: PostOpt) {
-  return request.post(
+export async function redisConfigCmd<T>(uuid: string, field: string, option?: PostOpt) {
+  return request.post<T>(
     REDIS_CMD,
     {
       uuid: uuid,
@@ -39,4 +35,31 @@ export async function redisConfigCmd(uuid: string, field: string, option?: PostO
     },
     option,
   )
+}
+
+export async function redisKeysCmd(uuid: string, option?: PostOpt) {
+  try {
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_DB_KEYS, option)
+    return res?.data[0]?.data
+  } catch {
+    return []
+  }
+}
+
+export async function redisDbNumber(uuid: string) {
+  try {
+    const res = await redisConfigCmd<IRedisQueryResponseBase<string[]>[]>(uuid, 'databases')
+    return res?.data[0]?.data?.[1]
+  } catch {
+    return 0
+  }
+}
+
+export async function redisSelectDb(uuid: string, index: number) {
+  try {
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_SELECT_DB_FUNC(index))
+    return res
+  } catch {
+    return 0
+  }
 }
