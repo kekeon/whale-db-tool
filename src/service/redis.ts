@@ -16,6 +16,7 @@ export async function redisCmd<T>(uuid: string, cmdList: RedisCmdItem[], option?
   )
 }
 
+// 监测 redis 有效性
 export async function redisPing(props: dbBase, option?: PostOpt) {
   try {
     const res = await request.post(REDIS_PING, props, option)
@@ -26,6 +27,7 @@ export async function redisPing(props: dbBase, option?: PostOpt) {
   }
 }
 
+// 查询数据库的字段配置
 export async function redisConfigCmd<T>(uuid: string, field: string, option?: PostOpt) {
   return request.post<T>(
     REDIS_CMD,
@@ -37,6 +39,7 @@ export async function redisConfigCmd<T>(uuid: string, field: string, option?: Po
   )
 }
 
+// 查询 redis 返回的keys
 export async function redisKeysCmd(uuid: string, option?: PostOpt) {
   try {
     const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_DB_KEYS, option)
@@ -46,6 +49,7 @@ export async function redisKeysCmd(uuid: string, option?: PostOpt) {
   }
 }
 
+// 查询 redis 库的数量
 export async function redisDbNumber(uuid: string) {
   try {
     const res = await redisConfigCmd<IRedisQueryResponseBase<string[]>[]>(uuid, 'databases')
@@ -55,9 +59,19 @@ export async function redisDbNumber(uuid: string) {
   }
 }
 
+// 切换 redis 库
 export async function redisSelectDb(uuid: string, index: number) {
   try {
     const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_SELECT_DB_FUNC(index))
+    return res
+  } catch {
+    return 0
+  }
+}
+
+export async function redisKeyValue(uuid: string, key: string) {
+  try {
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_SELECT_DB_FUNC(key))
     return res
   } catch {
     return 0

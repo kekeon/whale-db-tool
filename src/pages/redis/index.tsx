@@ -1,6 +1,6 @@
 import { ConnectedEnum } from '@/constant/js'
 import { useConnectedList } from '@/hooks'
-import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisSelectDb } from '@/service/redis'
+import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { Select } from 'antd'
 import classNames from 'classnames'
@@ -72,15 +72,17 @@ const Redis: React.FC<RedisPageProps> = () => {
     return dom
   }, [dbNumber])
 
-  const handleDbChange = (v: number) => {
+  const handleDbChange = async (v: number) => {
     setSelectDb(v)
-    redisSelectDb(redisDbUUidRef.current, v)
-    getDbKeys(v)
+    await redisSelectDb(redisDbUUidRef.current, v)
+    await getDbKeys(v)
     // handleDbChange(0)
   }
 
-  const handleSelectKey = (v: string) => {
+  const handleSelectKey = async (v: string) => {
     setSelectKey(v)
+    const res = await redisKeyValue(redisDbUUidRef.current, v)
+    console.log(res)
   }
 
   return (
