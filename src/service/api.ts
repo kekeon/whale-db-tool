@@ -9,3 +9,4 @@ export const CONNECTED_DELETE = '/connected/delete'
 
 export const REDIS_CMD = '/redis/cmd'
 export const REDIS_PING = '/redis/ping'
+export const REDIS_KEY_VALUE = '/redis/key_value'
