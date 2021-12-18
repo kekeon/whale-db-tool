@@ -8,6 +8,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import DbConnectList from '_cp/DbConnectList'
 import DBEditConnectModal from '_cp/DBEditConnectModal'
+import StringView from './components/StringView'
 import style from './index.module.less'
 
 const Option = Select.Option
@@ -20,6 +21,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [dbNumber, setDbNumber] = useState(1)
   const [selectDb, setSelectDb] = useState(0)
   const [selectKey, setSelectKey] = useState('')
+  const [selectKeyInValue, setSelectKeyInValue] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const redisDbUUidRef = useRef('')
   const initData = () => {}
@@ -83,7 +85,14 @@ const Redis: React.FC<RedisPageProps> = () => {
     setSelectKey(v)
     const res = await redisKeyValue(redisDbUUidRef.current, v)
     console.log(res)
+    if (Array.isArray(res?.data) && res?.data.length) {
+      setSelectKeyInValue(res?.data[0]?.data?.value as string)
+    }
   }
+
+  const renderView = useCallback(() => {
+    return <StringView value={selectKeyInValue} />
+  }, [selectKeyInValue])
 
   return (
     <section className={style.redis}>
@@ -115,8 +124,8 @@ const Redis: React.FC<RedisPageProps> = () => {
               </div>
             ))}
           </div>
-          <div />
         </div>
+        <div className="db-data-value">{renderView()}</div>
       </div>
 
       {addVisible && (

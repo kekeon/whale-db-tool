@@ -13,3 +13,13 @@ export interface IRedisQueryResponseBase<T> {
   data: T
   err_msg: string
 }
+
+export interface IRedisKeyInValue {
+  type: string
+  value: unknown
+}
+
+export interface IRedisKeyInValueItem {
+  data: IRedisKeyInValue
+  err_msg: string
+}

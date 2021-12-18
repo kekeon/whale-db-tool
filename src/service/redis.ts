@@ -1,6 +1,6 @@
 import { QUERY_DB_CONFIG_FUNC, QUERY_DB_KEYS, QUERY_SELECT_DB_FUNC } from '@/statement/redis.cmd'
 import { dbBase } from '@/types/mysqlTypes'
-import { IRedisQueryResponseBase, RedisCmdItem } from '@/types/redisType'
+import { IRedisKeyInValue, IRedisKeyInValueItem, IRedisQueryResponseBase, RedisCmdItem } from '@/types/redisType'
 import request, { PostOpt } from '@/utils/request'
 import { REDIS_CMD, REDIS_KEY_VALUE, REDIS_PING } from './api'
 
@@ -71,9 +71,12 @@ export async function redisSelectDb(uuid: string, index: number) {
 
 export async function redisKeyValue(uuid: string, key: string) {
   try {
-    const res = await request.post<IRedisQueryResponseBase<any[]>[]>(REDIS_KEY_VALUE, { uuid, key_list: [key] })
+    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_VALUE, {
+      uuid,
+      key_list: [key],
+    })
     return res
   } catch {
-    return 0
+    return null
   }
 }
