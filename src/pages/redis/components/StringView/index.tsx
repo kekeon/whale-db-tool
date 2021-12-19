@@ -19,8 +19,8 @@ const StringView: React.FC<StringViewProps> = ({ value }) => {
 
   useEffect(() => {
     if (isJsonStr(value)) {
-      console.log(value)
-      const json = JSONFormat(aceValue)
+      const json = JSONFormat(value)
+      console.log('json', json)
       setAceValue(json)
     } else {
       setAceValue(value)
