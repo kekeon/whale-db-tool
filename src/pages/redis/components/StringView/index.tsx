@@ -3,6 +3,10 @@ import style from './index.module.less'
 import AceEditor from 'react-ace'
 import { Select } from 'antd'
 import { isJsonStr, JSONFormat } from '@/utils/utils'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-github'
+import 'ace-builds/src-min-noconflict/ext-searchbox'
+import 'ace-builds/src-min-noconflict/ext-language_tools'
 
 const Option = Select.Option
 
@@ -20,7 +24,6 @@ const StringView: React.FC<StringViewProps> = ({ value }) => {
   useEffect(() => {
     if (isJsonStr(value)) {
       const json = JSONFormat(value)
-      console.log('json', json)
       setAceValue(json)
     } else {
       setAceValue(value)
