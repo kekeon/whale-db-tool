@@ -1,5 +1,13 @@
 import { uuid } from './commonTypes'
 
+export enum RedisKeyType {
+  STRING = 'string',
+  SET = 'set',
+  ZSET = 'zset',
+  LIST = 'list',
+  HASH = 'hash',
+}
+
 export interface RedisCmdItem {
   cmd: string[]
 }

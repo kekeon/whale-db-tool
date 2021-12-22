@@ -2,12 +2,14 @@ import { ConnectedEnum } from '@/constant/js'
 import { useConnectedList } from '@/hooks'
 import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
+import { RedisKeyType } from '@/types/redisType'
 import { Select } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import DbConnectList from '_cp/DbConnectList'
 import DBEditConnectModal from '_cp/DBEditConnectModal'
+import TableView from './components/TableView'
 import KeyTypeView from './components/KeyTypeView'
 import StringView from './components/StringView'
 import style from './index.module.less'
@@ -96,8 +98,20 @@ const Redis: React.FC<RedisPageProps> = () => {
   const renderView = useCallback(
     (type: string) => {
       switch (type) {
-        case 'string':
+        case RedisKeyType.STRING:
           return <StringView value={selectKeyInValue} />
+        case RedisKeyType.LIST: {
+          let data: any = []
+          if (Array.isArray(selectKeyInValue)) {
+            data = selectKeyInValue.map((v, index) => ({
+              idx: index + 1,
+              value: v,
+            }))
+          }
+          console.log('data', data)
+
+          return <TableView keyType={type} dataSource={data} />
+        }
         default:
           break
       }
