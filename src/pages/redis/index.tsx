@@ -100,12 +100,24 @@ const Redis: React.FC<RedisPageProps> = () => {
       switch (type) {
         case RedisKeyType.STRING:
           return <StringView value={selectKeyInValue} />
-        case RedisKeyType.LIST: {
+        case RedisKeyType.LIST:
+        case RedisKeyType.SET: {
           let data: any = []
           if (Array.isArray(selectKeyInValue)) {
             data = selectKeyInValue.map((v, index) => ({
               idx: index + 1,
               value: v,
+            }))
+          }
+          return <TableView keyType={type} dataSource={data} />
+        }
+        case RedisKeyType.ZSET: {
+          let data: any = []
+          if (Array.isArray(selectKeyInValue)) {
+            data = selectKeyInValue.map((v, index) => ({
+              idx: index + 1,
+              value: v?.Member,
+              score: v?.Score,
             }))
           }
           return <TableView keyType={type} dataSource={data} />
