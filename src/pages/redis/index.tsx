@@ -108,8 +108,24 @@ const Redis: React.FC<RedisPageProps> = () => {
               value: v,
             }))
           }
-          console.log('data', data)
-
+          return <TableView keyType={type} dataSource={data} />
+        }
+        case RedisKeyType.HASH: {
+          let data: any = []
+          if (Array.isArray(selectKeyInValue)) {
+            let item = {}
+            for (let i = 0; i < selectKeyInValue.length; i++) {
+              if (i % 2 === 0) {
+                item = {
+                  idx: i,
+                  keyInValue: selectKeyInValue[i],
+                }
+              } else {
+                item.value = selectKeyInValue[i]
+                data.push(item)
+              }
+            }
+          }
           return <TableView keyType={type} dataSource={data} />
         }
         default:

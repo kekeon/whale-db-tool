@@ -5,11 +5,11 @@ interface TableViewProps<T> {
   keyType: string
   dataSource: T[]
 }
-const TableView: React.FC<TableViewProps> = ({ keyType, dataSource }) => {
+const TableView = <T extends {}>({ keyType, dataSource }: TableViewProps<T>) => {
   const columns = useMemo(() => {
     return [
       { dataIndex: 'idx', title: 'ID', width: 120 },
-      { dataIndex: 'value', title: 'Value' },
+      { dataIndex: 'value', title: 'Value', ellipsis: { showTitle: true } },
       {
         dataIndex: 'row',
         title: 'Operation',
