@@ -3,7 +3,7 @@ import { useConnectedList } from '@/hooks'
 import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
-import { Select } from 'antd'
+import { Button, Col, Row, Select } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -13,6 +13,8 @@ import TableView from './components/TableView'
 import KeyTypeView from './components/KeyTypeView'
 import StringView from './components/StringView'
 import style from './index.module.less'
+import { PlusOutlined } from '@ant-design/icons'
+import NewKeyModal from './components/NewKeyModal'
 
 const Option = Select.Option
 
@@ -160,9 +162,16 @@ const Redis: React.FC<RedisPageProps> = () => {
       </div>
       <div className="db-data-wrap">
         <div className="db-table">
-          <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
-            {...dbListOption}
-          </Select>
+          <Row gutter={10}>
+            <Col span={12}>
+              <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
+                {...dbListOption}
+              </Select>
+            </Col>
+            <Col span={12}>
+              <NewKeyModal />
+            </Col>
+          </Row>
 
           <div className="db-keys-list">
             {keyList.map((key, index) => (
