@@ -12,7 +12,7 @@ const NewKeyModal: React.FC<NewKeyModalProps> = () => {
     }>
       width={600}
       layout="horizontal"
-      title="新建表单"
+      title="New Key"
       trigger={
         <Button>
           <PlusOutlined />
