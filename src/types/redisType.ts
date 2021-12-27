@@ -31,3 +31,9 @@ export interface IRedisKeyInValueItem {
   data: IRedisKeyInValue
   err_msg: string
 }
+
+export interface IRedisKeySetValue {
+  key_type: RedisKeyType
+  Key: string
+  value?: string
+}

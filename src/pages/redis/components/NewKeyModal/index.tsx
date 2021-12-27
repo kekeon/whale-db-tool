@@ -1,10 +1,20 @@
+import { redisKeySet } from '@/service/redis'
 import { RedisKeyType } from '@/types/redisType'
 import { PlusOutlined } from '@ant-design/icons'
 import ProForm, { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form'
 import { Button, Modal } from 'antd'
 import React from 'react'
-interface NewKeyModalProps {}
-const NewKeyModal: React.FC<NewKeyModalProps> = () => {
+interface NewKeyModalProps {
+  uuid: string
+}
+const NewKeyModal: React.FC<NewKeyModalProps> = ({ uuid }) => {
+  const handleAdd = async (value) => {
+    const res = await redisKeySet({
+      uuid,
+      ...value,
+    })
+    console.log('res', res)
+  }
   return (
     <ModalForm<{
       keyName: string
@@ -24,7 +34,8 @@ const NewKeyModal: React.FC<NewKeyModalProps> = () => {
         onCancel: () => console.log('run'),
       }}
       onFinish={async (values) => {
-        console.log(values.name)
+        console.log(values)
+        await handleAdd(values)
         return true
       }}
     >

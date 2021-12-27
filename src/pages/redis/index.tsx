@@ -169,7 +169,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               </Select>
             </Col>
             <Col span={12}>
-              <NewKeyModal />
+              <NewKeyModal uuid={redisDbUUid} />
             </Col>
           </Row>
 

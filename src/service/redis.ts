@@ -1,6 +1,13 @@
 import { QUERY_DB_CONFIG_FUNC, QUERY_DB_KEYS, QUERY_SELECT_DB_FUNC } from '@/statement/redis.cmd'
+import { uuid } from '@/types/commonTypes'
 import { dbBase } from '@/types/mysqlTypes'
-import { IRedisKeyInValue, IRedisKeyInValueItem, IRedisQueryResponseBase, RedisCmdItem } from '@/types/redisType'
+import {
+  IRedisKeyInValue,
+  IRedisKeyInValueItem,
+  IRedisKeySetValue,
+  IRedisQueryResponseBase,
+  RedisCmdItem,
+} from '@/types/redisType'
 import request, { PostOpt } from '@/utils/request'
 import { REDIS_CMD, REDIS_KEY_VALUE, REDIS_PING } from './api'
 
@@ -75,6 +82,15 @@ export async function redisKeyValue(uuid: string, key: string) {
       uuid,
       key_list: [key],
     })
+    return res
+  } catch {
+    return null
+  }
+}
+
+export async function redisKeySet(data: IRedisKeySetValue & uuid) {
+  try {
+    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_VALUE, data)
     return res
   } catch {
     return null
