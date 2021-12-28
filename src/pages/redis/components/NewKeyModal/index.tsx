@@ -7,21 +7,24 @@ import React from 'react'
 interface NewKeyModalProps {
   uuid: string
 }
+interface NewKeyModalForm {
+  keyName: string
+  keyType: RedisKeyType
+}
+
 const NewKeyModal: React.FC<NewKeyModalProps> = ({ uuid }) => {
-  const handleAdd = async (value) => {
+  const handleAdd = async (value: NewKeyModalForm) => {
     const res = await redisKeySet({
       uuid,
-      ...value,
+      key_type: value.keyType,
+      key: value.keyName,
     })
-    console.log('res', res)
   }
   return (
-    <ModalForm<{
-      keyName: string
-      keyType: string
-    }>
+    <ModalForm<NewKeyModalForm>
       width={600}
       layout="horizontal"
+      labelCol={{ span: 4 }}
       title="New Key"
       trigger={
         <Button>

@@ -9,7 +9,7 @@ import {
   RedisCmdItem,
 } from '@/types/redisType'
 import request, { PostOpt } from '@/utils/request'
-import { REDIS_CMD, REDIS_KEY_VALUE, REDIS_PING } from './api'
+import { REDIS_CMD, REDIS_KEY_SET, REDIS_KEY_VALUE, REDIS_PING } from './api'
 
 // 基础查询
 export async function redisCmd<T>(uuid: string, cmdList: RedisCmdItem[], option?: PostOpt) {
@@ -88,9 +88,9 @@ export async function redisKeyValue(uuid: string, key: string) {
   }
 }
 
-export async function redisKeySet(data: IRedisKeySetValue & uuid) {
+export async function redisKeySet(data: IRedisKeySetValue) {
   try {
-    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_VALUE, data)
+    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_SET, data)
     return res
   } catch {
     return null

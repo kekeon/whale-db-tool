@@ -33,7 +33,8 @@ export interface IRedisKeyInValueItem {
 }
 
 export interface IRedisKeySetValue {
+  uuid: uuid
   key_type: RedisKeyType
-  Key: string
+  key: string
   value?: string
 }
