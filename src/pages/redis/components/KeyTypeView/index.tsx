@@ -1,3 +1,4 @@
+import { redisDeleteKey } from '@/service/redis'
 import { DeleteOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, Col, Input, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +14,10 @@ const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType }) => {
   useEffect(() => {
     setValue(keyValue)
   }, [keyValue])
+
+  const handleDelete = async (key: string) => {
+    const deleteRes = await redisDeleteKey(key)
+  }
   return (
     <Row className={styles.KeyTypeView}>
       <Col span={8}>

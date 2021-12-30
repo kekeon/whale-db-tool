@@ -1,4 +1,9 @@
-import { QUERY_DB_CONFIG_FUNC, QUERY_DB_KEYS, QUERY_SELECT_DB_FUNC } from '@/statement/redis.cmd'
+import {
+  QUERY_DB_CONFIG_FUNC,
+  QUERY_DB_DELETE_KEY_FUNC,
+  QUERY_DB_KEYS,
+  QUERY_SELECT_DB_FUNC,
+} from '@/statement/redis.cmd'
 import { uuid } from '@/types/commonTypes'
 import { dbBase } from '@/types/mysqlTypes'
 import {
@@ -70,6 +75,16 @@ export async function redisDbNumber(uuid: string) {
 export async function redisSelectDb(uuid: string, index: number) {
   try {
     const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_SELECT_DB_FUNC(index))
+    return res
+  } catch {
+    return 0
+  }
+}
+
+// 删除键
+export async function redisDeleteKey(uuid: string, key: string) {
+  try {
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_DB_DELETE_KEY_FUNC(key))
     return res
   } catch {
     return 0
