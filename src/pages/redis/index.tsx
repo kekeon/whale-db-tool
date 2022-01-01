@@ -37,7 +37,7 @@ const Redis: React.FC<RedisPageProps> = () => {
     setDbNumber(Number(res))
   }
 
-  const getDbKeys = async (index: number) => {
+  const getDbKeys = async () => {
     const res = await redisKeysCmd(redisDbUUidRef.current)
     setKeyList(res)
   }
@@ -64,6 +64,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const handleAddOk = () => {}
   const handleAddCancel = () => {
     handleConnectedFormVisible(false)
+    getDbKeys()
   }
 
   /*  connect end */
@@ -127,7 +128,7 @@ const Redis: React.FC<RedisPageProps> = () => {
         case RedisKeyType.HASH: {
           let data: any = []
           if (Array.isArray(selectKeyInValue)) {
-            let item = {}
+            let item: any = {}
             for (let i = 0; i < selectKeyInValue.length; i++) {
               if (i % 2 === 0) {
                 item = {
@@ -162,7 +163,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       </div>
       <div className="db-data-wrap">
         <div className="db-table">
-          <Row gutter={10}>
+          <Row gutter={20}>
             <Col span={12}>
               <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
                 {...dbListOption}
@@ -188,7 +189,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           </div>
         </div>
         <div className="db-data-value">
-          <KeyTypeView KeyType={selectKeyInType} keyValue={selectKey} />
+          <KeyTypeView KeyType={selectKeyInType} keyValue={selectKey} onRefresh={getDbKeys} />
           {renderView(selectKeyInType)}
         </div>
       </div>
