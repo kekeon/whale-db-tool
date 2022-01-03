@@ -1,6 +1,6 @@
 import { redisDeleteKey } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
-import { DeleteOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons'
+import { DeleteOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, Col, Input, message, Modal, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -60,7 +60,6 @@ const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh,
           title="刷新"
           onClick={onRefreshKeyValue}
         />
-        <Button className="ml10" title="保存" type="primary" icon={<SaveOutlined />} />
       </Col>
     </Row>
   )
