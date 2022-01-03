@@ -10,8 +10,9 @@ interface KeyTypeViewProps {
   keyValue: string
   KeyType: string
   onRefresh: () => void
+  onRefreshKeyValue?: () => void
 }
-const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh }) => {
+const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh, onRefreshKeyValue }) => {
   const [value, setValue] = useState(keyValue)
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
 
@@ -51,7 +52,14 @@ const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh 
       </Col>
       <Col span={8}>
         <Button className="ml10" icon={<DeleteOutlined />} title="删除" danger onClick={handleDelete} />
-        <Button className="ml10" icon={<SyncOutlined />} type="primary" ghost title="刷新" />
+        <Button
+          className="ml10"
+          icon={<SyncOutlined />}
+          type="primary"
+          ghost
+          title="刷新"
+          onClick={onRefreshKeyValue}
+        />
         <Button className="ml10" title="保存" type="primary" icon={<SaveOutlined />} />
       </Col>
     </Row>

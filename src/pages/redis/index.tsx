@@ -170,7 +170,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               </Select>
             </Col>
             <Col span={12}>
-              <NewKeyModal uuid={redisDbUUid} />
+              <NewKeyModal uuid={redisDbUUid} onSuccess={getDbKeys} />
             </Col>
           </Row>
 
@@ -189,7 +189,12 @@ const Redis: React.FC<RedisPageProps> = () => {
           </div>
         </div>
         <div className="db-data-value">
-          <KeyTypeView KeyType={selectKeyInType} keyValue={selectKey} onRefresh={getDbKeys} />
+          <KeyTypeView
+            KeyType={selectKeyInType}
+            keyValue={selectKey}
+            onRefresh={getDbKeys}
+            onRefreshKeyValue={() => handleSelectKey(selectKey)}
+          />
           {renderView(selectKeyInType)}
         </div>
       </div>
