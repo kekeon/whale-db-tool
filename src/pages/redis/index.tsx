@@ -59,7 +59,7 @@ const Redis: React.FC<RedisPageProps> = () => {
     redisDbUUidRef.current = uuid
     setRedisDbUUid(uuid)
     getDbNumber(uuid)
-    getDbKeys(selectDb)
+    getDbKeys()
   }
   const handleAddOk = () => {}
   const handleAddCancel = () => {
@@ -84,8 +84,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const handleDbChange = async (v: number) => {
     setSelectDb(v)
     await redisSelectDb(redisDbUUidRef.current, v)
-    await getDbKeys(v)
-    // handleDbChange(0)
+    await getDbKeys()
   }
 
   const handleSelectKey = async (v: string) => {
