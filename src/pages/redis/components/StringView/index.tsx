@@ -1,19 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
 import style from './index.module.less'
 import AceEditor from 'react-ace'
-import { Select } from 'antd'
+import { Button, Select } from 'antd'
 import { isJsonStr, JSONFormat } from '@/utils/utils'
 import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-min-noconflict/ext-searchbox'
 import 'ace-builds/src-min-noconflict/ext-language_tools'
+import DbClipboardNode from '_cp/DbClipboardNode'
+import { SaveOutlined } from '@ant-design/icons'
 
 const Option = Select.Option
 
 interface StringViewProps {
   value: string
+  onSave?: (value: string) => void
 }
-const StringView: React.FC<StringViewProps> = ({ value }) => {
+const StringView: React.FC<StringViewProps> = ({ value, onSave }) => {
   const [theme, setTheme] = useState<string>('github')
   const [valueType, setValueType] = useState<string>('json')
   const [aceValue, setAceValue] = useState<string>(value)
@@ -29,14 +32,40 @@ const StringView: React.FC<StringViewProps> = ({ value }) => {
       setAceValue(value)
     }
   }, [value])
+  console.log('aceValue', aceValue)
+
+  const handleChange = (v) => {
+    console.log('v', v)
+    setAceValue(v)
+  }
+
+  const handleSave = () => {
+    onSave?.(aceValue)
+  }
 
   return (
     <div className={style.StringView}>
       <div className="string-view-header">
-        <Select value={valueType}>
-          <Option value="json">Json</Option>
-          <Option value="text">Text</Option>
-        </Select>
+        <div>
+          <Select value={valueType}>
+            <Option value="json">Json</Option>
+            <Option value="text">Text</Option>
+          </Select>
+        </div>
+        <div className="ml15">
+          <Button type="link">
+            <DbClipboardNode text={aceValue} className="ml10">
+              <span className="ml5 button-text hover-zoom">复制</span>
+            </DbClipboardNode>
+          </Button>
+        </div>
+        <div className="ml5">
+          <Button icon={<SaveOutlined />} type="link">
+            <span className="button-text hover-zoom" onClick={handleSave}>
+              保存
+            </span>
+          </Button>
+        </div>
       </div>
       <div className="string-content">
         <AceEditor
@@ -52,8 +81,8 @@ const StringView: React.FC<StringViewProps> = ({ value }) => {
           theme={theme}
           name="DB_STRING_ACE"
           editorProps={{ $blockScrolling: false }}
-          /*  onChange={handleChange}
-          onSelectionChange={handleSelect} */
+          onChange={handleChange}
+          // onSelectionChange={handleSelect}
           setOptions={{
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,

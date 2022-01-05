@@ -10,10 +10,11 @@ interface Props {
   style?: React.CSSProperties
   className?: string
   isIconColor?: boolean
+  children?: React.ReactChild
 }
 
 type PropsExtra = Props
-const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, isIconColor = true }) => {
+const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, isIconColor = true, children }) => {
   const CopyIcon = icon ? icon : <CopyOutlined />
   const [isCopySuccess, setIsCopySuccess] = useState<boolean>(false)
   const timerRef = useRef<number>()
@@ -36,6 +37,8 @@ const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, i
   useEffect(() => {
     const clipboard = new ClipboardJS($spanRef.current as HTMLElement, {
       text: (el: Element) => {
+        console.log('text', text)
+
         return text || ''
       },
     })
@@ -44,6 +47,7 @@ const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, i
       clipboard.destroy()
     }
   }, [])
+  console.log('text', text)
 
   return (
     <span style={style} ref={$spanRef} className={classNames(styles.DbClipboardNode, className)}>
@@ -55,6 +59,7 @@ const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, i
         onClick={handleCopy}
       >
         {isCopySuccess ? <CheckOutlined /> : CopyIcon}
+        {children}
       </span>
     </span>
   )
