@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import style from './index.module.less'
 import AceEditor from 'react-ace'
 import { Button, Select } from 'antd'
@@ -32,7 +32,6 @@ const StringView: React.FC<StringViewProps> = ({ value, onSave }) => {
       setAceValue(value)
     }
   }, [value])
-  console.log('aceValue', aceValue)
 
   const handleChange = (v) => {
     console.log('v', v)

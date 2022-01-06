@@ -1,11 +1,11 @@
 import { ConnectedEnum } from '@/constant/js'
 import { useConnectedList } from '@/hooks'
-import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeyValue, redisSelectDb } from '@/service/redis'
+import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
-import { Button, Col, Row, Select } from 'antd'
+import { Button, Col, message, Row, Select } from 'antd'
 import classNames from 'classnames'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import DbConnectList from '_cp/DbConnectList'
 import DBEditConnectModal from '_cp/DBEditConnectModal'
@@ -13,7 +13,6 @@ import TableView from './components/TableView'
 import KeyTypeView from './components/KeyTypeView'
 import StringView from './components/StringView'
 import style from './index.module.less'
-import { PlusOutlined } from '@ant-design/icons'
 import NewKeyModal from './components/NewKeyModal'
 
 const Option = Select.Option
@@ -97,7 +96,28 @@ const Redis: React.FC<RedisPageProps> = () => {
     }
   }
 
-  const handleSaveKeyInValue = (v: string) => {}
+  const handleSaveKeyInValue = async (v: string) => {
+    const res = await redisKeySet({
+      key: selectKey,
+      uuid: redisDbUUid,
+      key_type: selectKeyInType,
+      value: v,
+    })
+
+    if (res?.data?.err_msg) {
+      message.error(res?.data?.err_msg)
+      return
+    }
+
+    if (res?.data?.data?.value === 'OK') {
+      message.success('保存成功')
+      return
+    }
+  }
+
+  useEffect(() => {
+    console.log(' useEffect selectKeyInType', selectKeyInType)
+  }, [selectKeyInType])
 
   const renderView = useCallback(
     (type: string) => {
@@ -148,7 +168,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           break
       }
     },
-    [selectKeyInValue],
+    [selectKeyInValue, selectKeyInType],
   )
 
   return (

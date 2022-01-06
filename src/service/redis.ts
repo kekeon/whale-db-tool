@@ -105,7 +105,7 @@ export async function redisKeyValue(uuid: string, key: string) {
 
 export async function redisKeySet(data: IRedisKeySetValue) {
   try {
-    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_SET, data)
+    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValue>>(REDIS_KEY_SET, data)
     return res
   } catch {
     return null
