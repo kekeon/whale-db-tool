@@ -5,9 +5,10 @@ import React, { useMemo } from 'react'
 interface TableViewProps<T> {
   keyType: string
   dataSource: T[]
+  onEdit?: () => void
 }
 
-const TableView = <T extends {}>({ keyType, dataSource }: TableViewProps<T>) => {
+const TableView = <T extends {}>({ keyType, dataSource, onEdit }: TableViewProps<T>) => {
   const columns = useMemo(() => {
     const idxCol = { dataIndex: 'idx', title: 'ID', width: 120 }
     const keyCol = { dataIndex: 'keyInValue', title: 'Key', width: 120, ellipsis: { showTitle: true } }
@@ -22,7 +23,7 @@ const TableView = <T extends {}>({ keyType, dataSource }: TableViewProps<T>) => 
         return (
           <>
             <Button className="ml5" type="link" title="复制" icon={<CopyOutlined />} />
-            <Button className="ml5" type="link" title="编辑" icon={<EditOutlined />} />
+            <Button className="ml5" type="link" title="编辑" icon={<EditOutlined />} onClick={onEdit} />
             <Button className="ml5" type="link" title="删除" icon={<DeleteOutlined />} />
           </>
         )

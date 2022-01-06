@@ -14,6 +14,7 @@ import KeyTypeView from './components/KeyTypeView'
 import StringView from './components/StringView'
 import style from './index.module.less'
 import NewKeyModal from './components/NewKeyModal'
+import EditModal from './components/EditValueModal'
 
 const Option = Select.Option
 
@@ -28,6 +29,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [selectKeyInValue, setSelectKeyInValue] = useState('')
   const [selectKeyInType, setSelectKeyInType] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
+  const [showValueModal, setShowValueModal] = useState(false)
   const redisDbUUidRef = useRef('')
   const initData = () => {}
 
@@ -119,6 +121,12 @@ const Redis: React.FC<RedisPageProps> = () => {
     console.log(' useEffect selectKeyInType', selectKeyInType)
   }, [selectKeyInType])
 
+  const handleEditValue = () => {
+    console.log('handleEditValue')
+
+    setShowValueModal(true)
+  }
+
   const renderView = useCallback(
     (type: string) => {
       switch (type) {
@@ -133,7 +141,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               value: v,
             }))
           }
-          return <TableView keyType={type} dataSource={data} />
+          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
         }
         case RedisKeyType.ZSET: {
           let data: any = []
@@ -230,6 +238,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           initInfo={editInfo || {}}
         />
       )}
+      {showValueModal && <EditModal visible={showValueModal} />}
     </section>
   )
 }
