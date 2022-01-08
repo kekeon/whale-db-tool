@@ -238,7 +238,14 @@ const Redis: React.FC<RedisPageProps> = () => {
           initInfo={editInfo || {}}
         />
       )}
-      {showValueModal && <EditModal visible={showValueModal} />}
+      {showValueModal && (
+        <EditModal
+          onCancel={() => {
+            setShowValueModal(false)
+          }}
+          visible={showValueModal}
+        />
+      )}
     </section>
   )
 }
