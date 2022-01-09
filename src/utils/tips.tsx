@@ -52,6 +52,10 @@ export function warnMsg(msg = '操作失败') {
   message.warning(msg)
 }
 
+export function errorMsg(msg = '操作出错') {
+  message.error(msg)
+}
+
 export function loadingMsg(msg = '加载中', delay = 0) {
   return message.loading(msg, delay)
 }

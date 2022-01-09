@@ -1,9 +1,9 @@
 import { ConnectedEnum } from '@/constant/js'
-import { useConnectedList } from '@/hooks'
-import { redisConfigCmd, redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
+import { useAsyncLoading, useAsyncVisible, useConnectedList } from '@/hooks'
+import { redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
-import { Button, Col, message, Row, Select } from 'antd'
+import { Col, message, Row, Select } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -14,7 +14,8 @@ import KeyTypeView from './components/KeyTypeView'
 import StringView from './components/StringView'
 import style from './index.module.less'
 import NewKeyModal from './components/NewKeyModal'
-import EditModal from './components/EditValueModal'
+import EditModal, { IEditModalForm } from './components/EditValueModal'
+import { errorMsg, successMsg, warnMsg } from '@/utils/tips'
 
 const Option = Select.Option
 
@@ -30,6 +31,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [selectKeyInType, setSelectKeyInType] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
+  const [editKeyValue, setEditKeyValue] = useState()
   const redisDbUUidRef = useRef('')
   const initData = () => {}
 
@@ -121,10 +123,36 @@ const Redis: React.FC<RedisPageProps> = () => {
     console.log(' useEffect selectKeyInType', selectKeyInType)
   }, [selectKeyInType])
 
-  const handleEditValue = () => {
-    console.log('handleEditValue')
-
+  const handleEditValue = (row) => {
+    console.log('handleEditValue', row)
+    setEditKeyValue(row)
     setShowValueModal(true)
+  }
+
+  const { action: handleEditOk, visible: editSaveLoading } = useAsyncVisible(async (editValue) => {
+    const formData = editValue as IEditModalForm
+    if (!formData.field && !(formData as IEditModalForm).value) {
+      warnMsg('请输入需要更新的信息！')
+      return
+    }
+    const res = await redisKeySet({
+      uuid: redisDbUUid,
+      key_type: selectKeyInType as RedisKeyType,
+      key: selectKey,
+      value: [formData?.field, formData.value],
+    })
+
+    if (res?.data?.err_msg) {
+      errorMsg(res?.data?.err_msg)
+      return
+    }
+    successMsg()
+    handleEditCancel()
+    handleSelectKey(selectKey)
+  })
+
+  const handleEditCancel = () => {
+    setShowValueModal(false)
   }
 
   const renderView = useCallback(
@@ -170,7 +198,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               }
             }
           }
-          return <TableView keyType={type} dataSource={data} />
+          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
         }
         default:
           break
@@ -240,10 +268,13 @@ const Redis: React.FC<RedisPageProps> = () => {
       )}
       {showValueModal && (
         <EditModal
-          onCancel={() => {
-            setShowValueModal(false)
-          }}
+          keyType={selectKeyInType}
+          onCancel={handleEditCancel}
+          field={editKeyValue?.keyInValue}
+          value={editKeyValue?.value}
           visible={showValueModal}
+          loading={editSaveLoading}
+          onOk={handleEditOk}
         />
       )}
     </section>

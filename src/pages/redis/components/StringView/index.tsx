@@ -15,8 +15,9 @@ const Option = Select.Option
 interface StringViewProps {
   value: string
   onSave?: (value: string) => void
+  onChange?: (value: string) => void
 }
-const StringView: React.FC<StringViewProps> = ({ value, onSave }) => {
+const StringView: React.FC<StringViewProps> = ({ value, onSave, onChange }) => {
   const [theme, setTheme] = useState<string>('github')
   const [valueType, setValueType] = useState<string>('json')
   const [aceValue, setAceValue] = useState<string>(value)
@@ -34,8 +35,8 @@ const StringView: React.FC<StringViewProps> = ({ value, onSave }) => {
   }, [value])
 
   const handleChange = (v) => {
-    console.log('v', v)
     setAceValue(v)
+    onChange?.(v)
   }
 
   const handleSave = () => {
