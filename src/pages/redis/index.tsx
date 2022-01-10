@@ -1,5 +1,5 @@
 import { ConnectedEnum } from '@/constant/js'
-import { useAsyncVisible, useConnectedList } from '@/hooks'
+import { useAsyncVisible, useConnectedList, useStateRef } from '@/hooks'
 import { redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
@@ -32,6 +32,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
   const [editKeyValue, setEditKeyValue] = useState<{} & { lineKey: string }>()
+  const editKeyValueRef = useStateRef<({} & { lineKey: string }) | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
   const initData = () => {}
 
@@ -125,19 +126,9 @@ const Redis: React.FC<RedisPageProps> = () => {
 
   const handleEditValue = (row) => {
     console.log('handleEditValue', row)
-    let lineKey
-    switch (selectKeyInType) {
-      case RedisKeyType.HASH:
-        lineKey = 'keyInValue'
-        break
-      case RedisKeyType.LIST:
-      case RedisKeyType.SET:
-        lineKey = 'idx'
-        break
-    }
     setEditKeyValue({
       ...row,
-      lineKey: row['lineKey'],
+      lineKey: row.index,
     })
     setShowValueModal(true)
   }
@@ -148,12 +139,22 @@ const Redis: React.FC<RedisPageProps> = () => {
       warnMsg('请输入需要更新的信息！')
       return
     }
+
+    const value = []
+    if (formData?.field) {
+      value.push(formData?.field)
+    }
+
+    if (formData?.value) {
+      value.push(formData?.value)
+    }
+
     const res = await redisKeySet({
       uuid: redisDbUUid,
       key_type: selectKeyInType as RedisKeyType,
       key: selectKey,
-      line_key: editKeyValue?.lineKey as string,
-      value: [formData?.field, formData.value],
+      line_key: editKeyValueRef?.current?.lineKey as string,
+      value: value,
     })
 
     if (res?.data?.err_msg) {
@@ -180,6 +181,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           if (Array.isArray(selectKeyInValue)) {
             data = selectKeyInValue.map((v, index) => ({
               idx: index + 1,
+              index: index,
               value: v,
             }))
           }
@@ -190,6 +192,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           if (Array.isArray(selectKeyInValue)) {
             data = selectKeyInValue.map((v, index) => ({
               idx: index + 1,
+              index: index,
               value: v?.Member,
               score: v?.Score,
             }))
@@ -205,6 +208,7 @@ const Redis: React.FC<RedisPageProps> = () => {
                 item = {
                   idx: i,
                   keyInValue: selectKeyInValue[i],
+                  index: selectKeyInValue[i],
                 }
               } else {
                 item.value = selectKeyInValue[i]
