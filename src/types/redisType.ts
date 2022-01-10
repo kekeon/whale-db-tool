@@ -35,6 +35,7 @@ export interface IRedisKeyInValueItem {
 export interface IRedisKeySetValue {
   uuid: uuid
   key_type: RedisKeyType
+  line_key: string
   key: string
   value?: string | unknown[]
 }

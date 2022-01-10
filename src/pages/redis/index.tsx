@@ -1,5 +1,5 @@
 import { ConnectedEnum } from '@/constant/js'
-import { useAsyncLoading, useAsyncVisible, useConnectedList } from '@/hooks'
+import { useAsyncVisible, useConnectedList } from '@/hooks'
 import { redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
@@ -31,7 +31,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [selectKeyInType, setSelectKeyInType] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
-  const [editKeyValue, setEditKeyValue] = useState()
+  const [editKeyValue, setEditKeyValue] = useState<{} & { lineKey: string }>()
   const redisDbUUidRef = useRef('')
   const initData = () => {}
 
@@ -125,7 +125,20 @@ const Redis: React.FC<RedisPageProps> = () => {
 
   const handleEditValue = (row) => {
     console.log('handleEditValue', row)
-    setEditKeyValue(row)
+    let lineKey
+    switch (selectKeyInType) {
+      case RedisKeyType.HASH:
+        lineKey = 'keyInValue'
+        break
+      case RedisKeyType.LIST:
+      case RedisKeyType.SET:
+        lineKey = 'idx'
+        break
+    }
+    setEditKeyValue({
+      ...row,
+      lineKey: row['lineKey'],
+    })
     setShowValueModal(true)
   }
 
@@ -139,6 +152,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       uuid: redisDbUUid,
       key_type: selectKeyInType as RedisKeyType,
       key: selectKey,
+      line_key: editKeyValue?.lineKey as string,
       value: [formData?.field, formData.value],
     })
 
