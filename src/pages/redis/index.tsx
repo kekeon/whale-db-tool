@@ -153,16 +153,14 @@ const Redis: React.FC<RedisPageProps> = () => {
     if (formData?.value) {
       value.push(formData?.value)
     }
-    console.log('editKeyValueRef?.current', editKeyValueRef?.current)
 
     const res = await redisKeySet({
       uuid: redisDbUUid,
       key_type: selectKeyInType as RedisKeyType,
       key: selectKey,
-      line_key:
-        selectKeyInType === RedisKeyType.SET
-          ? editKeyValueRef?.current?.value
-          : (editKeyValueRef?.current?.lineKey as string),
+      line_key: [RedisKeyType.SET, RedisKeyType.ZSET].includes(selectKeyInType as RedisKeyType)
+        ? editKeyValueRef?.current?.value
+        : (editKeyValueRef?.current?.lineKey as string),
       value: value,
     })
 
@@ -206,7 +204,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               score: v?.Score,
             }))
           }
-          return <TableView keyType={type} dataSource={data} />
+          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
         }
         case RedisKeyType.HASH: {
           let data: any = []

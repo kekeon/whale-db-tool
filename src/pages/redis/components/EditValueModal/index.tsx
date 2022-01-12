@@ -1,5 +1,5 @@
 import { RedisKeyType } from '@/types/redisType'
-import { Modal, Form, Input } from 'antd'
+import { Modal, Form, Input, InputNumber } from 'antd'
 import React, { useEffect } from 'react'
 import StringView from '../StringView'
 import style from './index.module.less'
@@ -51,9 +51,9 @@ const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, 
       className={style.editValueModal}
     >
       <Form<IEditModalForm> layout="vertical" form={formRef}>
-        {[RedisKeyType.HASH].includes(keyType) ? (
+        {[RedisKeyType.HASH, RedisKeyType.ZSET].includes(keyType) ? (
           <Item label="Field" name="field" initialValue={field}>
-            <Input />
+            {RedisKeyType.HASH === keyType ? <Input /> : <InputNumber />}
           </Item>
         ) : null}
 
