@@ -136,7 +136,12 @@ const Redis: React.FC<RedisPageProps> = () => {
   const { action: handleEditOk, visible: editSaveLoading } = useAsyncVisible(async (editValue) => {
     const formData = editValue as IEditModalForm
     if (!formData.field && !(formData as IEditModalForm).value) {
-      warnMsg('请输入需要更新的信息！')
+      warnMsg('请输入需要更新的数据！')
+      return
+    }
+
+    if (selectKeyInType === RedisKeyType.SET && editKeyValueRef?.current?.value === formData?.value) {
+      warnMsg('未变更任何数据！')
       return
     }
 
@@ -148,12 +153,16 @@ const Redis: React.FC<RedisPageProps> = () => {
     if (formData?.value) {
       value.push(formData?.value)
     }
+    console.log('editKeyValueRef?.current', editKeyValueRef?.current)
 
     const res = await redisKeySet({
       uuid: redisDbUUid,
       key_type: selectKeyInType as RedisKeyType,
       key: selectKey,
-      line_key: editKeyValueRef?.current?.lineKey as string,
+      line_key:
+        selectKeyInType === RedisKeyType.SET
+          ? editKeyValueRef?.current?.value
+          : (editKeyValueRef?.current?.lineKey as string),
       value: value,
     })
 

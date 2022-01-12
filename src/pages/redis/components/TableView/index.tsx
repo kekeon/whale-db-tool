@@ -42,7 +42,7 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit }: TableViewProps
   }, [keyType])
   return (
     <div>
-      <Table columns={columns} rowKey="idx" dataSource={dataSource} />
+      <Table size="small" columns={columns} rowKey="idx" dataSource={dataSource} />
     </div>
   )
 }
