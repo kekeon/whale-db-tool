@@ -6,9 +6,10 @@ interface TableViewProps<T> {
   keyType: string
   dataSource: T[]
   onEdit?: (row: T) => void
+  onRemove?: (row: T) => void
 }
 
-const TableView = <T extends {}>({ keyType, dataSource, onEdit }: TableViewProps<T>) => {
+const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove }: TableViewProps<T>) => {
   const columns = useMemo(() => {
     const idxCol = { dataIndex: 'idx', title: 'ID', width: 120 }
     const keyCol = { dataIndex: 'keyInValue', title: 'Key', width: 120, ellipsis: { showTitle: true } }
@@ -24,7 +25,13 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit }: TableViewProps
           <>
             <Button className="ml5" type="link" title="复制" icon={<CopyOutlined />} />
             <Button className="ml5" type="link" title="编辑" icon={<EditOutlined />} onClick={() => onEdit?.(row)} />
-            <Button className="ml5" type="link" title="删除" icon={<DeleteOutlined />} />
+            <Button
+              className="ml5"
+              type="link"
+              title="删除"
+              icon={<DeleteOutlined />}
+              onClick={() => onRemove?.(row)}
+            />
           </>
         )
       },
@@ -35,7 +42,6 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit }: TableViewProps
         return [idxCol, keyCol, valueCol, optCol]
       case RedisKeyType.ZSET:
         return [idxCol, scoreCol, memberCol, optCol]
-
       default:
         return [idxCol, valueCol, optCol]
     }

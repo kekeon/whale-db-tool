@@ -1,9 +1,16 @@
 import { ConnectedEnum } from '@/constant/js'
 import { useAsyncVisible, useConnectedList, useStateRef } from '@/hooks'
-import { redisDbNumber, redisKeysCmd, redisKeySet, redisKeyValue, redisSelectDb } from '@/service/redis'
+import {
+  redisDbNumber,
+  redisKeyMemberRemove,
+  redisKeysCmd,
+  redisKeySet,
+  redisKeyValue,
+  redisSelectDb,
+} from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
-import { Col, message, Row, Select } from 'antd'
+import { Col, message, Modal, Row, Select } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -31,8 +38,8 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [selectKeyInType, setSelectKeyInType] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
-  const [editKeyValue, setEditKeyValue] = useState<{} & { lineKey: string }>()
-  const editKeyValueRef = useStateRef<({} & { lineKey: string }) | undefined>(editKeyValue)
+  const [editKeyValue, setEditKeyValue] = useState<{} & { member: string }>()
+  const editKeyValueRef = useStateRef<({} & { member: string }) | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
   const initData = () => {}
 
@@ -128,7 +135,7 @@ const Redis: React.FC<RedisPageProps> = () => {
     console.log('handleEditValue', row)
     setEditKeyValue({
       ...row,
-      lineKey: row.index,
+      member: row.index,
     })
     setShowValueModal(true)
   }
@@ -160,7 +167,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       key: selectKey,
       line_key: [RedisKeyType.SET, RedisKeyType.ZSET].includes(selectKeyInType as RedisKeyType)
         ? editKeyValueRef?.current?.value
-        : (editKeyValueRef?.current?.lineKey as string),
+        : (editKeyValueRef?.current?.member as string),
       value: value,
     })
 
@@ -172,6 +179,37 @@ const Redis: React.FC<RedisPageProps> = () => {
     handleEditCancel()
     handleSelectKey(selectKey)
   })
+
+  // 移除成员
+  const handleRemove = (row) => {
+    console.log('row', row)
+    const member = [RedisKeyType.HASH].includes(selectKeyInType as RedisKeyType)
+      ? row?.keyInValue
+      : (row?.value as string)
+
+    Modal.confirm({
+      title: '删除！',
+      content: (
+        <span>
+          确认删除成员【<span style={{ color: 'red' }}>{member}</span>】？
+        </span>
+      ),
+      onOk: async () => {
+        const res = await redisKeyMemberRemove({
+          uuid: redisDbUUid,
+          key: selectKey,
+          member: member,
+        })
+
+        if (!res) {
+          return
+        }
+
+        successMsg()
+        handleSelectKey(selectKey)
+      },
+    })
+  }
 
   const handleEditCancel = () => {
     setShowValueModal(false)
@@ -192,7 +230,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               value: v,
             }))
           }
-          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
+          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
         }
         case RedisKeyType.ZSET: {
           let data: any = []
@@ -204,7 +242,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               score: v?.Score,
             }))
           }
-          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
+          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
         }
         case RedisKeyType.HASH: {
           let data: any = []
@@ -223,7 +261,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               }
             }
           }
-          return <TableView keyType={type} dataSource={data} onEdit={handleEditValue} />
+          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
         }
         default:
           break

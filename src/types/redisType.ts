@@ -39,3 +39,9 @@ export interface IRedisKeySetValue {
   key: string
   value?: string | unknown[]
 }
+
+export interface IRedisKeyMemberRemove {
+  uuid: uuid
+  key: string
+  member: string
+}
