@@ -51,7 +51,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
               <span className="db-item">{item.connection_another_name}</span>
               <span className="db-edit-icon-wrap">
                 <EditOutlined
-                  className="ml5 icon_btn"
+                  className="ml5 hover-scale"
                   onClick={(e) => {
                     e.stopPropagation()
                     const d: common.cuid = {
@@ -74,13 +74,13 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
                     props?.onDelete(item.connection_uuid)
                   }}
                 >
-                  <DeleteOutlined onClick={(e) => e?.stopPropagation()} className="ml5 icon_btn" />
+                  <DeleteOutlined onClick={(e) => e?.stopPropagation()} className="ml5 hover-scale" />
                 </Popconfirm>
               </span>
             </div>
           ))
         : null}
-      <PlusOutlined className="ml10 cursor icon_btn" onClick={props.onAdd} />
+      <PlusOutlined className="ml10 cursor hover-scale" onClick={props.onAdd} />
     </div>
   )
 }

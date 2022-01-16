@@ -127,6 +127,8 @@ const Redis: React.FC<RedisPageProps> = () => {
     }
   }
 
+  const hanleChangeKeySave = () => {}
+
   const handleEditValue = (row) => {
     setEditKeyValue({
       ...row,
@@ -335,6 +337,7 @@ const Redis: React.FC<RedisPageProps> = () => {
         </div>
         <div className="db-data-value">
           <KeyTypeView
+            onSave={hanleChangeKeySave}
             KeyType={selectKeyInType}
             keyValue={selectKey}
             onRefresh={getDbKeys}

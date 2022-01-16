@@ -1,24 +1,36 @@
-import { redisDeleteKey } from '@/service/redis'
+import { redisDeleteKey, redisRenameKey } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
-import { DeleteOutlined, SyncOutlined } from '@ant-design/icons'
+import { RedisKeyType } from '@/types/redisType'
+import { CheckOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, Col, Input, message, Modal, Row } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import styles from './index.module.less'
 
 interface KeyTypeViewProps {
   keyValue: string
   KeyType: string
+  onSave?: () => void
   onRefresh: () => void
   onRefreshKeyValue?: () => void
 }
-const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh, onRefreshKeyValue }) => {
+const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh, onRefreshKeyValue, onSave }) => {
   const [value, setValue] = useState(keyValue)
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
 
   useEffect(() => {
     setValue(keyValue)
   }, [keyValue])
+
+  const type = useMemo(() => {
+    return {
+      set: 'Set',
+      zset: 'ZSet',
+      list: 'List',
+      string: 'String',
+      hash: 'Hash',
+    }[KeyType]
+  }, [KeyType])
 
   const handleDelete = () => {
     Modal.confirm({
@@ -39,15 +51,25 @@ const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh,
       },
     })
   }
+
+  const handleSaveKey = async () => {
+    const res = await redisRenameKey(redisDbUUid, {
+      key: keyValue,
+      newKey: value,
+    })
+
+    onRefresh?.()
+  }
   return (
     <Row className={styles.KeyTypeView}>
       <Col span={8}>
         <Input
-          addonBefore={KeyType}
+          addonBefore={type}
           onChange={(e) => {
             setValue(e.target.value)
           }}
           value={value}
+          suffix={<CheckOutlined className="cursor-p input-btn hover-scale" onClick={handleSaveKey} />}
         />
       </Col>
       <Col span={8}>

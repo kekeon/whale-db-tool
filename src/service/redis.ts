@@ -2,6 +2,7 @@ import {
   QUERY_DB_CONFIG_FUNC,
   QUERY_DB_DELETE_KEY_FUNC,
   QUERY_DB_KEYS,
+  QUERY_DB_RENAME_KEY_FUNC,
   QUERY_SELECT_DB_FUNC,
 } from '@/statement/redis.cmd'
 import { uuid } from '@/types/commonTypes'
@@ -89,6 +90,18 @@ export async function redisDeleteKey(uuid: string, key: string) {
     return res
   } catch {
     return 0
+  }
+}
+
+export async function redisRenameKey(uuid: string, params: { key: string; newKey: string }) {
+  try {
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(
+      uuid,
+      QUERY_DB_RENAME_KEY_FUNC(params.key, params.newKey),
+    )
+    return res
+  } catch {
+    return null
   }
 }
 
