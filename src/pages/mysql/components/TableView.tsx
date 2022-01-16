@@ -504,7 +504,6 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const handleFilterQuery = (values) => {
     const sqlWhere = formatSqlWhere(values)
-    // console.log('values', values, sqlWhere)
     sqlWhereRef.current = sqlWhere
     queryData?.(sqlWhere)
   }

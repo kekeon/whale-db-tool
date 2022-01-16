@@ -161,8 +161,6 @@ export function generateEditJson<T>(
     }
     return o
   })
-  console.log('list--', list)
-
   return list
 }
 

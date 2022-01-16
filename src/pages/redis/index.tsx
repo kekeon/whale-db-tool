@@ -102,7 +102,6 @@ const Redis: React.FC<RedisPageProps> = () => {
   const handleSelectKey = async (v: string) => {
     setSelectKey(v)
     const res = await redisKeyValue(redisDbUUidRef.current, v)
-    console.log(res)
     if (Array.isArray(res?.data) && res?.data.length) {
       setSelectKeyInValue(res?.data[0]?.data?.value as string)
       setSelectKeyInType(res?.data[0]?.data?.type as string)
@@ -128,12 +127,7 @@ const Redis: React.FC<RedisPageProps> = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(' useEffect selectKeyInType', selectKeyInType)
-  }, [selectKeyInType])
-
   const handleEditValue = (row) => {
-    console.log('handleEditValue', row)
     setEditKeyValue({
       ...row,
       member: row.index,
@@ -185,7 +179,6 @@ const Redis: React.FC<RedisPageProps> = () => {
 
   // 移除成员
   const handleRemove = (row) => {
-    console.log('row', row)
     const member = [RedisKeyType.HASH].includes(selectKeyInType as RedisKeyType)
       ? row?.keyInValue
       : (row?.value as string)

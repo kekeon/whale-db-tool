@@ -25,8 +25,6 @@ const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, 
 
   const handleOk = () => {
     const resData = formRef.getFieldsValue()
-    console.log('resData', resData)
-
     onOk?.(resData)
   }
   const handleCancel = () => {

@@ -37,8 +37,6 @@ const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, i
   useEffect(() => {
     const clipboard = new ClipboardJS($spanRef.current as HTMLElement, {
       text: (el: Element) => {
-        console.log('text', text)
-
         return text || ''
       },
     })
@@ -47,7 +45,6 @@ const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, i
       clipboard.destroy()
     }
   }, [])
-  console.log('text', text)
 
   return (
     <span style={style} ref={$spanRef} className={classNames(styles.DbClipboardNode, className)}>
