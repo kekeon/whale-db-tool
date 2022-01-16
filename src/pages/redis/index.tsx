@@ -38,6 +38,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [selectKeyInType, setSelectKeyInType] = useState('')
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
+  const [isValueModalNew, setIsValueModalNew] = useState(false)
   const [editKeyValue, setEditKeyValue] = useState<{} & { member: string }>()
   const editKeyValueRef = useStateRef<({} & { member: string }) | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
@@ -137,6 +138,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       ...row,
       member: row.index,
     })
+    setIsValueModalNew(false)
     setShowValueModal(true)
   }
 
@@ -175,6 +177,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       errorMsg(res?.data?.err_msg)
       return
     }
+    setEditKeyValue({ member: '' })
     successMsg()
     handleEditCancel()
     handleSelectKey(selectKey)
@@ -215,6 +218,11 @@ const Redis: React.FC<RedisPageProps> = () => {
     setShowValueModal(false)
   }
 
+  const handleAddMember = () => {
+    setIsValueModalNew(true)
+    setShowValueModal(true)
+  }
+
   const renderView = useCallback(
     (type: string) => {
       switch (type) {
@@ -230,7 +238,15 @@ const Redis: React.FC<RedisPageProps> = () => {
               value: v,
             }))
           }
-          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
+          return (
+            <TableView
+              keyType={type}
+              dataSource={data}
+              onRemove={handleRemove}
+              onEdit={handleEditValue}
+              onAdd={handleAddMember}
+            />
+          )
         }
         case RedisKeyType.ZSET: {
           let data: any = []
@@ -242,7 +258,15 @@ const Redis: React.FC<RedisPageProps> = () => {
               score: v?.Score,
             }))
           }
-          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
+          return (
+            <TableView
+              onAdd={handleAddMember}
+              keyType={type}
+              dataSource={data}
+              onRemove={handleRemove}
+              onEdit={handleEditValue}
+            />
+          )
         }
         case RedisKeyType.HASH: {
           let data: any = []
@@ -261,7 +285,15 @@ const Redis: React.FC<RedisPageProps> = () => {
               }
             }
           }
-          return <TableView keyType={type} dataSource={data} onRemove={handleRemove} onEdit={handleEditValue} />
+          return (
+            <TableView
+              onAdd={handleAddMember}
+              keyType={type}
+              dataSource={data}
+              onRemove={handleRemove}
+              onEdit={handleEditValue}
+            />
+          )
         }
         default:
           break
@@ -331,6 +363,7 @@ const Redis: React.FC<RedisPageProps> = () => {
       )}
       {showValueModal && (
         <EditModal
+          isNew={isValueModalNew}
           keyType={selectKeyInType}
           onCancel={handleEditCancel}
           field={editKeyValue?.keyInValue}

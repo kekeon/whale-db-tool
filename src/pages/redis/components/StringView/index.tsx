@@ -16,8 +16,9 @@ interface StringViewProps {
   value: string
   onSave?: (value: string) => void
   onChange?: (value: string) => void
+  label?: React.ReactChild
 }
-const StringView: React.FC<StringViewProps> = ({ value, onSave, onChange }) => {
+const StringView: React.FC<StringViewProps> = ({ value, label, onSave, onChange }) => {
   const [theme, setTheme] = useState<string>('github')
   const [valueType, setValueType] = useState<string>('json')
   const [aceValue, setAceValue] = useState<string>(value)
@@ -46,6 +47,7 @@ const StringView: React.FC<StringViewProps> = ({ value, onSave, onChange }) => {
   return (
     <div className={style.StringView}>
       <div className="string-view-header">
+        {label}
         <div>
           <Select value={valueType}>
             <Option value="json">Json</Option>
@@ -53,14 +55,14 @@ const StringView: React.FC<StringViewProps> = ({ value, onSave, onChange }) => {
           </Select>
         </div>
         <div className="ml15">
-          <Button type="link">
+          <Button type="link" className="string-view-btn">
             <DbClipboardNode text={aceValue} className="ml10">
               <span className="ml5 button-text hover-zoom">复制</span>
             </DbClipboardNode>
           </Button>
         </div>
         <div className="ml5">
-          <Button icon={<SaveOutlined />} type="link">
+          <Button className="string-view-btn" icon={<SaveOutlined />} type="link">
             <span className="button-text hover-zoom" onClick={handleSave}>
               保存
             </span>

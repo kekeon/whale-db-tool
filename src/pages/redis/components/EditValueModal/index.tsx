@@ -11,6 +11,7 @@ export interface IEditModalForm {
 
 const Item = Form.Item
 interface IEditModalProps {
+  isNew?: boolean
   visible: boolean
   loading: boolean
   field?: string
@@ -19,7 +20,7 @@ interface IEditModalProps {
   onCancel: () => void
   onOk: (data: IEditModalForm) => void
 }
-const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, onCancel, onOk, loading }) => {
+const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, loading, isNew, onCancel, onOk }) => {
   const [formRef] = Form.useForm()
 
   const handleOk = () => {
@@ -42,7 +43,7 @@ const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, 
 
   return (
     <Modal
-      title="Edit Line"
+      title={isNew ? 'Add New Line' : 'Edit Line'}
       width={800}
       visible={visible}
       onOk={handleOk}
@@ -53,12 +54,16 @@ const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, 
       <Form<IEditModalForm> layout="vertical" form={formRef}>
         {[RedisKeyType.HASH, RedisKeyType.ZSET].includes(keyType) ? (
           <Item label="Field" name="field" initialValue={field}>
-            {RedisKeyType.HASH === keyType ? <Input /> : <InputNumber />}
+            {RedisKeyType.HASH === keyType ? (
+              <Input placeholder="请输入" />
+            ) : (
+              <InputNumber placeholder="请输入数字" className="edit-modal-input" />
+            )}
           </Item>
         ) : null}
 
-        <Item label="Value" name="value" className="string-view-form">
-          <StringView value={value || ''} />
+        <Item label="" name="value" className="string-view-form">
+          <StringView label={<div className="string-value-label">Value</div>} value={value || ''} />
         </Item>
       </Form>
     </Modal>

@@ -7,9 +7,10 @@ interface TableViewProps<T> {
   dataSource: T[]
   onEdit?: (row: T) => void
   onRemove?: (row: T) => void
+  onAdd?: (row: T) => void
 }
 
-const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove }: TableViewProps<T>) => {
+const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd }: TableViewProps<T>) => {
   const columns = useMemo(() => {
     const idxCol = { dataIndex: 'idx', title: 'ID', width: 120 }
     const keyCol = { dataIndex: 'keyInValue', title: 'Key', width: 120, ellipsis: { showTitle: true } }
@@ -48,6 +49,9 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove }: Tabl
   }, [keyType])
   return (
     <div>
+      <Button type="primary" style={{ marginBottom: '10px' }} onClick={onAdd}>
+        新增
+      </Button>
       <Table size="small" columns={columns} rowKey="idx" dataSource={dataSource} />
     </div>
   )
