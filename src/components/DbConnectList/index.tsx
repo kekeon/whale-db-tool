@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import { common } from '@/types'
 import { Popconfirm } from 'antd'
 import { IDBItem } from '@/types/commonTypes'
+import { DbContainer } from '..'
 
 interface Props {
   onDelete: (uuid: common.uuid) => void
@@ -35,7 +36,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
   )
 
   return (
-    <div className={style['db-connect-lsit']}>
+    <DbContainer className={style['db-connect-list']}>
       {list?.length
         ? list.map((item, index: number) => (
             <div
@@ -81,7 +82,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
           ))
         : null}
       <PlusOutlined className="ml10 cursor hover-scale" onClick={props.onAdd} />
-    </div>
+    </DbContainer>
   )
 }
 export default DbConnectList

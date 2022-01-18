@@ -23,6 +23,7 @@ import style from './index.module.less'
 import NewKeyModal from './components/NewKeyModal'
 import EditModal, { IEditModalForm } from './components/EditValueModal'
 import { errorMsg, successMsg, warnMsg } from '@/utils/tips'
+import { DbContainer } from '_cp/index'
 
 const Option = Select.Option
 
@@ -298,7 +299,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   )
 
   return (
-    <section className={style.redis}>
+    <DbContainer className={style.redis}>
       <div className="db-connect-wrap">
         <DbConnectList
           list={connectList}
@@ -369,7 +370,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           onOk={handleEditOk}
         />
       )}
-    </section>
+    </DbContainer>
   )
 }
 export default Redis

@@ -6,6 +6,7 @@ import { Button, Col, Input, message, Modal, Row } from 'antd'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import styles from './index.module.less'
+import { successMsg } from '@/utils/tips'
 
 interface KeyTypeViewProps {
   keyValue: string
@@ -52,13 +53,28 @@ const KeyTypeView: React.FC<KeyTypeViewProps> = ({ keyValue, KeyType, onRefresh,
     })
   }
 
-  const handleSaveKey = async () => {
-    const res = await redisRenameKey(redisDbUUid, {
-      key: keyValue,
-      newKey: value,
+  const handleSaveKey = () => {
+    if (keyValue === value) return
+    Modal.confirm({
+      title: '更新键！',
+      content: (
+        <span>
+          确认将<span style={{ color: 'red' }}> {keyValue} </span>改为<span style={{ color: 'red' }}> {value} </span>？
+        </span>
+      ),
+      onOk: async () => {
+        try {
+          const res = await redisRenameKey(redisDbUUid, {
+            key: keyValue,
+            newKey: value,
+          })
+          successMsg()
+          onRefresh?.()
+        } catch (error) {
+          message.error(error as string)
+        }
+      },
     })
-
-    onRefresh?.()
   }
   return (
     <Row className={styles.KeyTypeView}>
