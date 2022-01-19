@@ -36,7 +36,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
   )
 
   return (
-    <DbContainer className={style['db-connect-list']}>
+    <div className={style['db-connect-list']}>
       {list?.length
         ? list.map((item, index: number) => (
             <div
@@ -82,7 +82,7 @@ const DbConnectList: React.FC<PropsExtra> = ({ list = [], ...props }) => {
           ))
         : null}
       <PlusOutlined className="ml10 cursor hover-scale" onClick={props.onAdd} />
-    </DbContainer>
+    </div>
   )
 }
 export default DbConnectList

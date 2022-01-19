@@ -299,8 +299,8 @@ const Redis: React.FC<RedisPageProps> = () => {
   )
 
   return (
-    <DbContainer className={style.redis}>
-      <div className="db-connect-wrap">
+    <div className={style.redis}>
+      <DbContainer radius="15px" className="db-connect-wrap">
         <DbConnectList
           list={connectList}
           onAdd={handleConnectAddForm}
@@ -308,9 +308,9 @@ const Redis: React.FC<RedisPageProps> = () => {
           onChange={handleChangeConnect}
           onEdit={handleConnectedEdit}
         />
-      </div>
+      </DbContainer>
       <div className="db-data-wrap">
-        <div className="db-table">
+        <DbContainer radius="15px" className="db-table">
           <Row gutter={20}>
             <Col span={12}>
               <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
@@ -335,8 +335,8 @@ const Redis: React.FC<RedisPageProps> = () => {
               </div>
             ))}
           </div>
-        </div>
-        <div className="db-data-value">
+        </DbContainer>
+        <DbContainer radius="15px" className="db-data-value">
           <KeyTypeView
             onSave={hanleChangeKeySave}
             KeyType={selectKeyInType}
@@ -345,7 +345,7 @@ const Redis: React.FC<RedisPageProps> = () => {
             onRefreshKeyValue={() => handleSelectKey(selectKey)}
           />
           {renderView(selectKeyInType)}
-        </div>
+        </DbContainer>
       </div>
 
       {addVisible && (
@@ -370,7 +370,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           onOk={handleEditOk}
         />
       )}
-    </DbContainer>
+    </div>
   )
 }
 export default Redis
