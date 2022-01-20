@@ -10,6 +10,22 @@ body,
   width: 100%;
 }
 
+/* antd */
+
+@antdBorderRadius: 16px;
+.ant-select-selector {
+  border-radius: @antdBorderRadius !important;
+}
+
+input.ant-input-number,
+input.ant-input,
+.ant-input-number-input-wrap,
+span.ant-input-affix-wrapper,
+button.ant-btn,
+span.ant-input-group-addon {
+  border-radius: @antdBorderRadius;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

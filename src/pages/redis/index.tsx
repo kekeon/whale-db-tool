@@ -344,7 +344,7 @@ const Redis: React.FC<RedisPageProps> = () => {
             onRefresh={getDbKeys}
             onRefreshKeyValue={() => handleSelectKey(selectKey)}
           />
-          {renderView(selectKeyInType)}
+          <div style={{ marginTop: '10px' }}>{renderView(selectKeyInType)}</div>
         </DbContainer>
       </div>
 
