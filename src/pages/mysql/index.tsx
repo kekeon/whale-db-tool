@@ -16,6 +16,7 @@ import classNames from 'classnames'
 import { CloseOutlined } from '@ant-design/icons'
 import { ConnectedEnum } from '@/constant/js'
 import DBEditConnectModal from '_cp/DBEditConnectModal'
+import DbContainer from '_cp/DbContainer'
 
 const Mysql: React.FC<any> = () => {
   const [dbList, setDbList] = useState<any[]>()
@@ -126,7 +127,7 @@ const Mysql: React.FC<any> = () => {
 
   return (
     <section className={style.mysql}>
-      <div className="db-connect-wrap">
+      <DbContainer radius="15px" className="db-connect-wrap">
         <DbConnectList
           list={connectList}
           onAdd={handleConnectAddForm}
@@ -134,9 +135,9 @@ const Mysql: React.FC<any> = () => {
           onChange={handleChangeConnect}
           onEdit={handleConnectedEdit}
         />
-      </div>
+      </DbContainer>
       <div className="db-data-wrap">
-        <div className="db-table">
+        <DbContainer radius="15px" className="db-table">
           <DbTableTree
             list={dbList!}
             config={{
@@ -144,16 +145,16 @@ const Mysql: React.FC<any> = () => {
               selectedKeys: treeSelectedKeys,
             }}
           />
-        </div>
+        </DbContainer>
 
         <div className="db-transaction">
-          <div className="db-transaction-tool">
+          <DbContainer radius="15px" className="db-transaction-tool">
             <div className="db-transaction-sql">
               <CodeEdit db={mySqlDbStatesRef.current.dbName!} onRun={handleRunSql} />
             </div>
-          </div>
+          </DbContainer>
 
-          <div className="db-transaction-view">
+          <DbContainer radius="15px" className="db-transaction-view">
             <TableView
               columns={columns}
               dataSource={tableData}
@@ -190,7 +191,7 @@ const Mysql: React.FC<any> = () => {
                 }
               />
             </div>
-          </div>
+          </DbContainer>
         </div>
       </div>
       {addVisible && (
