@@ -15,7 +15,6 @@
     }
 
     .db-table {
-      height: 100%;
       width: 300px;
       padding: 10px;
       background: #fff;
@@ -25,6 +24,14 @@
     .db-transaction {
       width: calc(100% - 300px);
       margin-left: 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-content: flex-start;
+      flex-direction: column;
+    }
+
+    .db-transaction-tool {
+      flex: 2;
     }
 
     .db-transaction-run-sql-info {
@@ -39,7 +46,7 @@
     }
 
     .db-transaction-view {
-      height: calc(100% - 330px);
+      flex: 3;
       position: relative;
     }
   }
