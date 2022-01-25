@@ -77,7 +77,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const handleAddOk = () => {}
   const handleAddCancel = () => {
     handleConnectedFormVisible(false)
-    getDbKeys()
+    // getDbKeys()
   }
 
   /*  connect end */

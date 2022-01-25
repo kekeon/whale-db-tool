@@ -117,8 +117,6 @@ const Mysql: React.FC<any> = () => {
   }
 
   const handleAddCancel = () => {
-    console.log('handleAddCancel')
-
     handleConnectedFormVisible(false)
   }
   /*  add end */
