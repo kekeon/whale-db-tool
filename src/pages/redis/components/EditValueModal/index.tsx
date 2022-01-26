@@ -61,7 +61,11 @@ const EditModal: React.FC<IEditModalProps> = ({ keyType, visible, field, value, 
         ) : null}
 
         <Item label="" name="value" className="string-view-form">
-          <StringView label={<div className="string-value-label">Value</div>} value={value || ''} />
+          <StringView
+            isSaveButton={false}
+            label={<div className="string-value-label">Value</div>}
+            value={value || ''}
+          />
         </Item>
       </Form>
     </Modal>

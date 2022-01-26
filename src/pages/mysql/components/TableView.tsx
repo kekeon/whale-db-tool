@@ -524,16 +524,16 @@ const TableView: React.FC<PropsExtra> = (props) => {
       <Row className="table-toolbar" justify="space-between" align="middle">
         <Col span={12}>
           <DbDropdownMenu list={exportMenuListLimit} onClick={handleExport}>
-            <Button title="导出" type="text" className="ml5" icon={<ExportOutlined />} />
+            <Button title="导出" type="text" className="ml5 hover-scale" icon={<ExportOutlined />} />
           </DbDropdownMenu>
           <DbDropdownMenu list={copyMenuListMemo}>
-            <Button title="复制" type="text" className="ml5" icon={<CopyOutlined />} />
+            <Button title="复制" type="text" className="ml5 hover-scale" icon={<CopyOutlined />} />
           </DbDropdownMenu>
           <Button
             title="插入"
             disabled={mySqlQueryTypeState === mySqlQueryType.SELF}
             type="text"
-            className="ml5"
+            className="ml5 hover-scale"
             onClick={handleAddRow}
             icon={<AppstoreAddOutlined />}
           />
@@ -541,7 +541,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
             title="删除"
             disabled={mySqlQueryTypeState === mySqlQueryType.SELF}
             type="text"
-            className="ml5"
+            className="ml5 hover-scale"
             onClick={handleDeleteItems}
             icon={<DeleteOutlined />}
           />
@@ -550,6 +550,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
           <Row justify="end" align="middle">
             <DbLabelText text="页码">
               <Button
+                className="hover-scale"
                 type="text"
                 onClick={handleTurnPageUp}
                 disabled={pageIndex === 1}
@@ -558,6 +559,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               <InputNumber size="small" min={0} value={pageIndex} />
               <Button
                 type="text"
+                className="hover-scale"
                 onClick={handleTurnPageDown}
                 disabled={dataSource?.length < limit! ? true : false}
                 icon={<CaretRightOutlined title="下一页" />}
@@ -566,7 +568,12 @@ const TableView: React.FC<PropsExtra> = (props) => {
             <DbLabelText text="行数">
               <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
             </DbLabelText>
-            <Button type="text" className="ml5" onClick={handleQueryData} icon={<SyncOutlined title="刷新" />} />
+            <Button
+              type="text"
+              className="ml5 hover-scale"
+              onClick={handleQueryData}
+              icon={<SyncOutlined title="刷新" />}
+            />
           </Row>
         </Col>
       </Row>

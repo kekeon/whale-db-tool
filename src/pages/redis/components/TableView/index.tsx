@@ -2,6 +2,7 @@ import { RedisKeyType } from '@/types/redisType'
 import { CopyOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { Button, Table } from 'antd'
 import React, { useMemo } from 'react'
+import DbClipboardNode from '_cp/DbClipboardNode'
 interface TableViewProps<T> {
   keyType: string
   dataSource: T[]
@@ -24,10 +25,16 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd 
       render: (_, row: T) => {
         return (
           <>
-            <Button className="ml5" type="link" title="复制" icon={<CopyOutlined />} />
-            <Button className="ml5" type="link" title="编辑" icon={<EditOutlined />} onClick={() => onEdit?.(row)} />
+            <DbClipboardNode text={row?.value} copyIconProps={{ title: '编辑', className: 'ml5 hover-scale' }} />
             <Button
-              className="ml5"
+              className="ml5 hover-scale"
+              type="link"
+              title="编辑"
+              icon={<EditOutlined />}
+              onClick={() => onEdit?.(row)}
+            />
+            <Button
+              className="ml5 hover-scale"
               type="link"
               title="删除"
               icon={<DeleteOutlined />}

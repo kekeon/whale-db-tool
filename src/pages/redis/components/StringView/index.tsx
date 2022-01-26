@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import style from './index.module.less'
 import AceEditor from 'react-ace'
 import { Button, Select } from 'antd'
@@ -17,8 +17,9 @@ interface StringViewProps {
   onSave?: (value: string) => void
   onChange?: (value: string) => void
   label?: React.ReactChild
+  isSaveButton?: boolean
 }
-const StringView: React.FC<StringViewProps> = ({ value, label, onSave, onChange }) => {
+const StringView: React.FC<StringViewProps> = ({ value, label, isSaveButton = true, onSave, onChange }) => {
   const [theme, setTheme] = useState<string>('github')
   const [valueType, setValueType] = useState<string>('json')
   const [aceValue, setAceValue] = useState<string>(value)
@@ -62,11 +63,13 @@ const StringView: React.FC<StringViewProps> = ({ value, label, onSave, onChange 
           </Button>
         </div>
         <div className="ml5">
-          <Button className="string-view-btn" icon={<SaveOutlined />} type="link">
-            <span className="button-text hover-zoom" onClick={handleSave}>
-              保存
-            </span>
-          </Button>
+          {isSaveButton && (
+            <Button className="string-view-btn" icon={<SaveOutlined />} type="link">
+              <span className="button-text hover-zoom" onClick={handleSave}>
+                保存
+              </span>
+            </Button>
+          )}
         </div>
       </div>
       <div className="string-content">

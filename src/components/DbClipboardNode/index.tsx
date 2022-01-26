@@ -9,13 +9,22 @@ interface Props {
   text: any
   style?: React.CSSProperties
   className?: string
+  copyIconProps?: React.HTMLAttributes<unknown>
   isIconColor?: boolean
   children?: React.ReactChild
 }
 
 type PropsExtra = Props
-const DbClipboardNode: React.FC<PropsExtra> = ({ icon, text, style, className, isIconColor = true, children }) => {
-  const CopyIcon = icon ? icon : <CopyOutlined />
+const DbClipboardNode: React.FC<PropsExtra> = ({
+  copyIconProps,
+  icon,
+  text,
+  style,
+  className,
+  isIconColor = true,
+  children,
+}) => {
+  const CopyIcon = icon ? icon : <CopyOutlined {...copyIconProps} />
   const [isCopySuccess, setIsCopySuccess] = useState<boolean>(false)
   const timerRef = useRef<number>()
   const isCopySuccessRef = useRef<boolean>()
