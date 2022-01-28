@@ -10,7 +10,7 @@ import {
 } from '@/service/redis'
 import { redisDbUUidState } from '@/store/redis'
 import { RedisKeyType } from '@/types/redisType'
-import { Col, message, Modal, Row, Select } from 'antd'
+import { Col, Input, message, Modal, Row, Select } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -321,6 +321,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               <NewKeyModal uuid={redisDbUUid} onSuccess={getDbKeys} />
             </Col>
           </Row>
+          <Input className="db-keys-search" placeholder="输入搜索" />
 
           <div className="db-keys-list">
             {keyList.map((key, index) => (
