@@ -556,7 +556,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
                 disabled={pageIndex === 1}
                 icon={<CaretLeftOutlined title="上一页" />}
               />
-              <InputNumber size="small" min={0} value={pageIndex} />
+              <InputNumber size="small" min={0} value={pageIndex} controls={false} />
               <Button
                 type="text"
                 className="hover-scale"
@@ -566,7 +566,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               />
             </DbLabelText>
             <DbLabelText text="行数">
-              <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} />
+              <InputNumber size="small" min={0} value={limit || 0} onChange={handleRowChange} controls={false} />
             </DbLabelText>
             <Button
               type="text"
@@ -633,7 +633,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
               : handleShowJson
           }
         >
-          JSON显示
+          JSON查看
         </div>
       </div>
     </div>

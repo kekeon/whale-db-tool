@@ -29,9 +29,20 @@ body,
 input.ant-input,
 .ant-input-number-input-wrap,
 span.ant-input-affix-wrapper,
-button.ant-btn,
-span.ant-input-group-addon {
+button.ant-btn {
   border-radius: @antdBorderRadius !important;
+}
+
+.ant-input-wrapper > span.ant-input-group-addon:nth-child(1) {
+  border-radius: @antdBorderRadius 0px 0px @antdBorderRadius!important;
+}
+
+.ant-input-wrapper > span.ant-input-group-addon:nth-child(3) {
+  border-radius: 0px @antdBorderRadius @antdBorderRadius 0px !important;
+}
+
+.ant-input-wrapper > span.ant-input-group-addon:nth-child(1) + .ant-input-affix-wrapper {
+  border-radius: 0px @antdBorderRadius @antdBorderRadius 0px !important;
 }
 
 code {

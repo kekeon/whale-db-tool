@@ -313,7 +313,7 @@ const Redis: React.FC<RedisPageProps> = () => {
         <DbContainer radius="15px" className="db-table">
           <Row gutter={20}>
             <Col span={12}>
-              <Select value={selectDb} style={{ width: 120 }} onChange={handleDbChange}>
+              <Select value={selectDb} style={{ width: '100%' }} onChange={handleDbChange}>
                 {...dbListOption}
               </Select>
             </Col>

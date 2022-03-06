@@ -30,7 +30,7 @@ const NewKeyModal: React.FC<NewKeyModalProps> = ({ uuid, onSuccess }) => {
       labelCol={{ span: 4 }}
       title="New Key"
       trigger={
-        <Button>
+        <Button style={{ width: '100%' }}>
           <PlusOutlined />
           New Key
         </Button>
