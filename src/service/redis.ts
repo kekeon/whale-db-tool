@@ -3,6 +3,7 @@ import {
   QUERY_DB_DELETE_KEY_FUNC,
   QUERY_DB_KEYS,
   QUERY_DB_RENAME_KEY_FUNC,
+  QUERY_DB_SCAN_KEYS_FUNC,
   QUERY_SELECT_DB_FUNC,
 } from '@/statement/redis.cmd'
 import { uuid } from '@/types/commonTypes'
@@ -54,12 +55,23 @@ export async function redisConfigCmd<T>(uuid: string, field: string, option?: Po
 }
 
 // 查询 redis 返回的keys
-export async function redisKeysCmd(uuid: string, option?: PostOpt) {
+export async function redisKeysCmd(
+  uuid: string,
+  params: { start: number; count: number; matchKey: string },
+  option?: PostOpt,
+) {
   try {
-    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(uuid, QUERY_DB_KEYS, option)
-    return res?.data[0]?.data
+    const res = await redisCmd<IRedisQueryResponseBase<string[]>[]>(
+      uuid,
+      QUERY_DB_SCAN_KEYS_FUNC(params.start, params.count, params.matchKey),
+      option,
+    )
+    console.log('redisKeysCmd', res)
+
+    // return res?.data[0]?.data
+    return { keys: res?.data[0]?.data?.[1], cursor: res?.data[0]?.data?.[0] }
   } catch {
-    return []
+    return { keys: [], cursor: '0' }
   }
 }
 

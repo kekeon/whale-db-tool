@@ -43,6 +43,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [editKeyValue, setEditKeyValue] = useState<{} & { member: string }>()
   const editKeyValueRef = useStateRef<({} & { member: string }) | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
+  const redisKeyCursorRef = useRef(0)
   const initData = () => {}
 
   const getDbNumber = async (uuid: string) => {
@@ -50,9 +51,14 @@ const Redis: React.FC<RedisPageProps> = () => {
     setDbNumber(Number(res))
   }
 
-  const getDbKeys = async () => {
-    const res = await redisKeysCmd(redisDbUUidRef.current)
-    setKeyList(res)
+  const getDbKeys = async (count = 500, matchKey = '*') => {
+    const res = await redisKeysCmd(redisDbUUidRef.current, {
+      start: redisKeyCursorRef.current,
+      count: count,
+      matchKey: matchKey,
+    })
+    setKeyList(res.keys as string[])
+    redisKeyCursorRef.current = Number(res?.cursor)
   }
 
   /*  connect start */
@@ -298,6 +304,10 @@ const Redis: React.FC<RedisPageProps> = () => {
     [selectKeyInValue, selectKeyInType],
   )
 
+  const handleSearchKey = (val: string) => {
+    getDbKeys(500, `*${val}*`)
+  }
+
   return (
     <div className={style.redis}>
       <DbContainer radius="15px" className="db-connect-wrap">
@@ -321,7 +331,7 @@ const Redis: React.FC<RedisPageProps> = () => {
               <NewKeyModal uuid={redisDbUUid} onSuccess={getDbKeys} />
             </Col>
           </Row>
-          <Input className="db-keys-search" placeholder="输入搜索" />
+          <Input.Search className="db-keys-search db-input-after" onSearch={handleSearchKey} placeholder="输入搜索" />
 
           <div className="db-keys-list">
             {keyList.map((key, index) => (

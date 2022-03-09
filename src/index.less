@@ -37,7 +37,13 @@ button.ant-btn {
   border-radius: @antdBorderRadius 0px 0px @antdBorderRadius!important;
 }
 
-.ant-input-wrapper > span.ant-input-group-addon:nth-child(3) {
+/* 只有后缀 */
+.db-input-after .ant-input {
+  border-radius: @antdBorderRadius 0 0 @antdBorderRadius !important;
+}
+
+.db-input-after .ant-input-group-addon,
+.db-input-after .ant-input-group-addon > .ant-btn {
   border-radius: 0px @antdBorderRadius @antdBorderRadius 0px !important;
 }
 

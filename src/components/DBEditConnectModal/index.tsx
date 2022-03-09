@@ -131,14 +131,24 @@ const DBEditConnectModal: React.FC<DBEditConnectModalProps> = (props) => {
             name="user"
             label="用户名"
             initialValue={initInfo?.name}
-            rules={[
-              inputRequired,
-              {
-                max: 1000,
-                type: 'string',
-                message: '最大长度1000',
-              },
-            ]}
+            rules={
+              type === ConnectedEnum.MYSQL
+                ? [
+                    inputRequired,
+                    {
+                      max: 1000,
+                      type: 'string',
+                      message: '最大长度1000',
+                    },
+                  ]
+                : [
+                    {
+                      max: 1000,
+                      type: 'string',
+                      message: '最大长度1000',
+                    },
+                  ]
+            }
           >
             <Input placeholder={inputPlaceholder} />
           </Item>
