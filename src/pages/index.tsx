@@ -32,7 +32,7 @@ const Login: React.FC<any> = () => {
           <img src={LoginImg} alt="" />
         </div>
         <div className="sys-form">
-          <div className="sys-form-title">User Login</div>
+          <div className="sys-form-title">账 号 登 录</div>
           <Form<LoginForm>
             name="basic"
             labelCol={{ span: 0 }}
@@ -40,29 +40,29 @@ const Login: React.FC<any> = () => {
             initialValues={{ remember: true }}
             onFinish={handleSubmit}
           >
-            <Form.Item name="account" rules={[{ required: true, message: 'Please input your username!' }]}>
+            <Form.Item name="account" rules={[{ required: true, message: '请输入账号' }]}>
               <Input
-                placeholder="Enter your username"
+                placeholder="请输入账号"
                 disabled={loginVisible}
                 prefix={<UserOutlined className="site-form-item-icon" />}
               />
             </Form.Item>
 
-            <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
+            <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
               <Input.Password
                 disabled={loginVisible}
-                placeholder="Enter your password"
+                placeholder="请输入密码"
                 prefix={<LockOutlined className="site-form-item-icon" />}
               />
             </Form.Item>
 
-            <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>Remember me ?</Checkbox>
+            <Form.Item name="remember" valuePropName="">
+              <Checkbox>记住账号?</Checkbox>
             </Form.Item>
 
             <Form.Item>
               <Button loading={loginVisible} className="login-btn" type="primary" htmlType="submit">
-                Login
+                登 录
               </Button>
             </Form.Item>
           </Form>

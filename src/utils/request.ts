@@ -68,7 +68,7 @@ class Http implements HttpInstance {
   constructor() {
     this.instance = axios.create({
       baseURL: '/api/v1/', // 接口前缀
-      timeout: 120000, // 设置响应超时时间
+      timeout: 60000, // 设置响应超时时间
     })
 
     // 请求拦截
