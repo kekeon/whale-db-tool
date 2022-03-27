@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import { useRef, useState } from 'react'
 
-const useAsyncVisible = <T>(asyncFunc: (...args: unknown[]) => T) => {
+const useAsyncVisible = <T>(asyncFunc: (...args: any) => T) => {
   const [visible, setVisible] = useState(false)
   const resRef = useRef<T | null>(null)
 
