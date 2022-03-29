@@ -606,7 +606,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
       )}
       {jsonRndVisible && (
         <DbRnd onClose={handleJsonClose}>
-          <DbJsonView readonly={true} data={cellJsonData} />
+          <DbJsonView readonly={true} value={cellJsonData} />
         </DbRnd>
       )}
       <div className="menu-wrap" ref={menuRef}>

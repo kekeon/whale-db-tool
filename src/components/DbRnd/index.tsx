@@ -18,6 +18,7 @@ interface Props {
 type PropsExtra = Props
 const DbJonDock: React.FC<PropsExtra> = (props) => {
   const [value, { toggle: toggleFullScroll }] = useToggle(false)
+  const [renderKey, setRenderKey] = useState(0)
   const positionStyleRef = useRef<positionStyle>()
   const [positionStyle, setPositionStyle] = useState<positionStyle>({
     x: 40,
@@ -44,6 +45,9 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
       }}
       // eslint-disable-next-line max-params
       onResizeStop={(e, _direction, ref, _delta, position) => {
+        console.log("212");
+        // const a = renderKey + 1
+        setRenderKey(renderKey + 1)
         setPositionStyle((s) => ({
           ...s,
           width: ref.style.width,
@@ -86,7 +90,7 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
             <CloseOutlined className="ml10" onClick={handleClose} />
           </div>
         </div>
-        <div className="DbRndContent">{props.children}</div>
+        <div className="DbRndContent" key={renderKey}>{props.children}</div>
       </div>
     </Rnd>,
     document.body,

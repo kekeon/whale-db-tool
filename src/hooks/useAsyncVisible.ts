@@ -11,7 +11,7 @@ const useAsyncVisible = <T>(asyncFunc: (...args: any) => T) => {
       resRef.current = await asyncFunc(...args)
     } catch (error) {
       console.error(error)
-      message.warn('请求失败')
+      // message.warn('请求失败')
     }
     setVisible(false)
     return resRef.current
