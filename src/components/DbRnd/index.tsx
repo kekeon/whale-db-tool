@@ -1,4 +1,4 @@
-import { ArrowsAltOutlined, CloseOutlined, ShrinkOutlined } from '@ant-design/icons'
+import { ArrowsAltOutlined, CloseOutlined, EditOutlined, ShrinkOutlined } from '@ant-design/icons'
 import { useToggle } from 'ahooks'
 import React, { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -12,11 +12,16 @@ interface positionStyle {
   y: number
 }
 
+interface editOptions {
+  onEdit: () => void
+}
+
 interface Props {
   onClose?: () => void
+  editOptions?: editOptions
 }
 type PropsExtra = Props
-const DbJonDock: React.FC<PropsExtra> = (props) => {
+const DbJonDock: React.FC<PropsExtra> = ({ editOptions, onClose }) => {
   const [value, { toggle: toggleFullScroll }] = useToggle(false)
   const [renderKey, setRenderKey] = useState(0)
   const positionStyleRef = useRef<positionStyle>()
@@ -28,12 +33,14 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
   })
 
   const handleClose = () => {
-    props.onClose?.()
+    onClose?.()
   }
 
   return createPortal(
     <Rnd
       className={styles.DbRnd}
+      bounds="body"
+      dragHandleClassName="DbRndHeader"
       size={{ width: positionStyle?.width, height: positionStyle?.height }}
       position={{ x: positionStyle.x, y: positionStyle.y }}
       onDragStop={(_e, d) => {
@@ -43,10 +50,7 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
           y: d.y,
         }))
       }}
-      // eslint-disable-next-line max-params
       onResizeStop={(e, _direction, ref, _delta, position) => {
-        console.log("212");
-        // const a = renderKey + 1
         setRenderKey(renderKey + 1)
         setPositionStyle((s) => ({
           ...s,
@@ -62,8 +66,10 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
             <div className="dot" />
           </div>
           <div className="DbRndHeaderRight">
+            {editOptions && <EditOutlined className="hover-scale" onClick={editOptions.onEdit} />}
             {value ? (
               <ShrinkOutlined
+                className="hover-scale"
                 onClick={() => {
                   toggleFullScroll(false)
                   setPositionStyle(positionStyleRef.current!)
@@ -71,6 +77,7 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
               />
             ) : (
               <ArrowsAltOutlined
+                className="hover-scale"
                 onClick={() => {
                   setPositionStyle((s) => {
                     const data = {
@@ -87,10 +94,12 @@ const DbJonDock: React.FC<PropsExtra> = (props) => {
                 }}
               />
             )}
-            <CloseOutlined className="ml10" onClick={handleClose} />
+            <CloseOutlined className="ml10 hover-scale" onClick={handleClose} />
           </div>
         </div>
-        <div className="DbRndContent" key={renderKey}>{props.children}</div>
+        <div className="DbRndContent" key={renderKey}>
+          {props.children}
+        </div>
       </div>
     </Rnd>,
     document.body,
