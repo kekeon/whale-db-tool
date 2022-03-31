@@ -11,6 +11,7 @@ import {
   CaretRightOutlined,
   CopyOutlined,
   DeleteOutlined,
+  EditOutlined,
   ExclamationCircleOutlined,
   ExportOutlined,
   SyncOutlined,
@@ -605,7 +606,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
         />
       )}
       {jsonRndVisible && (
-        <DbRnd onClose={handleJsonClose}>
+        <DbRnd onClose={handleJsonClose} extraHeader={<EditOutlined className="hover-scale mr10" />}>
           <DbJsonView readonly={true} value={cellJsonData} />
         </DbRnd>
       )}

@@ -12,16 +12,12 @@ interface positionStyle {
   y: number
 }
 
-interface editOptions {
-  onEdit: () => void
-}
-
 interface Props {
   onClose?: () => void
-  editOptions?: editOptions
+  extraHeader?: React.ReactChild
 }
 type PropsExtra = Props
-const DbJonDock: React.FC<PropsExtra> = ({ editOptions, onClose }) => {
+const DbJonDock: React.FC<PropsExtra> = ({ onClose, extraHeader, ...resetProps }) => {
   const [value, { toggle: toggleFullScroll }] = useToggle(false)
   const [renderKey, setRenderKey] = useState(0)
   const positionStyleRef = useRef<positionStyle>()
@@ -63,13 +59,14 @@ const DbJonDock: React.FC<PropsExtra> = ({ editOptions, onClose }) => {
       <div className="DbRndWrap">
         <div className="DbRndHeader">
           <div className="DbRndHeaderLeft">
-            <div className="dot" />
+            <div className="dot" title="拖动" />
           </div>
           <div className="DbRndHeaderRight">
-            {editOptions && <EditOutlined className="hover-scale" onClick={editOptions.onEdit} />}
+            {extraHeader}
             {value ? (
               <ShrinkOutlined
                 className="hover-scale"
+                title="退出全屏"
                 onClick={() => {
                   toggleFullScroll(false)
                   setPositionStyle(positionStyleRef.current!)
@@ -77,6 +74,7 @@ const DbJonDock: React.FC<PropsExtra> = ({ editOptions, onClose }) => {
               />
             ) : (
               <ArrowsAltOutlined
+                title="全屏"
                 className="hover-scale"
                 onClick={() => {
                   setPositionStyle((s) => {
@@ -94,11 +92,11 @@ const DbJonDock: React.FC<PropsExtra> = ({ editOptions, onClose }) => {
                 }}
               />
             )}
-            <CloseOutlined className="ml10 hover-scale" onClick={handleClose} />
+            <CloseOutlined title="关闭" className="ml10 hover-scale" onClick={handleClose} />
           </div>
         </div>
         <div className="DbRndContent" key={renderKey}>
-          {props.children}
+          {resetProps.children}
         </div>
       </div>
     </Rnd>,
