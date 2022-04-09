@@ -14,7 +14,7 @@ interface positionStyle {
 
 interface Props {
   onClose?: () => void
-  extraHeader?: React.ReactChild
+  extraHeader?: React.ReactNode
 }
 type PropsExtra = Props
 const DbJonDock: React.FC<PropsExtra> = ({ onClose, extraHeader, ...resetProps }) => {

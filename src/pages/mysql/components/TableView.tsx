@@ -14,6 +14,7 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
   ExportOutlined,
+  SaveOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
 import DbLabelText from '_cp/DbLabelText'
@@ -33,10 +34,10 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadText, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatSqlWhere, formatUpdate, isJsonStr } from '@/utils/utils'
+import { formatInsert, formatSqlWhere, formatUpdate, formatUpdateValid, isJsonStr } from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
-import { useBoolean } from 'ahooks'
+import { useBoolean, useSafeState } from 'ahooks'
 import { mysqlTableDeleteItem } from '@/service/mysql'
 import { mySqlState } from '@/store'
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -517,6 +518,17 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   /* ====== 查询 SLQ end ====== */
 
+  const [isEditStatus, setIsEditStatus] = useState(false)
+
+  const handleChangeEditStatus = () => {
+    setIsEditStatus(true)
+  }
+
+  const handleChangeEditSave = () => {
+    setIsEditStatus(false)
+    // sql = formatUpdateValid(dbName!, tableName!, curColumns, [values], editData)
+  }
+
   return (
     <div className={classNames(style['table-view'], props.className)}>
       {mySqlQueryTypeState === mySqlQueryType.SYSTEM && (
@@ -606,8 +618,17 @@ const TableView: React.FC<PropsExtra> = (props) => {
         />
       )}
       {jsonRndVisible && (
-        <DbRnd onClose={handleJsonClose} extraHeader={<EditOutlined className="hover-scale mr10" />}>
-          <DbJsonView readonly={true} value={cellJsonData} />
+        <DbRnd
+          onClose={handleJsonClose}
+          extraHeader={
+            isEditStatus ? (
+              <SaveOutlined title="保存" className="hover-scale mr10" onClick={handleChangeEditSave} />
+            ) : (
+              <EditOutlined title="编辑" className="hover-scale mr10" onClick={handleChangeEditStatus} />
+            )
+          }
+        >
+          <DbJsonView readonly={!isEditStatus} value={cellJsonData} />
         </DbRnd>
       )}
       <div className="menu-wrap" ref={menuRef}>
