@@ -1,5 +1,6 @@
 module.exports = {
   extends: [
+    'eslint-config-alloy',
     'alloy',
     'alloy/react',
     'alloy/typescript',

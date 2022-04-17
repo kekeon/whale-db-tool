@@ -557,8 +557,10 @@ const TableView: React.FC<PropsExtra> = (props) => {
         sql: sql,
       },
     ]
+
     let data: any = await mysqlTableExecQuery(uuid, sqlList)
     setMySqlQueryErrorState(data.errMsg)
+
     if (!data.errMsg) {
       queryData?.()
     }
