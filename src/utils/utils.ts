@@ -1,3 +1,4 @@
+import { mysql } from '@/types'
 import { IKV } from '@/types/commonTypes'
 import { FilterDataItem } from '@/types/mysqlTypes'
 
@@ -261,6 +262,41 @@ export function isJsonStr(str: unknown): unknown {
   } catch (error) {
     return false
   }
+}
+/**
+ * 筛选出自动增长键，如果未填写将其过滤
+ * @param columns
+ * @param values
+ * @returns
+ */
+export function filterAutoIncrement(columns: unknown[], values: IKV<unknown>) {
+  if (isEmptyArray(columns)) {
+    return columns
+  }
+
+  const autoColumns: {
+    columnsName: string
+    index: number
+  }[] = []
+  columns.forEach((col, inx) => {
+    if (/auto_increment/.test((col as mysql.tableColumnsInfo).Extra! || '')) {
+      autoColumns.push({
+        columnsName: (col as mysql.tableColumnsInfo).Field,
+        index: inx,
+      })
+    }
+  })
+
+  const curColumns = [].concat(columns as any)
+  if (!isEmptyArray(autoColumns)) {
+    autoColumns.forEach((autoCol) => {
+      if (values[autoCol.columnsName] === undefined) {
+        curColumns.splice(autoCol.index, 1)
+      }
+    })
+  }
+
+  return curColumns
 }
 
 /**

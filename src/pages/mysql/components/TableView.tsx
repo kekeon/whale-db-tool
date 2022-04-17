@@ -34,19 +34,29 @@ import {
 
 import { tableRenderData } from '../const'
 import { downloadText, exportExcel } from '@/utils/xlsx'
-import { formatInsert, formatSqlWhere, formatUpdate, formatUpdateValid, isJsonStr } from '@/utils/utils'
+import {
+  filterAutoIncrement,
+  formatInsert,
+  formatSqlWhere,
+  formatUpdate,
+  formatUpdateValid,
+  isEmptyArray,
+  isJsonStr,
+} from '@/utils/utils'
 import DbClipboard from '_cp/DbClipboard'
 import EditRowForm from './EditRowForm'
 import { useBoolean, useSafeState } from 'ahooks'
-import { mysqlTableDeleteItem } from '@/service/mysql'
+import { mysqlTableDeleteItem, mysqlTableExecQuery } from '@/service/mysql'
 import { mySqlState } from '@/store'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { mysql } from '@/types'
 import { DbRnd, DbJsonView } from '_cp/index'
 import { unSelectMsg } from '@/utils/tips'
 import { useStateRef } from '@/hooks'
 import { mySqlQueryType } from '@/store/mysql/types'
 import FilterForm from './filterForm'
+import { DbJsonViewRefProps } from '_cp/DbJsonView'
+import { USE_DATABASES_FUN } from '@/statement/mysql.sql'
 
 interface Props {
   queryData?: (...args: any) => void
@@ -72,6 +82,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
   const [{ dbName, tableName, offset, limit }, setMySqlDbStates] = useRecoilState(mySqlState.mySqlDbState)
   const columns = useRecoilValue(mySqlState.mySqlDbTableColumnsState)
   const uuid = useRecoilValue(mySqlState.mySqlDbUUid)
+  const setMySqlQueryErrorState = useSetRecoilState(mySqlState.mySqlQueryErrorState)
 
   const [jsonBtnDisable, setJsonBtnDisable] = useState<boolean>(true)
   const [cellJsonData, setCellJsonData] = useState<unknown>()
@@ -520,13 +531,37 @@ const TableView: React.FC<PropsExtra> = (props) => {
 
   const [isEditStatus, setIsEditStatus] = useState(false)
 
+  const jsonViewRef = useRef<DbJsonViewRefProps>()
+
   const handleChangeEditStatus = () => {
     setIsEditStatus(true)
   }
 
-  const handleChangeEditSave = () => {
+  const handleChangeEditSave = async () => {
     setIsEditStatus(false)
-    // sql = formatUpdateValid(dbName!, tableName!, curColumns, [values], editData)
+    let value = jsonViewRef.current?.getValue()
+    const column: any = propsRef.current?.columns?.[selectColIndex]
+    if (isJsonStr(value)) {
+      value = JSON.stringify(JSON.parse(value as string))
+    }
+
+    const values = { [column?.dataIndex as string]: value! }
+    const curColumns = filterAutoIncrement(columns, values)
+
+    const rowData = dataSource[selectRowIndex as number] as any
+    const sql = formatUpdateValid(dbName!, tableName!, curColumns, [values], rowData)
+    let sqlList: mysql.queryItem[] = [
+      USE_DATABASES_FUN(dbName || ''),
+      {
+        type: 'exec',
+        sql: sql,
+      },
+    ]
+    let data: any = await mysqlTableExecQuery(uuid, sqlList)
+    setMySqlQueryErrorState(data.errMsg)
+    if (!data.errMsg) {
+      queryData?.()
+    }
   }
 
   return (
@@ -628,7 +663,7 @@ const TableView: React.FC<PropsExtra> = (props) => {
             )
           }
         >
-          <DbJsonView readonly={!isEditStatus} value={cellJsonData} />
+          <DbJsonView readonly={!isEditStatus} value={cellJsonData} ref={jsonViewRef} />
         </DbRnd>
       )}
       <div className="menu-wrap" ref={menuRef}>

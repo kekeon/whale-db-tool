@@ -3,11 +3,10 @@ import { mysqlTableColumnsShowFull, mysqlTableExecQuery } from '@/service/mysql'
 import { USE_DATABASES_FUN } from '@/statement/mysql.sql'
 import { mySqlState } from '@/store'
 import { mysql } from '@/types'
-import { runSqlError } from '@/types/mysqlTypes'
-import { formatInsert, formatUpdateValid, isEmpty, isEmptyArray } from '@/utils/utils'
+import { filterAutoIncrement, formatInsert, formatUpdateValid, isEmptyArray } from '@/utils/utils'
 import { BetaSchemaForm, ProFormColumnsType, ProFormLayoutType } from '@ant-design/pro-form'
 import { message } from 'antd'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 interface EditRowFormProps {
@@ -55,29 +54,7 @@ const EditRowForm: React.FC<EditRowFormProps> = ({ visible, formType, editData, 
       })
 
       if (!isEmptyArray(columnList)) {
-        // 筛选出自动增长键，如果未填写将其过滤
-        const autoColumns: {
-          columnsName: string
-          index: number
-        }[] = []
-        columns.forEach((col, inx) => {
-          if (/auto_increment/.test((col as mysql.tableColumnsInfo).Extra! || '')) {
-            autoColumns.push({
-              columnsName: (col as mysql.tableColumnsInfo).Field,
-              index: inx,
-            })
-          }
-        })
-
-        const curColumns = [].concat(columns as any)
-        if (!isEmptyArray(autoColumns)) {
-          autoColumns.forEach((autoCol) => {
-            if (values[autoCol.columnsName] === undefined) {
-              curColumns.splice(autoCol.index, 1)
-            }
-          })
-        }
-
+        const curColumns = filterAutoIncrement(columns, values)
         let sql = formatInsert(mySqlDbStates.dbName!, mySqlDbStates.tableName!, curColumns, [values])
 
         if (formType === mysql.EditFormType.edit) {
