@@ -24,8 +24,6 @@ const StringView: React.FC<StringViewProps> = ({ value, label, isSaveButton = tr
   const [valueType, setValueType] = useState<string>('json')
   const [aceValue, setAceValue] = useState<string>(value)
   const editRef = useRef<AceEditor>(null)
-  const editInputValueRef = useRef<any>()
-  const editSelectValueRef = useRef<any>()
 
   useEffect(() => {
     if (isJsonStr(value)) {
