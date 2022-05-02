@@ -23,7 +23,7 @@ export interface IRedisQueryResponseBase<T> {
 }
 
 export interface IRedisKeyInValue {
-  type: string
+  type: RedisKeyType
   value: unknown
 }
 
@@ -35,7 +35,7 @@ export interface IRedisKeyInValueItem {
 export interface IRedisKeySetValue {
   uuid: uuid
   key_type: RedisKeyType
-  line_key: string
+  line_key?: string
   key: string
   value?: string | unknown[]
 }

@@ -25,7 +25,7 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd 
       render: (_, row: T) => {
         return (
           <>
-            <DbClipboardNode text={row?.value} copyIconProps={{ title: '编辑', className: 'ml5 hover-scale' }} />
+            <DbClipboardNode text={row?.value} copyIconProps={{ title: '拷贝', className: 'ml5 hover-scale' }} />
             <Button
               className="ml5 hover-scale"
               type="link"

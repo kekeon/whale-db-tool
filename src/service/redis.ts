@@ -119,7 +119,7 @@ export async function redisRenameKey(uuid: string, params: { key: string; newKey
 
 export async function redisKeyValue(uuid: string, key: string) {
   try {
-    const res = await request.post<IRedisQueryResponseBase<IRedisKeyInValueItem[]>[]>(REDIS_KEY_VALUE, {
+    const res = await request.post<IRedisKeyInValueItem[]>(REDIS_KEY_VALUE, {
       uuid,
       key_list: [key],
     })

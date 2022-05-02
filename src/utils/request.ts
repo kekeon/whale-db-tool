@@ -21,23 +21,21 @@ export interface requestResponse<T> {
   data: T
 }
 
-export interface Response extends AxiosResponse {
-  data: {
-    [k: string]: any
-    code: number
-    message: any
-    data: requestResponse<any>
-  }
+export interface Response<T> extends AxiosResponse {
+  [k: string]: any
+  code: number
+  message: any
+  data: T
 }
 
 declare interface HttpInstance {
-  get: <T>(url: string, params?: object, opt?: GetOpt) => Promise<requestResponse<T>>
+  get: <T>(url: string, params?: object, opt?: GetOpt) => Promise<Response<T>>
 
-  post: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
+  post: <T>(url: string, params: object, opt?: PostOpt) => Promise<Response<T>>
 
-  put: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
+  put: <T>(url: string, params: object, opt?: PostOpt) => Promise<Response<T>>
 
-  delete: <T>(url: string, params: object, opt?: PostOpt) => Promise<requestResponse<T>>
+  delete: <T>(url: string, params: object, opt?: PostOpt) => Promise<Response<T>>
 }
 
 interface ErrorMessage {
@@ -96,7 +94,7 @@ class Http implements HttpInstance {
 
     // 响应拦截
     this.instance.interceptors.response.use(
-      (response: Response) => {
+      (response) => {
         if (response.status === 200) {
           const code = response.data && Number(response.data.code)
           if (code !== 0) {
@@ -142,15 +140,15 @@ class Http implements HttpInstance {
    * @param { Object } opt [请求时配置的参数]  isCache: true 缓存数据，并从缓存中去；isRefresh：true 不从缓存中去拿数据， 并会刷新缓存数据,suffixUrl: string 给url加后缀
    */
   public get<T>(url: string, params?: object, opt: GetOpt = { isCache: false, isRefresh: false }) {
-    return new Promise<requestResponse<T>>((resolve, reject) => {
+    return new Promise<Response<T>>((resolve, reject) => {
       // opt中的参数，数据缓存,isCache:是否需要缓存, isRefresh: 是否强刷缓存, url 作为key, 缓存时间 7*24*3600*1000
 
       if (opt.isCache && !opt.isRefresh) {
         const key = url.replace(/\//g, '_').toLocaleUpperCase()
-        const res = storage().getLocal(key, false)
+        const res = storage().getLocal<Response<T>>(key, false)
         // 缓存中存在有效
         if (res) {
-          resolve({ data: res as T })
+          resolve(res)
           return
         }
       }
@@ -187,7 +185,7 @@ class Http implements HttpInstance {
    */
 
   public post<T>(url: string, params: object, opt: PostOpt = { text: '操作成功', hidden: true }) {
-    return new Promise<requestResponse<T>>((resolve, reject) => {
+    return new Promise<Response<T>>((resolve, reject) => {
       // 添加后缀
       const { hidden, text, ...axiosOpt } = opt
 
@@ -208,7 +206,7 @@ class Http implements HttpInstance {
   }
 
   public put<T>(url: string, params: object, opt: PostOpt = { text: '更新成功', hidden: true }) {
-    return new Promise<requestResponse<T>>((resolve, reject) => {
+    return new Promise<Response<T>>((resolve, reject) => {
       // 添加后缀
       const { hidden, text, ...axiosOpt } = opt
       this.instance
@@ -228,7 +226,7 @@ class Http implements HttpInstance {
   }
 
   public delete<T>(url: string, params: object, opt: PostOpt = { text: '删除成功', hidden: true }) {
-    return new Promise<requestResponse<T>>((resolve, reject) => {
+    return new Promise<Response<T>>((resolve, reject) => {
       this.instance
         .delete(url, { data: params, ...opt })
         .then((res) => {

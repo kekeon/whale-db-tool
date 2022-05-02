@@ -30,18 +30,26 @@ const Option = Select.Option
 interface RedisPageProps {
   to: string
 }
+
+interface EditKeyValueType {
+  member: string
+  keyInValue?: string
+  value?: string
+  index?: number
+}
+
 const Redis: React.FC<RedisPageProps> = () => {
   const [keyList, setKeyList] = useState<string[]>([])
   const [dbNumber, setDbNumber] = useState(1)
   const [selectDb, setSelectDb] = useState(0)
   const [selectKey, setSelectKey] = useState('')
   const [selectKeyInValue, setSelectKeyInValue] = useState('')
-  const [selectKeyInType, setSelectKeyInType] = useState('')
+  const [selectKeyInType, setSelectKeyInType] = useState<RedisKeyType>()
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
   const [isValueModalNew, setIsValueModalNew] = useState(false)
-  const [editKeyValue, setEditKeyValue] = useState<{} & { member: string }>()
-  const editKeyValueRef = useStateRef<({} & { member: string }) | undefined>(editKeyValue)
+  const [editKeyValue, setEditKeyValue] = useState<EditKeyValueType>()
+  const editKeyValueRef = useStateRef<EditKeyValueType | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
   const redisKeyCursorRef = useRef(0)
   const initData = () => {}
@@ -111,7 +119,7 @@ const Redis: React.FC<RedisPageProps> = () => {
     const res = await redisKeyValue(redisDbUUidRef.current, v)
     if (Array.isArray(res?.data) && res?.data.length) {
       setSelectKeyInValue(res?.data[0]?.data?.value as string)
-      setSelectKeyInType(res?.data[0]?.data?.type as string)
+      setSelectKeyInType(res?.data[0]?.data?.type)
     }
   }
 
@@ -119,9 +127,11 @@ const Redis: React.FC<RedisPageProps> = () => {
     const res = await redisKeySet({
       key: selectKey,
       uuid: redisDbUUid,
-      key_type: selectKeyInType,
+      key_type: selectKeyInType as RedisKeyType,
       value: v,
+      line_key: '',
     })
+    console.log('res', res)
 
     if (res?.data?.err_msg) {
       message.error(res?.data?.err_msg)
@@ -136,10 +146,10 @@ const Redis: React.FC<RedisPageProps> = () => {
 
   const hanleChangeKeySave = () => {}
 
-  const handleEditValue = (row) => {
+  const handleEditValue = (row: EditKeyValueType) => {
     setEditKeyValue({
       ...row,
-      member: row.index,
+      member: String((row as EditKeyValueType).index),
     })
     setIsValueModalNew(false)
     setShowValueModal(true)
@@ -187,7 +197,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   })
 
   // 移除成员
-  const handleRemove = (row) => {
+  const handleRemove = (row: EditKeyValueType) => {
     const member = [RedisKeyType.HASH].includes(selectKeyInType as RedisKeyType)
       ? row?.keyInValue
       : (row?.value as string)
@@ -203,7 +213,7 @@ const Redis: React.FC<RedisPageProps> = () => {
         const res = await redisKeyMemberRemove({
           uuid: redisDbUUid,
           key: selectKey,
-          member: member,
+          member: member!,
         })
 
         if (!res) {
@@ -350,13 +360,13 @@ const Redis: React.FC<RedisPageProps> = () => {
         <DbContainer radius="15px" className="db-data-value">
           <KeyTypeView
             onSave={hanleChangeKeySave}
-            KeyType={selectKeyInType}
+            KeyType={selectKeyInType!}
             keyValue={selectKey}
             onRefresh={getDbKeys}
             onRefreshKeyValue={() => handleSelectKey(selectKey)}
           />
           <div style={{ marginTop: '10px' }} className="db-data-content">
-            {renderView(selectKeyInType)}
+            {renderView(selectKeyInType!)}
           </div>
         </DbContainer>
       </div>
