@@ -31,11 +31,16 @@ interface RedisPageProps {
   to: string
 }
 
-interface EditKeyValueType {
-  member: string
+interface IEditKeyValueType {
+  member?: string
   keyInValue?: string
   value?: string
   index?: number
+}
+
+interface ITableDataColumn extends IEditKeyValueType {
+  idx?: number
+  score?: string
 }
 
 const Redis: React.FC<RedisPageProps> = () => {
@@ -48,8 +53,8 @@ const Redis: React.FC<RedisPageProps> = () => {
   const [redisDbUUid, setRedisDbUUid] = useRecoilState(redisDbUUidState)
   const [showValueModal, setShowValueModal] = useState(false)
   const [isValueModalNew, setIsValueModalNew] = useState(false)
-  const [editKeyValue, setEditKeyValue] = useState<EditKeyValueType>()
-  const editKeyValueRef = useStateRef<EditKeyValueType | undefined>(editKeyValue)
+  const [editKeyValue, setEditKeyValue] = useState<IEditKeyValueType>()
+  const editKeyValueRef = useStateRef<IEditKeyValueType | undefined>(editKeyValue)
   const redisDbUUidRef = useRef('')
   const redisKeyCursorRef = useRef(0)
   const initData = () => {}
@@ -131,7 +136,6 @@ const Redis: React.FC<RedisPageProps> = () => {
       value: v,
       line_key: '',
     })
-    console.log('res', res)
 
     if (res?.data?.err_msg) {
       message.error(res?.data?.err_msg)
@@ -144,12 +148,12 @@ const Redis: React.FC<RedisPageProps> = () => {
     }
   }
 
-  const hanleChangeKeySave = () => {}
+  const handleChangeKeySave = () => {}
 
-  const handleEditValue = (row: EditKeyValueType) => {
+  const handleEditValue = (row: IEditKeyValueType) => {
     setEditKeyValue({
       ...row,
-      member: String((row as EditKeyValueType).index),
+      member: String((row as IEditKeyValueType).index),
     })
     setIsValueModalNew(false)
     setShowValueModal(true)
@@ -197,7 +201,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   })
 
   // 移除成员
-  const handleRemove = (row: EditKeyValueType) => {
+  const handleRemove = (row: IEditKeyValueType) => {
     const member = [RedisKeyType.HASH].includes(selectKeyInType as RedisKeyType)
       ? row?.keyInValue
       : (row?.value as string)
@@ -235,6 +239,10 @@ const Redis: React.FC<RedisPageProps> = () => {
     setShowValueModal(true)
   }
 
+  const handleKeywordSearch = (value: string, type: string) => {
+    console.log('value, type', value, type)
+  }
+
   const renderView = useCallback(
     (type: string) => {
       switch (type) {
@@ -242,7 +250,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           return <StringView onSave={handleSaveKeyInValue} value={selectKeyInValue} />
         case RedisKeyType.LIST:
         case RedisKeyType.SET: {
-          let data: any = []
+          let data: ITableDataColumn[] = []
           if (Array.isArray(selectKeyInValue)) {
             data = selectKeyInValue.map((v, index) => ({
               idx: index + 1,
@@ -251,7 +259,8 @@ const Redis: React.FC<RedisPageProps> = () => {
             }))
           }
           return (
-            <TableView
+            <TableView<ITableDataColumn>
+              onSearch={handleKeywordSearch}
               keyType={type}
               dataSource={data}
               onRemove={handleRemove}
@@ -261,7 +270,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           )
         }
         case RedisKeyType.ZSET: {
-          let data: any = []
+          let data: ITableDataColumn[] = []
           if (Array.isArray(selectKeyInValue)) {
             data = selectKeyInValue.map((v, index) => ({
               idx: index + 1,
@@ -272,6 +281,7 @@ const Redis: React.FC<RedisPageProps> = () => {
           }
           return (
             <TableView
+              onSearch={handleKeywordSearch}
               onAdd={handleAddMember}
               keyType={type}
               dataSource={data}
@@ -281,9 +291,9 @@ const Redis: React.FC<RedisPageProps> = () => {
           )
         }
         case RedisKeyType.HASH: {
-          let data: any = []
+          let data: ITableDataColumn[] = []
           if (Array.isArray(selectKeyInValue)) {
-            let item: any = {}
+            let item: ITableDataColumn = {}
             for (let i = 0; i < selectKeyInValue.length; i++) {
               if (i % 2 === 0) {
                 item = {
@@ -298,7 +308,8 @@ const Redis: React.FC<RedisPageProps> = () => {
             }
           }
           return (
-            <TableView
+            <TableView<ITableDataColumn>
+              onSearch={handleKeywordSearch}
               onAdd={handleAddMember}
               keyType={type}
               dataSource={data}
@@ -359,7 +370,7 @@ const Redis: React.FC<RedisPageProps> = () => {
         </DbContainer>
         <DbContainer radius="15px" className="db-data-value">
           <KeyTypeView
-            onSave={hanleChangeKeySave}
+            onSave={handleChangeKeySave}
             KeyType={selectKeyInType!}
             keyValue={selectKey}
             onRefresh={getDbKeys}

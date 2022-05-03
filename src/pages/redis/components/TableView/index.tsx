@@ -1,17 +1,29 @@
 import { RedisKeyType } from '@/types/redisType'
-import { CopyOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { Button, Table } from 'antd'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { Button, Input, Table } from 'antd'
 import React, { useMemo } from 'react'
 import DbClipboardNode from '_cp/DbClipboardNode'
-interface TableViewProps<T> {
+
+interface ITableColumn {
+  value?: string
+}
+interface ITableViewProps<T> {
   keyType: string
   dataSource: T[]
   onEdit?: (row: T) => void
   onRemove?: (row: T) => void
-  onAdd?: (row: T) => void
+  onAdd?: () => void
+  onSearch?: (value: string, keyType: string) => void
 }
 
-const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd }: TableViewProps<T>) => {
+const TableView = <T extends ITableColumn>({
+  keyType,
+  dataSource,
+  onEdit,
+  onRemove,
+  onAdd,
+  onSearch,
+}: ITableViewProps<T>) => {
   const columns = useMemo(() => {
     const idxCol = { dataIndex: 'idx', title: 'ID', width: 120 }
     const keyCol = { dataIndex: 'keyInValue', title: 'Key', width: 120, ellipsis: { showTitle: true } }
@@ -20,9 +32,16 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd 
     const scoreCol = { dataIndex: 'score', title: 'Score', ellipsis: { showTitle: true } }
     const optCol = {
       dataIndex: 'row',
-      title: 'Operation',
+      title: (
+        <Input.Search
+          className="db-input-after"
+          size="small"
+          placeholder="Keyword Search"
+          onSearch={(value) => onSearch?.(value, keyType)}
+        />
+      ),
       width: 180,
-      render: (_, row: T) => {
+      render: (_: unknown, row: T) => {
         return (
           <>
             <DbClipboardNode text={row?.value} copyIconProps={{ title: '拷贝', className: 'ml5 hover-scale' }} />
@@ -56,7 +75,7 @@ const TableView = <T extends {}>({ keyType, dataSource, onEdit, onRemove, onAdd 
   }, [keyType])
   return (
     <div>
-      <Button type="primary" style={{ marginBottom: '10px' }} onClick={onAdd}>
+      <Button type="primary" style={{ marginBottom: '10px' }} onClick={() => onAdd?.()}>
         新增
       </Button>
       <Table size="small" columns={columns} rowKey="idx" dataSource={dataSource} />
