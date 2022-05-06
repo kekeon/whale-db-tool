@@ -11,6 +11,7 @@ import { dbBase } from '@/types/mysqlTypes'
 import {
   IRedisKeyInValue,
   IRedisKeyInValueItem,
+  IRedisKeyInValueParams,
   IRedisKeyMemberRemove,
   IRedisKeySetValue,
   IRedisQueryResponseBase,
@@ -117,11 +118,12 @@ export async function redisRenameKey(uuid: string, params: { key: string; newKey
   }
 }
 
-export async function redisKeyValue(uuid: string, key: string) {
+export async function redisKeyValue(uuid: string, key: string, params?: IRedisKeyInValueParams) {
   try {
     const res = await request.post<IRedisKeyInValueItem[]>(REDIS_KEY_VALUE, {
       uuid,
       key_list: [key],
+      ...params,
     })
     return res
   } catch {

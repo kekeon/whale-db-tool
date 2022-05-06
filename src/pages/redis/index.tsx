@@ -239,8 +239,12 @@ const Redis: React.FC<RedisPageProps> = () => {
     setShowValueModal(true)
   }
 
-  const handleKeywordSearch = (value: string, type: string) => {
-    console.log('value, type', value, type)
+  const handleKeywordSearch = async (keyword: string, type: string) => {
+    const res = await redisKeyValue(redisDbUUidRef.current, selectKey, { match: keyword ?? `*${keyword}*` })
+    if (Array.isArray(res?.data) && res?.data.length) {
+      setSelectKeyInValue(res?.data[0]?.data?.value as string)
+      setSelectKeyInType(res?.data[0]?.data?.type)
+    }
   }
 
   const renderView = useCallback(

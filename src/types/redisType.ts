@@ -32,6 +32,14 @@ export interface IRedisKeyInValueItem {
   err_msg: string
 }
 
+export interface IRedisKeyInValueParams {
+  start?: number
+  stop?: number
+  count?: number
+  match?: string
+  cursor?: number
+}
+
 export interface IRedisKeySetValue {
   uuid: uuid
   key_type: RedisKeyType
