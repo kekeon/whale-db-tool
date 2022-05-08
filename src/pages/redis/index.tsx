@@ -248,7 +248,7 @@ const Redis: React.FC<RedisPageProps> = () => {
   }
 
   const renderView = useCallback(
-    (type: string) => {
+    (type: RedisKeyType) => {
       switch (type) {
         case RedisKeyType.STRING:
           return <StringView onSave={handleSaveKeyInValue} value={selectKeyInValue} />

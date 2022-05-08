@@ -8,12 +8,12 @@ interface ITableColumn {
   value?: string
 }
 interface ITableViewProps<T> {
-  keyType: string
+  keyType: RedisKeyType
   dataSource: T[]
   onEdit?: (row: T) => void
   onRemove?: (row: T) => void
   onAdd?: () => void
-  onSearch?: (value: string, keyType: string) => void
+  onSearch?: (value: string, keyType: RedisKeyType) => void
 }
 
 const TableView = <T extends ITableColumn>({
@@ -32,13 +32,15 @@ const TableView = <T extends ITableColumn>({
     const scoreCol = { dataIndex: 'score', title: 'Score', ellipsis: { showTitle: true } }
     const optCol = {
       dataIndex: 'row',
-      title: (
+      title: [RedisKeyType.HASH, RedisKeyType.SET, RedisKeyType.ZSET].includes(keyType) ? (
         <Input.Search
           className="db-input-after"
           size="small"
           placeholder="Keyword Search"
           onSearch={(value) => onSearch?.(value, keyType)}
         />
+      ) : (
+        'Operation'
       ),
       width: 180,
       render: (_: unknown, row: T) => {
