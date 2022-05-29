@@ -8,6 +8,7 @@
 
 ## 🛠 安装
 
+- ssh 安装
 - 下载 [package](https://github.com/kekeon/whale-db-tool-release) 中的压缩包解压后
 - 初始登录账号： admin, 密码: 123456
 
